@@ -51,13 +51,8 @@
         }
     </script>
     <style>
-        #reader {
-            border: none !important;
-        }
-        #reader video {
-            border-radius: 1rem !important;
-            object-fit: cover;
-        }
+        #reader { border: none !important; }
+        #reader video { border-radius: 1rem !important; object-fit: cover; }
         #reader__dashboard_section_csr button {
             background-color: #4f46e5 !important;
             color: white !important;
@@ -74,29 +69,16 @@
             background-color: #4338ca !important;
             transform: translateY(-1px);
         }
-        #reader__status_span {
-            font-size: 0.875rem !important;
-            color: #6b7280 !important;
-        }
+        #reader__status_span { font-size: 0.875rem !important; color: #6b7280 !important; }
         .glass-card {
             background: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
         }
-        .custom-scrollbar::-webkit-scrollbar {
-            width: 6px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-            background: #f1f5f9;
-            border-radius: 10px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 10px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8;
-        }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
     </style>
 </head>
 <body class="bg-slate-100 min-h-screen font-sans text-slate-800 antialiased flex flex-col justify-between selection:bg-indigo-500 selection:text-white">
@@ -106,8 +88,8 @@
         <div class="absolute -top-10 -left-10 w-40 h-40 bg-pink-500/20 rounded-full blur-3xl pointer-events-none"></div>
         <div class="absolute -bottom-10 right-10 w-60 h-60 bg-indigo-400/20 rounded-full blur-3xl pointer-events-none"></div>
 
-        <div class="max-w-5xl mx-auto px-4 sm:px-6 py-5 relative z-10">
-            <!-- Navigasi Atas: Tombol Kembali -->
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 py-5 relative z-10">
+            <!-- Navigasi Atas -->
             <div class="flex items-center justify-between pb-4 mb-4 border-b border-white/10">
                 <a href="index.html" class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs sm:text-sm font-medium transition-all backdrop-blur-md border border-white/15 hover:scale-105 active:scale-95 shadow-sm">
                     <i data-lucide="arrow-left" class="w-4 h-4"></i>
@@ -115,14 +97,14 @@
                 </a>
 
                 <div class="flex items-center gap-2">
-                    <button onclick="fetchStudentList()" title="Refresh Data Siswa dari Spreadsheet" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-white/15 hover:bg-white/25 text-white border border-white/20 transition-all active:scale-95">
+                    <button onclick="fetchStudentList()" title="Refresh Data Siswa dari Spreadsheet" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-white/15 hover:bg-white/25 text-white border border-white/20 transition-all active:scale-95 shadow-sm">
                         <i data-lucide="refresh-cw" class="w-3.5 h-3.5" id="refreshIcon"></i>
                         <span>Sync Database</span>
                     </button>
-                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-400/20 text-emerald-200 border border-emerald-400/30">
-                        <span class="w-2 h-2 mr-1.5 rounded-full bg-emerald-400 animate-ping"></span>
-                        Sistem Aktif
-                    </span>
+                    <button onclick="openRekapModal()" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold bg-emerald-500 hover:bg-emerald-600 text-white border border-emerald-400/30 transition-all active:scale-95 shadow-md">
+                        <i data-lucide="table" class="w-3.5 h-3.5"></i>
+                        <span>Preview Rekap Hari Ini</span>
+                    </button>
                 </div>
             </div>
 
@@ -158,7 +140,7 @@
     </header>
 
     <!-- Main Content Container -->
-    <main class="max-w-5xl mx-auto px-4 sm:px-6 py-8 w-full flex-grow grid grid-cols-1 md:grid-cols-12 gap-6">
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 py-8 w-full flex-grow grid grid-cols-1 md:grid-cols-12 gap-6">
 
         <!-- Kolom Scanner QR -->
         <div class="md:col-span-7 flex flex-col gap-4">
@@ -192,18 +174,21 @@
                     </div>
                 </div>
 
-                <!-- Tombol Buka Modal Absen Manual -->
-                <div class="mt-5 pt-4 border-t border-slate-200/80 text-center">
-                    <p class="text-xs text-slate-500 mb-3 font-medium">Tidak membawa kartu? Pilih siswa langsung dari daftar database.</p>
-                    <button onclick="openManualModal()" class="w-full py-3.5 px-4 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-2xl text-sm font-semibold transition-all shadow-md hover:shadow-indigo-200 hover:shadow-lg active:scale-[0.99] flex items-center justify-center gap-2 group">
-                        <i data-lucide="users" class="w-4 h-4 text-purple-200 group-hover:scale-110 transition-transform"></i>
-                        <span>Pilih & Klik Nama Siswa (Absen Manual)</span>
+                <!-- Tombol Akses Cepat -->
+                <div class="mt-5 pt-4 border-t border-slate-200/80 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <button onclick="openManualModal()" class="py-3 px-4 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-2xl text-xs font-semibold transition-all shadow-md active:scale-[0.99] flex items-center justify-center gap-2">
+                        <i data-lucide="users" class="w-4 h-4 text-purple-200"></i>
+                        <span>Absen Manual (Klik Nama)</span>
+                    </button>
+                    <button onclick="openRekapModal()" class="py-3 px-4 bg-slate-800 hover:bg-slate-900 text-white rounded-2xl text-xs font-semibold transition-all shadow-md active:scale-[0.99] flex items-center justify-center gap-2">
+                        <i data-lucide="layout-list" class="w-4 h-4 text-emerald-400"></i>
+                        <span>Cek Siapa Saja Belum Absen</span>
                     </button>
                 </div>
             </div>
         </div>
 
-        <!-- Kolom Riwayat & Informasi -->
+        <!-- Kolom Riwayat Scan Terakhir -->
         <div class="md:col-span-5 flex flex-col gap-4">
             <div class="glass-card rounded-3xl shadow-lg border border-white/60 p-5 sm:p-6 flex flex-col h-full">
                 <div class="flex items-center justify-between mb-4">
@@ -211,7 +196,7 @@
                         <span class="p-2 bg-indigo-50 text-indigo-600 rounded-xl">
                             <i data-lucide="history" class="w-5 h-5"></i>
                         </span>
-                        Riwayat Presensi
+                        Aktivitas Absen Terakhir
                     </h3>
                     <span id="historyCount" class="text-xs font-semibold bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full shadow-sm">0 Siswa</span>
                 </div>
@@ -221,7 +206,7 @@
                         <div class="p-3 bg-slate-100 rounded-2xl w-fit mx-auto mb-3">
                             <i data-lucide="clipboard-list" class="w-8 h-8 opacity-60"></i>
                         </div>
-                        <p class="text-xs font-medium">Belum ada data presensi yang dicatat.</p>
+                        <p class="text-xs font-medium">Belum ada aktivitas presensi pada sesi ini.</p>
                     </div>
                 </div>
             </div>
@@ -232,8 +217,6 @@
     <!-- Modal Input Absen Manual Berbasis Daftar Database Siswa -->
     <div id="manualModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
         <div class="bg-white rounded-3xl shadow-2xl max-w-lg w-full p-6 sm:p-7 animate-slide-up relative border border-white/20 flex flex-col max-h-[90vh]">
-            
-            <!-- Modal Header -->
             <div class="flex items-center justify-between pb-4 border-b border-slate-100">
                 <div class="flex items-center gap-3">
                     <div class="p-3 bg-indigo-50 text-indigo-600 rounded-2xl">
@@ -249,9 +232,7 @@
                 </button>
             </div>
 
-            <!-- Modal Content Body -->
             <div class="mt-4 space-y-4 flex-grow overflow-hidden flex flex-col">
-                <!-- Pilihan Status Kehadiran -->
                 <div>
                     <label class="block text-xs font-bold text-slate-700 mb-2">Pilih Status Kehadiran Terlebih Dahulu:</label>
                     <div class="grid grid-cols-4 gap-2">
@@ -282,14 +263,12 @@
                     </div>
                 </div>
 
-                <!-- Input Live Search -->
                 <div class="relative">
                     <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5"></i>
                     <input type="text" id="searchSiswaInput" oninput="filterSiswaList()" placeholder="Cari nama atau NISN siswa..." 
                            class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all">
                 </div>
 
-                <!-- List Siswa Interaktif -->
                 <div id="studentListContainer" class="flex-grow overflow-y-auto space-y-2 pr-1 custom-scrollbar min-h-[220px]">
                     <div id="studentLoading" class="text-center py-8 text-slate-400">
                         <i data-lucide="loader-2" class="w-7 h-7 animate-spin mx-auto text-indigo-500 mb-2"></i>
@@ -298,10 +277,92 @@
                 </div>
             </div>
 
-            <!-- Modal Footer -->
             <div class="pt-4 border-t border-slate-100 flex justify-end mt-2">
                 <button type="button" onclick="closeManualModal()" class="w-full py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-2xl text-sm transition-all">
                     Batal / Tutup
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL BARU: Preview Rekap Absen Keseluruhan -->
+    <div id="rekapModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-4xl w-full p-6 sm:p-7 animate-slide-up relative border border-white/20 flex flex-col max-h-[90vh]">
+            
+            <!-- Modal Header -->
+            <div class="flex items-center justify-between pb-4 border-b border-slate-100">
+                <div class="flex items-center gap-3">
+                    <div class="p-3 bg-emerald-50 text-emerald-600 rounded-2xl">
+                        <i data-lucide="clipboard-check" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-lg text-slate-800">Preview Status Presensi Hari Ini</h3>
+                        <p class="text-xs text-slate-500" id="rekapTanggalSubtitle">Memuat data...</p>
+                    </div>
+                </div>
+                <button onclick="closeRekapModal()" class="text-slate-400 hover:text-slate-600 transition-colors p-2 rounded-full hover:bg-slate-100">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <!-- Ringkasan Counter / Stats Badge -->
+            <div class="grid grid-cols-2 sm:grid-cols-5 gap-2.5 my-4">
+                <div class="bg-emerald-50 border border-emerald-200 p-2.5 rounded-2xl text-center">
+                    <p class="text-[11px] font-bold text-emerald-700">Hadir</p>
+                    <p class="text-lg font-extrabold text-emerald-900" id="countHadir">0</p>
+                </div>
+                <div class="bg-amber-50 border border-amber-200 p-2.5 rounded-2xl text-center">
+                    <p class="text-[11px] font-bold text-amber-700">Izin</p>
+                    <p class="text-lg font-extrabold text-amber-900" id="countIzin">0</p>
+                </div>
+                <div class="bg-blue-50 border border-blue-200 p-2.5 rounded-2xl text-center">
+                    <p class="text-[11px] font-bold text-blue-700">Sakit</p>
+                    <p class="text-lg font-extrabold text-blue-900" id="countSakit">0</p>
+                </div>
+                <div class="bg-rose-50 border border-rose-200 p-2.5 rounded-2xl text-center">
+                    <p class="text-[11px] font-bold text-rose-700">Alpa</p>
+                    <p class="text-lg font-extrabold text-rose-900" id="countAlpa">0</p>
+                </div>
+                <div class="bg-slate-100 border border-slate-300 p-2.5 rounded-2xl text-center col-span-2 sm:col-span-1">
+                    <p class="text-[11px] font-bold text-slate-600">Belum Absen</p>
+                    <p class="text-lg font-extrabold text-slate-800" id="countBelum">0</p>
+                </div>
+            </div>
+
+            <!-- Input Pencarian Rekap -->
+            <div class="relative mb-3">
+                <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5"></i>
+                <input type="text" id="searchRekapInput" oninput="filterRekapTable()" placeholder="Cari berdasarkan nama atau status kehadiran..." 
+                       class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all">
+            </div>
+
+            <!-- Tabel Rekap Data -->
+            <div class="flex-grow overflow-y-auto custom-scrollbar border border-slate-200 rounded-2xl">
+                <table class="w-full text-left text-xs sm:text-sm">
+                    <thead class="bg-slate-100 text-slate-700 sticky top-0 font-bold border-b border-slate-200">
+                        <tr>
+                            <th class="p-3 text-center w-12">No</th>
+                            <th class="p-3">Nama Siswa</th>
+                            <th class="p-3">NISN / NIS</th>
+                            <th class="p-3 text-center">Status Hari Ini</th>
+                        </tr>
+                    </thead>
+                    <tbody id="rekapTableBody" class="divide-y divide-slate-100">
+                        <tr>
+                            <td colspan="4" class="text-center py-8 text-slate-400">
+                                <i data-lucide="loader-2" class="w-6 h-6 animate-spin mx-auto text-emerald-500 mb-2"></i>
+                                Memuat data rekap dari spreadsheet...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="pt-4 border-t border-slate-100 flex items-center justify-between mt-3">
+                <p class="text-xs text-slate-500 font-medium">* Status diambil secara live dari sheet bulan aktif</p>
+                <button type="button" onclick="closeRekapModal()" class="px-5 py-2.5 bg-slate-800 hover:bg-slate-900 text-white font-semibold rounded-2xl text-sm transition-all">
+                    Tutup Preview
                 </button>
             </div>
         </div>
@@ -312,9 +373,8 @@
         <p>© Presensi Digital Sekolah - Dikembangkan khusus untuk membantu proses KBM Ibu Guru</p>
     </footer>
 
-    <!-- Audio Beep & Core Script -->
+    <!-- Core Script -->
     <script>
-        // URL Web App Google Apps Script terbaru Anda yang terhubung dengan sheet per bulan
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwgFvTSY7Ctrbb4PO6xq7EKkwlLylKNQZd3OP6IKl_7Rvso5s-A4H2G78_veOmAycXBFQ/exec";
 
         let isProcessing = false;
@@ -347,11 +407,12 @@
                     osc.stop(ctx.currentTime + 0.3);
                 }
             } catch (e) {
-                console.log("Audio API disabled or not allowed without user gesture.");
+                console.log("Audio API disabled");
             }
         }
 
-        function fetchStudentList() {
+        // Ambil Data Siswa + Status Kehadiran Hari Ini
+        function fetchStudentList(callbackOnSuccess) {
             const refreshIcon = document.getElementById('refreshIcon');
             if (refreshIcon) refreshIcon.classList.add('animate-spin');
 
@@ -361,9 +422,7 @@
                     if (data && Array.isArray(data.students)) {
                         globalStudentDatabase = data.students;
                         renderStudentList(globalStudentDatabase);
-                    } else if (Array.isArray(data)) {
-                        globalStudentDatabase = data;
-                        renderStudentList(globalStudentDatabase);
+                        if (callbackOnSuccess) callbackOnSuccess();
                     } else {
                         showStudentListError("Format data siswa tidak sesuai.");
                     }
@@ -395,6 +454,13 @@
             students.forEach((student, index) => {
                 const nisn = student.nisn || student[0] || '';
                 const nama = student.nama || student[1] || 'Tanpa Nama';
+                const statusToday = student.statusToday || '-';
+
+                let badgeColor = "bg-slate-100 text-slate-600";
+                if(statusToday === 'H' || statusToday === 'Hadir') badgeColor = "bg-emerald-100 text-emerald-800";
+                else if(statusToday === 'I' || statusToday === 'Izin') badgeColor = "bg-amber-100 text-amber-800";
+                else if(statusToday === 'S' || statusToday === 'Sakit') badgeColor = "bg-blue-100 text-blue-800";
+                else if(statusToday === 'A' || statusToday === 'Alpa') badgeColor = "bg-rose-100 text-rose-800";
 
                 html += `
                     <button onclick="selectStudentForAttendance('${nisn}', '${nama.replace(/'/g, "\\'")}')" 
@@ -408,10 +474,13 @@
                                 <p class="text-[11px] text-slate-500 font-medium">NISN: ${nisn}</p>
                             </div>
                         </div>
-                        <span class="inline-flex items-center gap-1 text-xs font-semibold text-indigo-600 bg-white px-2.5 py-1 rounded-xl border border-slate-200 group-hover:border-indigo-300 group-hover:bg-indigo-600 group-hover:text-white transition-all shadow-sm">
-                            <span>Absen</span>
-                            <i data-lucide="check" class="w-3.5 h-3.5"></i>
-                        </span>
+                        <div class="flex items-center gap-2">
+                            ${statusToday !== '-' ? `<span class="px-2 py-0.5 text-[10px] font-bold rounded-md ${badgeColor}">${statusToday}</span>` : ''}
+                            <span class="inline-flex items-center gap-1 text-xs font-semibold text-indigo-600 bg-white px-2.5 py-1 rounded-xl border border-slate-200 group-hover:border-indigo-300 group-hover:bg-indigo-600 group-hover:text-white transition-all shadow-sm">
+                                <span>Absen</span>
+                                <i data-lucide="check" class="w-3.5 h-3.5"></i>
+                            </span>
+                        </div>
                     </button>
                 `;
             });
@@ -441,8 +510,8 @@
             }
 
             const filtered = globalStudentDatabase.filter(student => {
-                const nisn = String(student.nisn || student[0] || '').toLowerCase();
-                const nama = String(student.nama || student[1] || '').toLowerCase();
+                const nisn = String(student.nisn || '').toLowerCase();
+                const nama = String(student.nama || '').toLowerCase();
                 return nisn.includes(query) || nama.includes(query);
             });
 
@@ -466,7 +535,7 @@
                 textContainer.innerHTML = `<p class="font-bold text-sm">${title}</p><p class="text-xs text-amber-700 mt-0.5">${message}</p>`;
             } else if (state === 'success') {
                 box.className = "mt-5 p-4 rounded-2xl transition-all duration-300 bg-emerald-50 border border-emerald-300 text-emerald-900 text-center animate-bounce-short shadow-md";
-                iconContainer.innerHTML = `<i data-lucide="check-circle-2" class="w-9 h-9 text-emerald-600 animate-scale font-bold"></i>`;
+                iconContainer.innerHTML = `<i data-lucide="check-circle-2" class="w-9 h-9 text-emerald-600 font-bold"></i>`;
                 textContainer.innerHTML = `<p class="font-extrabold text-base text-emerald-900">${title}</p><p class="text-xs mt-1 text-emerald-700 font-medium">${message}</p>`;
             } else if (state === 'error') {
                 box.className = "mt-5 p-4 rounded-2xl transition-all duration-300 bg-rose-50 border border-rose-300 text-rose-900 text-center shadow-md";
@@ -514,6 +583,9 @@
                         jam: jamText,
                         status: statusInput
                     });
+
+                    // Sync ulang database untuk update status
+                    fetchStudentList();
                 } else {
                     playBeep('error');
                     updateStatusUI('error', 'Gagal Mencatat', response.message || 'Data NISN tidak ditemukan');
@@ -552,15 +624,110 @@
             document.getElementById('manualModal').classList.add('hidden');
         }
 
+        /* --- FUNGSI MODAL REKAP ABSEN KESELURUHAN --- */
+        function openRekapModal() {
+            document.getElementById('rekapModal').classList.remove('hidden');
+            document.getElementById('searchRekapInput').value = '';
+            
+            const now = new Date();
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('rekapTanggalSubtitle').innerText = now.toLocaleDateString('id-ID', options);
+
+            fetchStudentList(() => {
+                renderRekapTable(globalStudentDatabase);
+            });
+        }
+
+        function closeRekapModal() {
+            document.getElementById('rekapModal').classList.add('hidden');
+        }
+
+        function renderRekapTable(students) {
+            const tbody = document.getElementById('rekapTableBody');
+            if (!tbody) return;
+
+            let countHadir = 0, countIzin = 0, countSakit = 0, countAlpa = 0, countBelum = 0;
+
+            if (students.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="4" class="text-center py-8 text-slate-400 font-medium">Tidak ada data siswa ditemukan.</td>
+                    </tr>`;
+                updateRekapStats(0, 0, 0, 0, 0);
+                return;
+            }
+
+            let rowsHtml = '';
+            students.forEach((student, index) => {
+                const nisn = student.nisn || '-';
+                const nama = student.nama || 'Tanpa Nama';
+                const st = (student.statusToday || '').toUpperCase();
+
+                let badgeHtml = '';
+                if (st === 'H' || st === 'HADIR') {
+                    countHadir++;
+                    badgeHtml = `<span class="px-3 py-1 text-xs font-bold rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 inline-flex items-center gap-1"><i data-lucide="check" class="w-3 h-3"></i> Hadir (H)</span>`;
+                } else if (st === 'I' || st === 'IZIN') {
+                    countIzin++;
+                    badgeHtml = `<span class="px-3 py-1 text-xs font-bold rounded-full bg-amber-100 text-amber-800 border border-amber-300 inline-flex items-center gap-1"><i data-lucide="file-text" class="w-3 h-3"></i> Izin (I)</span>`;
+                } else if (st === 'S' || st === 'SAKIT') {
+                    countSakit++;
+                    badgeHtml = `<span class="px-3 py-1 text-xs font-bold rounded-full bg-blue-100 text-blue-800 border border-blue-300 inline-flex items-center gap-1"><i data-lucide="activity" class="w-3 h-3"></i> Sakit (S)</span>`;
+                } else if (st === 'A' || st === 'ALPA') {
+                    countAlpa++;
+                    badgeHtml = `<span class="px-3 py-1 text-xs font-bold rounded-full bg-rose-100 text-rose-800 border border-rose-300 inline-flex items-center gap-1"><i data-lucide="x" class="w-3 h-3"></i> Alpa (A)</span>`;
+                } else {
+                    countBelum++;
+                    badgeHtml = `<span class="px-3 py-1 text-xs font-semibold rounded-full bg-slate-100 text-slate-500 border border-slate-200">Belum Absen</span>`;
+                }
+
+                rowsHtml += `
+                    <tr class="hover:bg-slate-50 transition-colors">
+                        <td class="p-3 text-center font-bold text-slate-500">${index + 1}</td>
+                        <td class="p-3 font-bold text-slate-800">${nama}</td>
+                        <td class="p-3 text-slate-500 font-mono text-xs">${nisn}</td>
+                        <td class="p-3 text-center">${badgeHtml}</td>
+                    </tr>
+                `;
+            });
+
+            tbody.innerHTML = rowsHtml;
+            updateRekapStats(countHadir, countIzin, countSakit, countAlpa, countBelum);
+            lucide.createIcons();
+        }
+
+        function updateRekapStats(h, i, s, a, belum) {
+            document.getElementById('countHadir').innerText = h;
+            document.getElementById('countIzin').innerText = i;
+            document.getElementById('countSakit').innerText = s;
+            document.getElementById('countAlpa').innerText = a;
+            document.getElementById('countBelum').innerText = belum;
+        }
+
+        function filterRekapTable() {
+            const query = document.getElementById('searchRekapInput').value.toLowerCase().trim();
+            if (!query) {
+                renderRekapTable(globalStudentDatabase);
+                return;
+            }
+
+            const filtered = globalStudentDatabase.filter(student => {
+                const nisn = String(student.nisn || '').toLowerCase();
+                const nama = String(student.nama || '').toLowerCase();
+                const st = String(student.statusToday || '').toLowerCase();
+                return nisn.includes(query) || nama.includes(query) || st.includes(query);
+            });
+
+            renderRekapTable(filtered);
+        }
+
         function addHistoryItem(data) {
             historyData.unshift(data);
             const container = document.getElementById('historyList');
             const emptyHistory = document.getElementById('emptyHistory');
             const countBadge = document.getElementById('historyCount');
 
-            if (emptyHistory) {
-                emptyHistory.remove();
-            }
+            if (emptyHistory) emptyHistory.remove();
 
             countBadge.innerText = `${historyData.length} Siswa`;
 
