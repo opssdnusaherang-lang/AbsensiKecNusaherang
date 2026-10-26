@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HadirNusa | Portal Absensi Digital Interaktif & Responsive</title>
+<!-- Tailwind CSS for utility styling & responsiveness -->
+<script src="https://cdn.tailwindcss.com"></script>
+<!-- FontAwesome for icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<!-- Canvas Confetti for celebrate effect -->
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+
+  * {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Animated Glowing Gradient Background */
+  .animated-gradient-bg {
+    background: linear-gradient(-45deg, #0f172a, #1e3a8a, #0d9488, #1e293b);
+    background-size: 400% 400%;
+    animation: gradientShift 15s ease infinite;
+  }
+
+  @keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  /* Floating Orbs Animation */
+  .orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.5;
+    animation: floatOrb 12s ease-in-out infinite alternate;
+  }
+  .orb-1 { width: 350px; height: 350px; background: #2563eb; top: -50px; left: -50px; }
+  .orb-2 { width: 300px; height: 300px; background: #0d9488; bottom: -50px; right: -50px; animation-delay: -4s; }
+  .orb-3 { width: 250px; height: 250px; background: #4f46e5; top: 40%; left: 30%; animation-delay: -8s; }
+
+  @keyframes floatOrb {
+    0% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(30px, 40px) scale(1.1); }
+    100% { transform: translate(-20px, 20px) scale(0.95); }
+  }
+
+  /* Glassmorphism Card Effect */
+  .glass-card {
+    background: rgba(255, 255, 255, 0.88);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    box-shadow: 0 20px 50px rgba(15, 23, 42, 0.12);
+  }
+
+  /* Responsive Mobile Top Card Glass */
+  .mobile-header-glass {
+    background: rgba(15, 23, 42, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+  }
+
+  /* Pulse Ripple Effect for Status Badge */
+  .pulse-ring {
+    position: relative;
+  }
+  .pulse-ring::before {
+    content: '';
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%; height: 100%;
+    border-radius: 9999px;
+    background: #10b981;
+    opacity: 0.6;
+    animation: ringPulse 2s infinite;
+  }
+
+  @keyframes ringPulse {
+    0% { width: 100%; height: 100%; opacity: 0.6; }
+    100% { width: 180%; height: 180%; opacity: 0; }
+  }
+
+  /* Interactive Input Focus & Touch Optimizations */
+  .custom-input {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    font-size: 16px; /* Prevents auto-zoom on iOS Safari */
+  }
+  @media (min-width: 640px) {
+    .custom-input {
+      font-size: 0.875rem; /* 14px on desktop */
+    }
+  }
+  .custom-input:focus {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 20px -4px rgba(37, 99, 235, 0.2);
+  }
+
+  /* Shimmer Animated Button */
+  .btn-shimmer {
+    position: relative;
+    overflow: hidden;
+  }
+  .btn-shimmer::after {
+    content: '';
+    position: absolute;
+    top: -50%; right: -50%; bottom: -50%; left: -50%;
+    background: linear-gradient(to bottom right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.25) 50%, rgba(255,255,255,0) 100%);
+    transform: rotate(45deg) translate(-200%, -200%);
+    animation: shimmer 4s infinite;
+  }
+
+  @keyframes shimmer {
+    0% { transform: rotate(45deg) translate(-200%, -200%); }
+    20%, 100% { transform: rotate(45deg) translate(200%, 200%); }
+  }
+
+  /* Shake Animation for Invalid Submission */
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-8px); }
+    40%, 80% { transform: translateX(8px); }
+  }
+  .animate-shake {
+    animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+  }
+
+  /* Canvas Overlay */
+  #particles-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 2;
+  }
+</style>
+</head>
+
+<body class="bg-slate-100 min-h-screen text-slate-800 flex items-center justify-center relative overflow-x-hidden antialiased selection:bg-teal-500 selection:text-white">
+
+  <!-- Main Container Page Layout (Fluid Desktop & Touch-Friendly Mobile) -->
+  <div class="w-full min-h-screen grid grid-cols-1 lg:grid-cols-12 relative overflow-hidden">
+
+    <!-- DESKTOP VISUAL PANEL / MOBILE HERO BANNER -->
+    <div class="lg:col-span-7 animated-gradient-bg p-6 sm:p-10 lg:p-16 flex flex-col justify-between relative overflow-hidden text-white min-h-[300px] sm:min-h-[400px] lg:min-h-screen">
+      <!-- Animated Background Floating Orbs -->
+      <div class="orb orb-1"></div>
+      <div class="orb orb-2"></div>
+      <div class="orb orb-3"></div>
+      
+      <!-- Interactive Particles Canvas -->
+      <canvas id="particles-canvas"></canvas>
+
+      <!-- Brand Header -->
+      <div class="flex items-center justify-between sm:justify-start sm:space-x-4 z-10">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-teal-300 text-xl sm:text-2xl shadow-lg transform hover:scale-105 hover:rotate-6 transition-all duration-300">
+            <i class="fa-solid fa-user-check"></i>
+          </div>
+          <div>
+            <h1 class="text-xl sm:text-2xl font-extrabold tracking-tight text-white flex items-center gap-2">
+              HadirNusa
+              <span class="text-[10px] sm:text-xs font-semibold px-2 py-0.5 rounded-full bg-teal-400/20 text-teal-300 border border-teal-400/30">v2.4 Live</span>
+            </h1>
+            <p class="text-[10px] sm:text-xs tracking-wider text-slate-300 uppercase font-medium">Absensi Digital Sekolah Terpadu</p>
+          </div>
+        </div>
+
+        <!-- Mobile Indicator Badge -->
+        <div class="lg:hidden mobile-header-glass px-3 py-1 rounded-full text-[11px] font-medium text-teal-300 flex items-center gap-1.5 border border-white/10">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          Nusaherang
+        </div>
+      </div>
+
+      <!-- Hero Content (Adaptive for Mobile & Desktop) -->
+      <div class="my-auto py-6 sm:py-10 z-10 max-w-xl">
+        <div class="hidden sm:inline-flex items-center space-x-2 bg-white/10 backdrop-blur-md border border-white/20 px-4 py-2 rounded-full text-xs font-semibold text-teal-200 mb-6 shadow-sm hover:bg-white/15 transition duration-300 cursor-default">
+          <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 inline-block relative pulse-ring"></span>
+          <span>Satu Sistem • 14 Sekolah Dasar Nusaherang</span>
+        </div>
+
+        <h2 class="text-3xl sm:text-5xl lg:text-6xl font-extrabold leading-tight tracking-tight mb-3 sm:mb-6 text-white drop-shadow-sm">
+          Hadir tepat waktu,<br>
+          <span class="bg-clip-text text-transparent bg-gradient-to-r from-teal-300 via-emerald-200 to-cyan-300">
+            belajar lebih maju.
+          </span>
+        </h2>
+
+        <p class="text-slate-200 text-xs sm:text-base leading-relaxed mb-6 sm:mb-8 opacity-90 line-clamp-3 sm:line-clamp-none">
+          Platform terintegrasi absensi digital untuk siswa dan tenaga pendidik di Kecamatan Nusaherang, Kabupaten Kuningan. Lebih cepat, akurat, dan transparan.
+        </p>
+
+        <!-- Animated Mini Stats Badges (Collapsible/Optimized for Mobile) -->
+        <div class="grid grid-cols-3 gap-2 sm:gap-4 pt-1 sm:pt-2">
+          <div class="p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-white/10 backdrop-blur-md border border-white/15 hover:bg-white/20 transition-all duration-300 text-center sm:text-left">
+            <div class="text-xl sm:text-3xl font-black text-teal-300">14</div>
+            <div class="text-[10px] sm:text-xs text-slate-200 font-medium mt-0.5 sm:mt-1">Sekolah Dasar</div>
+          </div>
+          <div class="p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-white/10 backdrop-blur-md border border-white/15 hover:bg-white/20 transition-all duration-300 text-center sm:text-left">
+            <div class="text-xl sm:text-3xl font-black text-cyan-300">1</div>
+            <div class="text-[10px] sm:text-xs text-slate-200 font-medium mt-0.5 sm:mt-1">Portal Terpadu</div>
+          </div>
+          <div class="p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-white/10 backdrop-blur-md border border-white/15 hover:bg-white/20 transition-all duration-300 text-center sm:text-left">
+            <div class="text-xl sm:text-3xl font-black text-emerald-300">Realtime</div>
+            <div class="text-[10px] sm:text-xs text-slate-200 font-medium mt-0.5 sm:mt-1">Rekap Presensi</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer Info (Hidden on very small phone view, visible on desktop/tablet) -->
+      <div class="hidden sm:flex flex-col sm:flex-row justify-between items-center text-xs text-slate-300 pt-6 border-t border-white/10 z-10 gap-2">
+        <p>© 2026 HadirNusa Digital System</p>
+        <p class="flex items-center gap-1">
+          <i class="fa-solid fa-location-dot text-teal-400"></i> Kecamatan Nusaherang • Kab. Kuningan
+        </p>
+      </div>
+    </div>
+
+    <!-- RIGHT PANEL / MOBILE FORM SHEET -->
+    <div class="lg:col-span-5 flex items-center justify-center p-4 sm:p-10 lg:p-14 bg-slate-50 relative min-h-[calc(100vh-300px)] lg:min-h-screen">
+      <!-- Subtle Decorative Background Patterns -->
+      <div class="absolute inset-0 opacity-40 pointer-events-none" style="background-image: radial-gradient(#cbd5e1 1px, transparent 1px); background-size: 24px 24px;"></div>
+
+      <div class="w-full max-w-md space-y-6 sm:space-y-8 relative z-10 my-auto">
+
+        <!-- Welcome Header -->
+        <div class="space-y-1.5 sm:space-y-2 text-center sm:text-left">
+          <span class="text-[10px] sm:text-xs font-bold tracking-widest text-blue-600 uppercase bg-blue-50 px-3 py-1 rounded-md border border-blue-100 inline-block">
+            Portal Presensi Resmi
+          </span>
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">Selamat Datang!</h2>
+          <p class="text-xs sm:text-sm text-slate-500">Pilih lokasi sekolah dan peran akun Anda untuk melanjutkan ke dashboard.</p>
+        </div>
+
+        <!-- Glassmorphism Form Container -->
+        <div class="glass-card rounded-2xl sm:rounded-3xl p-5 sm:p-8 space-y-5 sm:space-y-6 shadow-xl relative" id="formCard">
+          
+          <div class="flex items-center justify-between pb-3 sm:pb-4 border-b border-slate-200/60">
+            <div class="flex items-center space-x-2">
+              <i class="fa-solid fa-shield-halved text-blue-600 text-base sm:text-lg"></i>
+              <h3 class="font-bold text-slate-800 text-xs sm:text-sm">Autentikasi Pengguna</h3>
+            </div>
+            <span class="inline-flex items-center gap-1.5 text-[10px] sm:text-xs font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+              Sistem Aktif
+            </span>
+          </div>
+
+          <form id="loginForm" class="space-y-4 sm:space-y-5" novalidate>
+            <!-- Select School -->
+            <div>
+              <label for="school" class="block text-[11px] sm:text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5 sm:mb-2">
+                Pilih Sekolah Dasar
+              </label>
+              <div class="relative">
+                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                  <i class="fa-solid fa-school text-sm"></i>
+                </span>
+                <select id="school" required class="custom-input pl-10 pr-10 py-3 sm:py-3.5 w-full bg-slate-50 border border-slate-200 rounded-xl text-slate-800 font-medium focus:bg-white focus:border-blue-500 focus:outline-none appearance-none cursor-pointer">
+                  <option value="" disabled selected>Pilih unit sekolah...</option>
+                  <option>SD Negeri 1 Cikadu</option>
+                  <option>SD Negeri 1 Jambar</option>
+                  <option>SD Negeri 1 Kertawirama</option>
+                  <option>SD Negeri 1 Nusaherang</option>
+                  <option>SD Negeri 2 Cikadu</option>
+                  <option>SD Negeri 2 Jambar</option>
+                  <option>SD Negeri 2 Kertawirama</option>
+                  <option>SD Negeri 3 Cikadu</option>
+                  <option>SD Negeri 3 Haurkuning</option>
+                  <option>SD Negeri 3 Jambar</option>
+                  <option>SD Negeri Ciasih</option>
+                  <option>SD Negeri Haurkuning</option>
+                  <option>SD Negeri Kertayuga</option>
+                  <option>SD Negeri Windusari</option>
+                </select>
+                <span class="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none text-slate-400">
+                  <i class="fa-solid fa-chevron-down text-xs"></i>
+                </span>
+              </div>
+            </div>
+
+            <!-- Select Role -->
+            <div>
+              <label for="role" class="block text-[11px] sm:text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5 sm:mb-2">
+                Masuk Sebagai
+              </label>
+              <div class="relative">
+                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                  <i class="fa-solid fa-user-gear text-sm"></i>
+                </span>
+                <select id="role" required class="custom-input pl-10 pr-10 py-3 sm:py-3.5 w-full bg-slate-50 border border-slate-200 rounded-xl text-slate-800 font-medium focus:bg-white focus:border-blue-500 focus:outline-none appearance-none cursor-pointer">
+                  <option value="" disabled selected>Pilih peran pengguna...</option>
+                  <option value="Guru">Guru / Tenaga Pendidik</option>
+                  <option value="Siswa">Siswa / Wali Murid</option>
+                  <option value="Admin Sekolah">Admin Sekolah</option>
+                  <option value="Admin Kecamatan">Admin UPTD / Korwil</option>
+                </select>
+                <span class="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none text-slate-400">
+                  <i class="fa-solid fa-chevron-down text-xs"></i>
+                </span>
+              </div>
+            </div>
+
+            <!-- Username Input -->
+            <div>
+              <label for="username" class="block text-[11px] sm:text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5 sm:mb-2">
+                Username / NIP / NISN
+              </label>
+              <div class="relative">
+                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                  <i class="fa-solid fa-id-card text-sm"></i>
+                </span>
+                <input id="username" type="text" autocomplete="username" placeholder="Masukkan ID atau username" required class="custom-input pl-10 pr-4 py-3 sm:py-3.5 w-full bg-slate-50 border border-slate-200 rounded-xl text-slate-800 font-medium focus:bg-white focus:border-blue-500 focus:outline-none placeholder:text-slate-400">
+              </div>
+            </div>
+
+            <!-- Password Input with Toggle -->
+            <div>
+              <label for="password" class="block text-[11px] sm:text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5 sm:mb-2">
+                Kata Sandi
+              </label>
+              <div class="relative">
+                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                  <i class="fa-solid fa-lock text-sm"></i>
+                </span>
+                <input id="password" type="password" autocomplete="current-password" placeholder="••••••••" required class="custom-input pl-10 pr-12 py-3 sm:py-3.5 w-full bg-slate-50 border border-slate-200 rounded-xl text-slate-800 font-medium focus:bg-white focus:border-blue-500 focus:outline-none placeholder:text-slate-400">
+                <button type="button" id="togglePass" class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-blue-600 transition-colors p-2">
+                  <i class="fa-solid fa-eye text-sm" id="eyeIcon"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Remember & Forgot Password -->
+            <div class="flex items-center justify-between text-xs font-medium pt-1">
+              <label class="flex items-center space-x-2 text-slate-600 cursor-pointer select-none">
+                <input type="checkbox" id="remember" class="w-4 h-4 rounded text-blue-600 focus:ring-blue-500 border-slate-300">
+                <span>Ingat saya</span>
+              </label>
+              <a href="#" id="forgotBtn" class="text-blue-600 hover:text-blue-700 font-bold hover:underline transition">
+                Lupa kata sandi?
+              </a>
+            </div>
+
+            <!-- Submit Button with Shimmer & Loading Spinner -->
+            <button type="submit" id="submitBtn" class="btn-shimmer w-full py-3.5 sm:py-4 px-6 rounded-xl text-white font-bold text-sm bg-gradient-to-r from-blue-600 via-indigo-600 to-teal-600 hover:from-blue-700 hover:via-indigo-700 hover:to-teal-700 shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 transform active:scale-[0.98] sm:hover:-translate-y-0.5 transition-all duration-200 flex items-center justify-center space-x-2 mt-2">
+              <span id="btnText">Masuk ke Dashboard</span>
+              <i class="fa-solid fa-arrow-right text-xs transition-transform group-hover:translate-x-1" id="btnIcon"></i>
+            </button>
+          </form>
+
+          <!-- Interactive Notice Box -->
+          <div id="notice" class="hidden rounded-xl p-3.5 sm:p-4 text-xs leading-relaxed transition-all duration-300" role="alert"></div>
+
+          <!-- Prototype Hint Banner -->
+          <div class="bg-blue-50/80 border border-blue-100 rounded-xl sm:rounded-2xl p-3 sm:p-3.5 flex gap-2.5 sm:gap-3 text-slate-600 text-[11px] sm:text-xs leading-relaxed">
+            <i class="fa-solid fa-circle-info text-blue-500 text-sm sm:text-base flex-shrink-0 mt-0.5"></i>
+            <div>
+              <strong class="font-semibold text-blue-900">Prototipe Interaktif:</strong> 
+              Form disesuaikan untuk tampilan Desktop & Mobile Phone.
+            </div>
+          </div>
+
+        </div>
+
+        <p class="text-center text-[11px] sm:text-xs text-slate-400 pt-1">
+          Butuh bantuan? Hubungi Operator IT Sekolah masing-masing.<br class="sm:hidden">
+          <span class="sm:hidden text-slate-400/80">© 2026 HadirNusa System</span>
+        </p>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- JavaScript for Canvas Particles & Responsive Touch Actions -->
+  <script>
+    // --- 1. Responsive Interactive Particles Canvas ---
+    const canvas = document.getElementById('particles-canvas');
+    const ctx = canvas.getContext('2d');
+    let particlesArray = [];
+
+    function resizeCanvas() {
+      canvas.width = canvas.parentElement.clientWidth;
+      canvas.height = canvas.parentElement.clientHeight;
+    }
+    resizeCanvas();
+    window.addEventListener('resize', () => {
+      resizeCanvas();
+      initParticles();
+    });
+
+    class Particle {
+      constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.size = Math.random() * 2.5 + 1;
+        this.speedX = (Math.random() - 0.5) * 0.7;
+        this.speedY = (Math.random() - 0.5) * 0.7;
+        this.color = `rgba(255, 255, 255, ${Math.random() * 0.35 + 0.15})`;
+      }
+      update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+
+        if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+        if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+      }
+      draw() {
+        ctx.fillStyle = this.color;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    function initParticles() {
+      particlesArray = [];
+      // Dynamic particle density based on screen width
+      const density = window.innerWidth < 640 ? 20000 : 12000;
+      const numberOfParticles = Math.floor((canvas.width * canvas.height) / density);
+      for (let i = 0; i < numberOfParticles; i++) {
+        particlesArray.push(new Particle());
+      }
+    }
+    initParticles();
+
+    function animateParticles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (let i = 0; i < particlesArray.length; i++) {
+        particlesArray[i].update();
+        particlesArray[i].draw();
+
+        for (let j = i; j < particlesArray.length; j++) {
+          const dx = particlesArray[i].x - particlesArray[j].x;
+          const dy = particlesArray[i].y - particlesArray[j].y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+
+          const maxDist = window.innerWidth < 640 ? 60 : 85;
+          if (distance < maxDist) {
+            ctx.beginPath();
+            ctx.strokeStyle = `rgba(255, 255, 255, ${0.12 - distance / 500})`;
+            ctx.lineWidth = 0.5;
+            ctx.moveTo(particlesArray[i].x, particlesArray[i].y);
+            ctx.lineTo(particlesArray[j].x, particlesArray[j].y);
+            ctx.stroke();
+            ctx.closePath();
+          }
+        }
+      }
+      requestAnimationFrame(animateParticles);
+    }
+    animateParticles();
+
+    // --- 2. Password Visibility Toggle ---
+    const passwordInput = document.getElementById('password');
+    const togglePassBtn = document.getElementById('togglePass');
+    const eyeIcon = document.getElementById('eyeIcon');
+
+    togglePassBtn.addEventListener('click', () => {
+      const isPassword = passwordInput.type === 'password';
+      passwordInput.type = isPassword ? 'text' : 'password';
+      eyeIcon.className = isPassword ? 'fa-solid fa-eye-slash text-blue-600' : 'fa-solid fa-eye text-slate-400';
+    });
+
+    // --- 3. Interactive Form Handling & Dynamic Alerts ---
+    const loginForm = document.getElementById('loginForm');
+    const formCard = document.getElementById('formCard');
+    const submitBtn = document.getElementById('submitBtn');
+    const btnText = document.getElementById('btnText');
+    const btnIcon = document.getElementById('btnIcon');
+    const notice = document.getElementById('notice');
+    const forgotBtn = document.getElementById('forgotBtn');
+
+    loginForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const school = document.getElementById('school').value;
+      const role = document.getElementById('role').value;
+      const username = document.getElementById('username').value.trim();
+      const password = passwordInput.value.trim();
+
+      // Form validation with shake animation
+      if (!school || !role || !username || !password) {
+        formCard.classList.remove('animate-shake');
+        void formCard.offsetWidth; // Trigger reflow
+        formCard.classList.add('animate-shake');
+
+        showNotice('error', '<i class="fa-solid fa-triangle-exclamation mr-1 text-red-500"></i> Lengkapi semua kolom form terlebih dahulu.');
+        return;
+      }
+
+      // Loading State
+      submitBtn.disabled = true;
+      btnText.textContent = 'Memproses...';
+      btnIcon.className = 'fa-solid fa-circle-notch fa-spin text-xs';
+
+      setTimeout(() => {
+        submitBtn.disabled = false;
+        btnText.textContent = 'Masuk ke Dashboard';
+        btnIcon.className = 'fa-solid fa-arrow-right text-xs';
+
+        showNotice('success', `
+          <div class="flex items-start space-x-2">
+            <i class="fa-solid fa-circle-check text-emerald-600 text-base mt-0.5"></i>
+            <div>
+              <strong class="font-bold text-emerald-900">Simulasi Berhasil!</strong><br>
+              Terhubung sebagai <b>${role}</b> di <b>${school}</b>.
+            </div>
+          </div>
+        `);
+
+        if (typeof confetti === 'function') {
+          confetti({
+            particleCount: window.innerWidth < 640 ? 40 : 75,
+            spread: 60,
+            origin: { y: 0.7 }
+          });
+        }
+      }, 1000);
+    });
+
+    function showNotice(type, htmlContent) {
+      notice.classList.remove('hidden', 'bg-red-50', 'text-red-700', 'border-red-200', 'bg-emerald-50', 'text-emerald-800', 'border-emerald-200');
+      
+      if (type === 'error') {
+        notice.classList.add('bg-red-50', 'text-red-700', 'border', 'border-red-200');
+      } else {
+        notice.classList.add('bg-emerald-50', 'text-emerald-800', 'border', 'border-emerald-200');
+      }
+      
+      notice.innerHTML = htmlContent;
+    }
+
+    forgotBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      showNotice('error', '<i class="fa-solid fa-info-circle mr-1"></i> Hubungi Operator IT sekolah Anda untuk reset kata sandi.');
+    });
+  </script>
+</body>
+</html>
