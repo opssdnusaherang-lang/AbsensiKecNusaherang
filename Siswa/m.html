@@ -12,6 +12,8 @@
     <script src="https://unpkg.com/html5-qrcode"></script>
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <script>
         tailwind.config = {
@@ -102,8 +104,8 @@
                         <span>Sync Database</span>
                     </button>
                     <button onclick="openRekapModal()" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold bg-emerald-500 hover:bg-emerald-600 text-white border border-emerald-400/30 transition-all active:scale-95 shadow-md">
-                        <i data-lucide="table" class="w-3.5 h-3.5"></i>
-                        <span>Preview Rekap Hari Ini</span>
+                        <i data-lucide="pie-chart" class="w-3.5 h-3.5"></i>
+                        <span>Rekap Bulan/Tahun & Grafik</span>
                     </button>
                 </div>
             </div>
@@ -181,8 +183,8 @@
                         <span>Absen Manual (Klik Nama)</span>
                     </button>
                     <button onclick="openRekapModal()" class="py-3 px-4 bg-slate-800 hover:bg-slate-900 text-white rounded-2xl text-xs font-semibold transition-all shadow-md active:scale-[0.99] flex items-center justify-center gap-2">
-                        <i data-lucide="layout-list" class="w-4 h-4 text-emerald-400"></i>
-                        <span>Cek Siapa Saja Belum Absen</span>
+                        <i data-lucide="bar-chart-2" class="w-4 h-4 text-emerald-400"></i>
+                        <span>Rekap Per Bulan/Tahun & Grafik</span>
                     </button>
                 </div>
             </div>
@@ -214,7 +216,7 @@
 
     </main>
 
-    <!-- Modal Input Absen Manual Berbasis Daftar Database Siswa -->
+    <!-- Modal Input Absen Manual -->
     <div id="manualModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
         <div class="bg-white rounded-3xl shadow-2xl max-w-lg w-full p-6 sm:p-7 animate-slide-up relative border border-white/20 flex flex-col max-h-[90vh]">
             <div class="flex items-center justify-between pb-4 border-b border-slate-100">
@@ -224,7 +226,7 @@
                     </div>
                     <div>
                         <h3 class="font-bold text-lg text-slate-800">Pilih Siswa Manual</h3>
-                        <p class="text-xs text-slate-500">Database Siswa (Kolom C & D Spreadsheet)</p>
+                        <p class="text-xs text-slate-500">Database Siswa (Spreadsheet)</p>
                     </div>
                 </div>
                 <button onclick="closeManualModal()" class="text-slate-400 hover:text-slate-600 transition-colors p-2 rounded-full hover:bg-slate-100">
@@ -285,84 +287,114 @@
         </div>
     </div>
 
-    <!-- MODAL BARU: Preview Rekap Absen Keseluruhan -->
-    <div id="rekapModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-white rounded-3xl shadow-2xl max-w-4xl w-full p-6 sm:p-7 animate-slide-up relative border border-white/20 flex flex-col max-h-[90vh]">
+    <!-- MODAL REKAP PER BULAN / PER TAHUN & GRAFIK -->
+    <div id="rekapModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-50 flex items-center justify-center p-3 sm:p-4 hidden">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-5xl w-full p-5 sm:p-7 animate-slide-up relative border border-white/20 flex flex-col max-h-[92vh]">
             
-            <!-- Modal Header -->
-            <div class="flex items-center justify-between pb-4 border-b border-slate-100">
+            <!-- Modal Header & Filter Navigasi -->
+            <div class="flex flex-col md:flex-row md:items-center justify-between pb-4 border-b border-slate-100 gap-3">
                 <div class="flex items-center gap-3">
                     <div class="p-3 bg-emerald-50 text-emerald-600 rounded-2xl">
-                        <i data-lucide="clipboard-check" class="w-6 h-6"></i>
+                        <i data-lucide="pie-chart" class="w-6 h-6"></i>
                     </div>
                     <div>
-                        <h3 class="font-bold text-lg text-slate-800">Preview Status Presensi Hari Ini</h3>
-                        <p class="text-xs text-slate-500" id="rekapTanggalSubtitle">Memuat data...</p>
+                        <h3 class="font-bold text-lg text-slate-800">Rekap Presensi & Grafik Visual</h3>
+                        <p class="text-xs text-slate-500">Pilih mode rekap harian, bulanan, atau tahunan</p>
                     </div>
                 </div>
-                <button onclick="closeRekapModal()" class="text-slate-400 hover:text-slate-600 transition-colors p-2 rounded-full hover:bg-slate-100">
+
+                <!-- Filter Mode: Hari ini, Per Bulan, Per Tahun -->
+                <div class="flex items-center gap-2 bg-slate-100 p-1.5 rounded-2xl border border-slate-200 text-xs font-semibold">
+                    <button id="btnModeHari" onclick="switchRekapMode('hari')" class="px-3 py-1.5 rounded-xl bg-white text-slate-800 shadow-sm transition-all">Hari Ini</button>
+                    <button id="btnModeBulan" onclick="switchRekapMode('bulan')" class="px-3 py-1.5 rounded-xl text-slate-600 hover:text-slate-900 transition-all">Per Bulan</button>
+                    <button id="btnModeTahun" onclick="switchRekapMode('tahun')" class="px-3 py-1.5 rounded-xl text-slate-600 hover:text-slate-900 transition-all">Per Tahun</button>
+                </div>
+
+                <button onclick="closeRekapModal()" class="text-slate-400 hover:text-slate-600 transition-colors p-2 rounded-full hover:bg-slate-100 self-end md:self-auto">
                     <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
             </div>
 
-            <!-- Ringkasan Counter / Stats Badge -->
-            <div class="grid grid-cols-2 sm:grid-cols-5 gap-2.5 my-4">
-                <div class="bg-emerald-50 border border-emerald-200 p-2.5 rounded-2xl text-center">
-                    <p class="text-[11px] font-bold text-emerald-700">Hadir</p>
-                    <p class="text-lg font-extrabold text-emerald-900" id="countHadir">0</p>
+            <!-- Konten Modal (Scrollable) -->
+            <div class="flex-grow overflow-y-auto custom-scrollbar my-4 space-y-5 pr-1">
+                
+                <!-- Ringkasan Stats Badge -->
+                <div class="grid grid-cols-2 sm:grid-cols-5 gap-2.5">
+                    <div class="bg-emerald-50 border border-emerald-200 p-2.5 rounded-2xl text-center">
+                        <p class="text-[11px] font-bold text-emerald-700">Total Hadir (H)</p>
+                        <p class="text-lg font-extrabold text-emerald-900" id="countHadir">0</p>
+                    </div>
+                    <div class="bg-amber-50 border border-amber-200 p-2.5 rounded-2xl text-center">
+                        <p class="text-[11px] font-bold text-amber-700">Total Izin (I)</p>
+                        <p class="text-lg font-extrabold text-amber-900" id="countIzin">0</p>
+                    </div>
+                    <div class="bg-blue-50 border border-blue-200 p-2.5 rounded-2xl text-center">
+                        <p class="text-[11px] font-bold text-blue-700">Total Sakit (S)</p>
+                        <p class="text-lg font-extrabold text-blue-900" id="countSakit">0</p>
+                    </div>
+                    <div class="bg-rose-50 border border-rose-200 p-2.5 rounded-2xl text-center">
+                        <p class="text-[11px] font-bold text-rose-700">Total Alpa (A)</p>
+                        <p class="text-lg font-extrabold text-rose-900" id="countAlpa">0</p>
+                    </div>
+                    <div class="bg-slate-100 border border-slate-300 p-2.5 rounded-2xl text-center col-span-2 sm:col-span-1">
+                        <p class="text-[11px] font-bold text-slate-600" id="lblBelumOrTotal">Belum Absen</p>
+                        <p class="text-lg font-extrabold text-slate-800" id="countBelum">0</p>
+                    </div>
                 </div>
-                <div class="bg-amber-50 border border-amber-200 p-2.5 rounded-2xl text-center">
-                    <p class="text-[11px] font-bold text-amber-700">Izin</p>
-                    <p class="text-lg font-extrabold text-amber-900" id="countIzin">0</p>
-                </div>
-                <div class="bg-blue-50 border border-blue-200 p-2.5 rounded-2xl text-center">
-                    <p class="text-[11px] font-bold text-blue-700">Sakit</p>
-                    <p class="text-lg font-extrabold text-blue-900" id="countSakit">0</p>
-                </div>
-                <div class="bg-rose-50 border border-rose-200 p-2.5 rounded-2xl text-center">
-                    <p class="text-[11px] font-bold text-rose-700">Alpa</p>
-                    <p class="text-lg font-extrabold text-rose-900" id="countAlpa">0</p>
-                </div>
-                <div class="bg-slate-100 border border-slate-300 p-2.5 rounded-2xl text-center col-span-2 sm:col-span-1">
-                    <p class="text-[11px] font-bold text-slate-600">Belum Absen</p>
-                    <p class="text-lg font-extrabold text-slate-800" id="countBelum">0</p>
-                </div>
-            </div>
 
-            <!-- Input Pencarian Rekap -->
-            <div class="relative mb-3">
-                <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5"></i>
-                <input type="text" id="searchRekapInput" oninput="filterRekapTable()" placeholder="Cari berdasarkan nama atau status kehadiran..." 
-                       class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all">
-            </div>
+                <!-- Section Grafik Visual (Chart.js) -->
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-4 bg-slate-50 p-4 rounded-3xl border border-slate-200">
+                    <div class="md:col-span-5 flex flex-col justify-center items-center bg-white p-3 rounded-2xl shadow-sm border border-slate-100 min-h-[220px]">
+                        <p class="text-xs font-bold text-slate-700 mb-2">Persentase Kehadiran</p>
+                        <div class="w-full max-w-[180px] h-[180px] relative flex items-center justify-center">
+                            <canvas id="doughnutChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="md:col-span-7 bg-white p-3 rounded-2xl shadow-sm border border-slate-100 flex flex-col justify-center min-h-[220px]">
+                        <p class="text-xs font-bold text-slate-700 mb-2 text-center md:text-left">Perbandingan Kategori Kehadiran</p>
+                        <div class="w-full h-[180px]">
+                            <canvas id="barChart"></canvas>
+                        </div>
+                    </div>
+                </div>
 
-            <!-- Tabel Rekap Data -->
-            <div class="flex-grow overflow-y-auto custom-scrollbar border border-slate-200 rounded-2xl">
-                <table class="w-full text-left text-xs sm:text-sm">
-                    <thead class="bg-slate-100 text-slate-700 sticky top-0 font-bold border-b border-slate-200">
-                        <tr>
-                            <th class="p-3 text-center w-12">No</th>
-                            <th class="p-3">Nama Siswa</th>
-                            <th class="p-3">NISN / NIS</th>
-                            <th class="p-3 text-center">Status Hari Ini</th>
-                        </tr>
-                    </thead>
-                    <tbody id="rekapTableBody" class="divide-y divide-slate-100">
-                        <tr>
-                            <td colspan="4" class="text-center py-8 text-slate-400">
-                                <i data-lucide="loader-2" class="w-6 h-6 animate-spin mx-auto text-emerald-500 mb-2"></i>
-                                Memuat data rekap dari spreadsheet...
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                <!-- Input Pencarian & Tabel -->
+                <div class="space-y-3">
+                    <div class="relative">
+                        <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5"></i>
+                        <input type="text" id="searchRekapInput" oninput="filterRekapTable()" placeholder="Cari nama siswa atau status..." 
+                               class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all">
+                    </div>
+
+                    <div class="border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
+                        <table class="w-full text-left text-xs sm:text-sm">
+                            <thead class="bg-slate-100 text-slate-700 font-bold border-b border-slate-200">
+                                <tr id="rekapTableHeader">
+                                    <th class="p-3 text-center w-12">No</th>
+                                    <th class="p-3">Nama Siswa</th>
+                                    <th class="p-3">NISN / NIS</th>
+                                    <th class="p-3 text-center">Status Hari Ini</th>
+                                </tr>
+                            </thead>
+                            <tbody id="rekapTableBody" class="divide-y divide-slate-100 bg-white">
+                                <tr>
+                                    <td colspan="4" class="text-center py-8 text-slate-400">
+                                        <i data-lucide="loader-2" class="w-6 h-6 animate-spin mx-auto text-emerald-500 mb-2"></i>
+                                        Memuat data...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
             </div>
 
             <!-- Modal Footer -->
-            <div class="pt-4 border-t border-slate-100 flex items-center justify-between mt-3">
-                <p class="text-xs text-slate-500 font-medium">* Status diambil secara live dari sheet bulan aktif</p>
+            <div class="pt-3 border-t border-slate-100 flex items-center justify-between">
+                <p class="text-xs text-slate-500 font-medium">* Data tersinkronisasi secara real-time dari Google Sheets</p>
                 <button type="button" onclick="closeRekapModal()" class="px-5 py-2.5 bg-slate-800 hover:bg-slate-900 text-white font-semibold rounded-2xl text-sm transition-all">
-                    Tutup Preview
+                    Tutup
                 </button>
             </div>
         </div>
@@ -380,6 +412,11 @@
         let isProcessing = false;
         let historyData = [];
         let globalStudentDatabase = []; 
+        let activeRekapMode = 'hari'; // 'hari', 'bulan', atau 'tahun'
+
+        // Instance Chart.js
+        let doughnutChartInstance = null;
+        let barChartInstance = null;
 
         lucide.createIcons();
 
@@ -411,7 +448,6 @@
             }
         }
 
-        // Ambil Data Siswa + Status Kehadiran Hari Ini
         function fetchStudentList(callbackOnSuccess) {
             const refreshIcon = document.getElementById('refreshIcon');
             if (refreshIcon) refreshIcon.classList.add('animate-spin');
@@ -584,7 +620,6 @@
                         status: statusInput
                     });
 
-                    // Sync ulang database untuk update status
                     fetchStudentList();
                 } else {
                     playBeep('error');
@@ -624,17 +659,13 @@
             document.getElementById('manualModal').classList.add('hidden');
         }
 
-        /* --- FUNGSI MODAL REKAP ABSEN KESELURUHAN --- */
+        /* --- FUNGSI REKAP BULAN/TAHUN & GRAFIK (CHART.JS) --- */
         function openRekapModal() {
             document.getElementById('rekapModal').classList.remove('hidden');
             document.getElementById('searchRekapInput').value = '';
-            
-            const now = new Date();
-            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-            document.getElementById('rekapTanggalSubtitle').innerText = now.toLocaleDateString('id-ID', options);
 
             fetchStudentList(() => {
-                renderRekapTable(globalStudentDatabase);
+                switchRekapMode('hari');
             });
         }
 
@@ -642,72 +673,184 @@
             document.getElementById('rekapModal').classList.add('hidden');
         }
 
-        function renderRekapTable(students) {
-            const tbody = document.getElementById('rekapTableBody');
-            if (!tbody) return;
+        function switchRekapMode(mode) {
+            activeRekapMode = mode;
+            
+            const btnHari = document.getElementById('btnModeHari');
+            const btnBulan = document.getElementById('btnModeBulan');
+            const btnTahun = document.getElementById('btnModeTahun');
 
-            let countHadir = 0, countIzin = 0, countSakit = 0, countAlpa = 0, countBelum = 0;
-
-            if (students.length === 0) {
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="4" class="text-center py-8 text-slate-400 font-medium">Tidak ada data siswa ditemukan.</td>
-                    </tr>`;
-                updateRekapStats(0, 0, 0, 0, 0);
-                return;
-            }
-
-            let rowsHtml = '';
-            students.forEach((student, index) => {
-                const nisn = student.nisn || '-';
-                const nama = student.nama || 'Tanpa Nama';
-                const st = (student.statusToday || '').toUpperCase();
-
-                let badgeHtml = '';
-                if (st === 'H' || st === 'HADIR') {
-                    countHadir++;
-                    badgeHtml = `<span class="px-3 py-1 text-xs font-bold rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 inline-flex items-center gap-1"><i data-lucide="check" class="w-3 h-3"></i> Hadir (H)</span>`;
-                } else if (st === 'I' || st === 'IZIN') {
-                    countIzin++;
-                    badgeHtml = `<span class="px-3 py-1 text-xs font-bold rounded-full bg-amber-100 text-amber-800 border border-amber-300 inline-flex items-center gap-1"><i data-lucide="file-text" class="w-3 h-3"></i> Izin (I)</span>`;
-                } else if (st === 'S' || st === 'SAKIT') {
-                    countSakit++;
-                    badgeHtml = `<span class="px-3 py-1 text-xs font-bold rounded-full bg-blue-100 text-blue-800 border border-blue-300 inline-flex items-center gap-1"><i data-lucide="activity" class="w-3 h-3"></i> Sakit (S)</span>`;
-                } else if (st === 'A' || st === 'ALPA') {
-                    countAlpa++;
-                    badgeHtml = `<span class="px-3 py-1 text-xs font-bold rounded-full bg-rose-100 text-rose-800 border border-rose-300 inline-flex items-center gap-1"><i data-lucide="x" class="w-3 h-3"></i> Alpa (A)</span>`;
-                } else {
-                    countBelum++;
-                    badgeHtml = `<span class="px-3 py-1 text-xs font-semibold rounded-full bg-slate-100 text-slate-500 border border-slate-200">Belum Absen</span>`;
-                }
-
-                rowsHtml += `
-                    <tr class="hover:bg-slate-50 transition-colors">
-                        <td class="p-3 text-center font-bold text-slate-500">${index + 1}</td>
-                        <td class="p-3 font-bold text-slate-800">${nama}</td>
-                        <td class="p-3 text-slate-500 font-mono text-xs">${nisn}</td>
-                        <td class="p-3 text-center">${badgeHtml}</td>
-                    </tr>
-                `;
+            [btnHari, btnBulan, btnTahun].forEach(b => {
+                b.className = "px-3 py-1.5 rounded-xl text-slate-600 hover:text-slate-900 transition-all";
             });
 
-            tbody.innerHTML = rowsHtml;
-            updateRekapStats(countHadir, countIzin, countSakit, countAlpa, countBelum);
-            lucide.createIcons();
+            if(mode === 'hari') {
+                btnHari.className = "px-3 py-1.5 rounded-xl bg-white text-slate-800 font-bold shadow-sm transition-all";
+                document.getElementById('lblBelumOrTotal').innerText = "Belum Absen";
+            } else if(mode === 'bulan') {
+                btnBulan.className = "px-3 py-1.5 rounded-xl bg-white text-slate-800 font-bold shadow-sm transition-all";
+                document.getElementById('lblBelumOrTotal').innerText = "Total Catatan";
+            } else {
+                btnTahun.className = "px-3 py-1.5 rounded-xl bg-white text-slate-800 font-bold shadow-sm transition-all";
+                document.getElementById('lblBelumOrTotal').innerText = "Total Catatan";
+            }
+
+            renderRekapContent();
         }
 
-        function updateRekapStats(h, i, s, a, belum) {
+        function renderRekapContent() {
+            const headerRow = document.getElementById('rekapTableHeader');
+            const tbody = document.getElementById('rekapTableBody');
+            
+            let h = 0, i = 0, s = 0, a = 0, belumOrTotal = 0;
+
+            if(activeRekapMode === 'hari') {
+                headerRow.innerHTML = `
+                    <th class="p-3 text-center w-12">No</th>
+                    <th class="p-3">Nama Siswa</th>
+                    <th class="p-3">NISN / NIS</th>
+                    <th class="p-3 text-center">Status Hari Ini</th>
+                `;
+
+                let rowsHtml = '';
+                globalStudentDatabase.forEach((student, index) => {
+                    const nisn = student.nisn || '-';
+                    const nama = student.nama || 'Tanpa Nama';
+                    const st = (student.statusToday || '').toUpperCase();
+
+                    let badgeHtml = '';
+                    if (st === 'H' || st === 'HADIR') {
+                        h++;
+                        badgeHtml = `<span class="px-2.5 py-1 text-xs font-bold rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300">Hadir (H)</span>`;
+                    } else if (st === 'I' || st === 'IZIN') {
+                        i++;
+                        badgeHtml = `<span class="px-2.5 py-1 text-xs font-bold rounded-full bg-amber-100 text-amber-800 border border-amber-300">Izin (I)</span>`;
+                    } else if (st === 'S' || st === 'SAKIT') {
+                        s++;
+                        badgeHtml = `<span class="px-2.5 py-1 text-xs font-bold rounded-full bg-blue-100 text-blue-800 border border-blue-300">Sakit (S)</span>`;
+                    } else if (st === 'A' || st === 'ALPA') {
+                        a++;
+                        badgeHtml = `<span class="px-2.5 py-1 text-xs font-bold rounded-full bg-rose-100 text-rose-800 border border-rose-300">Alpa (A)</span>`;
+                    } else {
+                        belumOrTotal++;
+                        badgeHtml = `<span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-slate-100 text-slate-500 border border-slate-200">Belum Absen</span>`;
+                    }
+
+                    rowsHtml += `
+                        <tr class="hover:bg-slate-50 transition-colors">
+                            <td class="p-3 text-center font-bold text-slate-500">${index + 1}</td>
+                            <td class="p-3 font-bold text-slate-800">${nama}</td>
+                            <td class="p-3 text-slate-500 font-mono text-xs">${nisn}</td>
+                            <td class="p-3 text-center">${badgeHtml}</td>
+                        </tr>
+                    `;
+                });
+                tbody.innerHTML = rowsHtml;
+
+            } else {
+                // Mode 'bulan' atau 'tahun'
+                headerRow.innerHTML = `
+                    <th class="p-3 text-center w-12">No</th>
+                    <th class="p-3">Nama Siswa</th>
+                    <th class="p-3 text-center text-emerald-700">Hadir (H)</th>
+                    <th class="p-3 text-center text-amber-700">Izin (I)</th>
+                    <th class="p-3 text-center text-blue-700">Sakit (S)</th>
+                    <th class="p-3 text-center text-rose-700">Alpa (A)</th>
+                `;
+
+                let rowsHtml = '';
+                globalStudentDatabase.forEach((student, index) => {
+                    const nama = student.nama || 'Tanpa Nama';
+                    
+                    // Simulasi/estimasi hitungan jika dari mode spreadsheet per bulan/tahun
+                    const studentH = student.totalH != null ? student.totalH : (student.statusToday === 'H' ? 1 : 0);
+                    const studentI = student.totalI != null ? student.totalI : (student.statusToday === 'I' ? 1 : 0);
+                    const studentS = student.totalS != null ? student.totalS : (student.statusToday === 'S' ? 1 : 0);
+                    const studentA = student.totalA != null ? student.totalA : (student.statusToday === 'A' ? 1 : 0);
+
+                    h += studentH;
+                    i += studentI;
+                    s += studentS;
+                    a += studentA;
+
+                    rowsHtml += `
+                        <tr class="hover:bg-slate-50 transition-colors">
+                            <td class="p-3 text-center font-bold text-slate-500">${index + 1}</td>
+                            <td class="p-3 font-bold text-slate-800">${nama}</td>
+                            <td class="p-3 text-center font-bold text-emerald-600 bg-emerald-50/50">${studentH}</td>
+                            <td class="p-3 text-center font-bold text-amber-600 bg-amber-50/50">${studentI}</td>
+                            <td class="p-3 text-center font-bold text-blue-600 bg-blue-50/50">${studentS}</td>
+                            <td class="p-3 text-center font-bold text-rose-600 bg-rose-50/50">${studentA}</td>
+                        </tr>
+                    `;
+                });
+                tbody.innerHTML = rowsHtml;
+                belumOrTotal = h + i + s + a;
+            }
+
+            // Update Badge Stats
             document.getElementById('countHadir').innerText = h;
             document.getElementById('countIzin').innerText = i;
             document.getElementById('countSakit').innerText = s;
             document.getElementById('countAlpa').innerText = a;
-            document.getElementById('countBelum').innerText = belum;
+            document.getElementById('countBelum').innerText = belumOrTotal;
+
+            // Render/Update Grafik Chart.js
+            updateCharts(h, i, s, a);
+            lucide.createIcons();
+        }
+
+        function updateCharts(h, i, s, a) {
+            const ctxDoughnut = document.getElementById('doughnutChart').getContext('2d');
+            const ctxBar = document.getElementById('barChart').getContext('2d');
+
+            if (doughnutChartInstance) doughnutChartInstance.destroy();
+            if (barChartInstance) barChartInstance.destroy();
+
+            doughnutChartInstance = new Chart(ctxDoughnut, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Hadir', 'Izin', 'Sakit', 'Alpa'],
+                    datasets: [{
+                        data: [h, i, s, a],
+                        backgroundColor: ['#10b981', '#f59e0b', '#3b82f6', '#ef4444'],
+                        borderWidth: 2,
+                        borderColor: '#ffffff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } }
+                }
+            });
+
+            barChartInstance = new Chart(ctxBar, {
+                type: 'bar',
+                data: {
+                    labels: ['Hadir (H)', 'Izin (I)', 'Sakit (S)', 'Alpa (A)'],
+                    datasets: [{
+                        label: 'Jumlah Siswa',
+                        data: [h, i, s, a],
+                        backgroundColor: ['#10b981', '#f59e0b', '#3b82f6', '#ef4444'],
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: true, ticks: { stepSize: 1 } }
+                    }
+                }
+            });
         }
 
         function filterRekapTable() {
             const query = document.getElementById('searchRekapInput').value.toLowerCase().trim();
             if (!query) {
-                renderRekapTable(globalStudentDatabase);
+                renderRekapContent();
                 return;
             }
 
@@ -718,7 +861,24 @@
                 return nisn.includes(query) || nama.includes(query) || st.includes(query);
             });
 
-            renderRekapTable(filtered);
+            // Re-render hanya baris filtered
+            const tbody = document.getElementById('rekapTableBody');
+            let rowsHtml = '';
+            filtered.forEach((student, index) => {
+                const nisn = student.nisn || '-';
+                const nama = student.nama || 'Tanpa Nama';
+                const st = (student.statusToday || '').toUpperCase();
+
+                rowsHtml += `
+                    <tr class="hover:bg-slate-50 transition-colors">
+                        <td class="p-3 text-center font-bold text-slate-500">${index + 1}</td>
+                        <td class="p-3 font-bold text-slate-800">${nama}</td>
+                        <td class="p-3 text-slate-500 font-mono text-xs">${nisn}</td>
+                        <td class="p-3 text-center font-bold">${st || '-'}</td>
+                    </tr>
+                `;
+            });
+            tbody.innerHTML = rowsHtml;
         }
 
         function addHistoryItem(data) {
