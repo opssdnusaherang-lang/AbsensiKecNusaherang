@@ -180,7 +180,7 @@
 
     </main>
 
-    <!-- Modal Absen Manual (Indikator Hijau Jika Sudah Absen Hari Ini) -->
+    <!-- Modal Absen Manual (Tombol Status Default Mati / Tidak Ada yang Terpilih) -->
     <div id="manualModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-50 flex items-center justify-center p-3 hidden">
         <div class="bg-white rounded-3xl shadow-2xl max-w-lg w-full p-5 sm:p-6 animate-slide-up relative border border-white/20 flex flex-col max-h-[90vh]">
             <div class="flex items-center justify-between pb-3 border-b border-slate-100">
@@ -190,7 +190,7 @@
                     </div>
                     <div>
                         <h3 class="font-bold text-base text-slate-800">Pilih Siswa Manual</h3>
-                        <p class="text-[11px] text-slate-500">Siswa yang sudah scan tampil hijau</p>
+                        <p class="text-[11px] text-slate-500">Wajib pilih status dulu sebelum klik nama</p>
                     </div>
                 </div>
                 <button onclick="closeManualModal()" class="text-slate-400 hover:text-slate-600 p-1.5 rounded-full hover:bg-slate-100">
@@ -200,10 +200,10 @@
 
             <div class="mt-3 space-y-3 flex-grow overflow-hidden flex flex-col">
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1.5">Pilih Status Kehadiran:</label>
+                    <label class="block text-xs font-bold text-slate-700 mb-1.5">Pilih Status Kehadiran (Wajib Klik Salah Satu):</label>
                     <div class="grid grid-cols-4 gap-1.5">
                         <label class="cursor-pointer">
-                            <input type="radio" name="statusKeterangan" value="Hadir" checked class="peer sr-only">
+                            <input type="radio" name="statusKeterangan" value="Hadir" class="peer sr-only">
                             <div class="py-2 px-1 text-center text-xs font-bold rounded-xl border border-slate-200 peer-checked:border-emerald-500 peer-checked:bg-emerald-50 peer-checked:text-emerald-700 shadow-sm">Hadir</div>
                         </label>
                         <label class="cursor-pointer">
@@ -410,7 +410,6 @@
         }
 
         function fetchStudentList() {
-            // Mengambil status siswa untuk hari ini agar modal manual tahu siapa yang sudah absen
             const todayStr = new Date().toISOString().split('T')[0];
             fetch(`${SCRIPT_URL}?action=getStudents&date=${todayStr}&mode=harian`)
                 .then(res => res.json())
@@ -463,7 +462,15 @@
         }
 
         function selectStudentForAttendance(nisn, nama) {
-            const status = document.querySelector('input[name="statusKeterangan"]:checked')?.value || "Hadir";
+            const selectedStatus = document.querySelector('input[name="statusKeterangan"]:checked');
+            
+            // Validasi: Pastikan Ibu Guru sudah memilih status (Hadir/Izin/Sakit/Alpa) sebelum klik nama siswa
+            if (!selectedStatus) {
+                alert("⚠️ Harap pilih Status Kehadiran terlebih dahulu (Hadir, Izin, Sakit, atau Alpa) di bagian atas sebelum mengklik nama siswa!");
+                return;
+            }
+
+            const status = selectedStatus.value;
             closeManualModal();
             processAttendance(nisn, nama, status);
         }
@@ -508,7 +515,7 @@
                     const jamText = response.jam || now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
                     updateStatusUI('success', `✅ [${statusInput.toUpperCase()}]: ${studentName}`, `NISN: ${nisn} • Jam: ${jamText}`);
                     addHistoryItem({ nisn: nisn, nama: studentName, jam: jamText, status: statusInput });
-                    fetchStudentList(); // Refresh daftar siswa agar status hijau langsung terupdate
+                    fetchStudentList(); 
                 } else {
                     playBeep('error');
                     updateStatusUI('error', 'Gagal Mencatat', response.message || 'Data tidak ditemukan');
@@ -529,7 +536,12 @@
         function openManualModal() {
             document.getElementById('manualModal').classList.remove('hidden');
             document.getElementById('searchSiswaInput').value = '';
-            fetchStudentList(); // Memuat ulang data terbaru saat modal dibuka
+            
+            // Reset pilihan status radio button setiap kali modal dibuka agar tidak ada yang terpilih otomatis
+            const radios = document.querySelectorAll('input[name="statusKeterangan"]');
+            radios.forEach(r => r.checked = false);
+
+            fetchStudentList(); 
         }
         function closeManualModal() { document.getElementById('manualModal').classList.add('hidden'); }
 
@@ -598,7 +610,7 @@
         }
 
         function fetchRekapPerBulanOtomatis() {
-            const bulanVal = document.getElementById('selectBulanOtomatis').value; // Format "2026-07"
+            const bulanVal = document.getElementById('selectBulanOtomatis').value; 
             const targetDateStr = `${bulanVal}-01`;
 
             fetch(`${SCRIPT_URL}?action=getStudents&date=${targetDateStr}&mode=bulan`)
