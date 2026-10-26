@@ -27,18 +27,9 @@
                         'radar-scan': 'radarScan 2s linear infinite',
                     },
                     keyframes: {
-                        slideUp: {
-                            '0%': { transform: 'translateY(24px)', opacity: '0' },
-                            '100%': { transform: 'translateY(0)', opacity: '1' }
-                        },
-                        float: {
-                            '0%, 100%': { transform: 'translateY(0px)' },
-                            '50%': { transform: 'translateY(-6px)' }
-                        },
-                        radarScan: {
-                            '0%': { top: '0%' },
-                            '100%': { top: '100%' }
-                        }
+                        slideUp: { '0%': { transform: 'translateY(24px)', opacity: '0' }, '100%': { transform: 'translateY(0)', opacity: '1' } },
+                        float: { '0%, 100%': { transform: 'translateY(0px)' }, '50%': { transform: 'translateY(-6px)' } },
+                        radarScan: { '0%': { top: '0%' }, '100%': { top: '100%' } }
                     }
                 }
             }
@@ -58,11 +49,7 @@
             margin-top: 10px !important;
             box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.3);
         }
-        .glass-card {
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-        }
+        .glass-card { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); }
         .custom-scrollbar::-webkit-scrollbar { width: 6px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 10px; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
@@ -88,15 +75,15 @@
                         <span>Sync Database</span>
                     </button>
                     <button onclick="openRekapModal()" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold bg-emerald-500 hover:bg-emerald-600 text-white border border-emerald-400/30 transition-all shadow-md">
-                        <i data-lucide="calendar" class="w-3.5 h-3.5"></i>
-                        <span>Pilih Tanggal & Grafik Rekap</span>
+                        <i data-lucide="bar-chart-3" class="w-3.5 h-3.5"></i>
+                        <span>Rekap Harian & Tahun Ajaran</span>
                     </button>
                 </div>
             </div>
 
             <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
                 <div class="flex items-center space-x-3 text-center sm:text-left">
-                    <div class="p-3 bg-white/15 rounded-2xl backdrop-blur-md border border-white/20 shadow-inner animate-float">
+                    <div class="p-3 bg-white/15 rounded-2xl backdrop-blur-md border border-white/25 shadow-inner animate-float">
                         <i data-lucide="qr-code" class="w-8 h-8 text-indigo-200"></i>
                     </div>
                     <div>
@@ -161,8 +148,8 @@
                         <span>Absen Manual (Klik Nama)</span>
                     </button>
                     <button onclick="openRekapModal()" class="py-3 px-4 bg-slate-800 hover:bg-slate-900 text-white rounded-2xl text-xs font-semibold shadow-md active:scale-[0.99] flex items-center justify-center gap-2">
-                        <i data-lucide="calendar" class="w-4 h-4 text-emerald-400"></i>
-                        <span>Cek Tanggal Lain & Grafik</span>
+                        <i data-lucide="bar-chart-2" class="w-4 h-4 text-emerald-400"></i>
+                        <span>Lihat Grafik & Rekap</span>
                     </button>
                 </div>
             </div>
@@ -254,37 +241,43 @@
         </div>
     </div>
 
-    <!-- MODAL REKAP DENGAN PILIHAN TANGGAL KUSTOM & GRAFIK -->
+    <!-- MODAL REKAP & GRAFIK (HARIAN & TAHUN AJARAN 2026/2027) -->
     <div id="rekapModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-50 flex items-center justify-center p-3 sm:p-4 hidden">
         <div class="bg-white rounded-3xl shadow-2xl max-w-5xl w-full p-5 sm:p-7 animate-slide-up relative border border-white/20 flex flex-col max-h-[92vh]">
             
             <div class="flex flex-col md:flex-row md:items-center justify-between pb-4 border-b border-slate-100 gap-3">
                 <div class="flex items-center gap-3">
                     <div class="p-3 bg-emerald-50 text-emerald-600 rounded-2xl">
-                        <i data-lucide="calendar" class="w-6 h-6"></i>
+                        <i data-lucide="bar-chart-3" class="w-6 h-6"></i>
                     </div>
                     <div>
-                        <h3 class="font-bold text-lg text-slate-800">Rekap Presensi Berdasarkan Tanggal</h3>
-                        <p class="text-xs text-slate-500">Pilih tanggal, bulan, atau tahun tertentu untuk melihat data & grafik</p>
+                        <h3 class="font-bold text-lg text-slate-800">Grafik & Rekap Presensi Siswa</h3>
+                        <p class="text-xs text-slate-500">Pilih mode Harian atau Tahun Ajaran 2026/2027</p>
                     </div>
                 </div>
 
-                <!-- Input Pilih Tanggal Kustom (Date Picker) -->
-                <div class="flex items-center gap-2 bg-slate-50 p-2 rounded-2xl border border-slate-200 shadow-sm">
-                    <label class="text-xs font-bold text-slate-700 pl-1">Pilih Tanggal:</label>
-                    <input type="date" id="customRekapDate" onchange="fetchRekapByCustomDate()" 
-                           class="px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                <!-- Tombol Mode: Harian vs Tahun Ajaran -->
+                <div class="flex items-center gap-2 bg-slate-100 p-1.5 rounded-2xl border border-slate-200 text-xs font-semibold">
+                    <button id="btnModeHarian" onclick="switchRekapMode('harian')" class="px-3 py-1.5 rounded-xl bg-white text-slate-800 shadow-sm transition-all">Harian</button>
+                    <button id="btnModeTahun" onclick="switchRekapMode('tahunan')" class="px-3 py-1.5 rounded-xl text-slate-600 hover:text-slate-900 transition-all">Tahun Ajaran 2026/2027</button>
                 </div>
 
-                <button onclick="closeRekapModal()" class="text-slate-400 hover:text-slate-600 p-2 rounded-full hover:bg-slate-100 self-end md:self-auto">
+                <button onclick="closeRekapModal()" class="text-slate-400 hover:text-slate-600 p-2 rounded-full hover:bg-slate-100">
                     <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
             </div>
 
+            <!-- Konten Harian Control (Date Picker) -->
+            <div id="harianControlSection" class="mt-3 flex items-center gap-2 bg-slate-50 p-2.5 rounded-2xl border border-slate-200">
+                <label class="text-xs font-bold text-slate-700">Pilih Tanggal:</label>
+                <input type="date" id="customRekapDate" onchange="fetchRekapByCustomDate()" 
+                       class="px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+            </div>
+
             <div class="flex-grow overflow-y-auto custom-scrollbar my-4 space-y-5 pr-1">
                 
-                <!-- Statistik Counter -->
-                <div class="grid grid-cols-2 sm:grid-cols-5 gap-2.5">
+                <!-- Statistik Counter (Harian) -->
+                <div id="statsHarianContainer" class="grid grid-cols-2 sm:grid-cols-5 gap-2.5">
                     <div class="bg-emerald-50 border border-emerald-200 p-2.5 rounded-2xl text-center">
                         <p class="text-[11px] font-bold text-emerald-700">Hadir (H)</p>
                         <p class="text-lg font-extrabold text-emerald-900" id="countHadir">0</p>
@@ -309,22 +302,22 @@
 
                 <!-- Grafik Visual Chart.js -->
                 <div class="grid grid-cols-1 md:grid-cols-12 gap-4 bg-slate-50 p-4 rounded-3xl border border-slate-200">
-                    <div class="md:col-span-5 flex flex-col justify-center items-center bg-white p-3 rounded-2xl shadow-sm border border-slate-100 min-h-[200px]">
+                    <div id="chartDoughnutWrapper" class="md:col-span-5 flex flex-col justify-center items-center bg-white p-3 rounded-2xl shadow-sm border border-slate-100 min-h-[200px]">
                         <p class="text-xs font-bold text-slate-700 mb-2">Persentase Kehadiran</p>
                         <div class="w-full max-w-[160px] h-[160px] relative flex items-center justify-center">
                             <canvas id="doughnutChart"></canvas>
                         </div>
                     </div>
                     <div class="md:col-span-7 bg-white p-3 rounded-2xl shadow-sm border border-slate-100 flex flex-col justify-center min-h-[200px]">
-                        <p class="text-xs font-bold text-slate-700 mb-2">Grafik Status Kehadiran</p>
-                        <div class="w-full h-[160px]">
+                        <p class="text-xs font-bold text-slate-700 mb-2" id="chartBarTitle">Grafik Status Kehadiran</p>
+                        <div class="w-full h-[180px]">
                             <canvas id="barChart"></canvas>
                         </div>
                     </div>
                 </div>
 
-                <!-- Tabel Data -->
-                <div class="space-y-3">
+                <!-- Tabel Data (Harian) -->
+                <div id="tableHarianSection" class="space-y-3">
                     <div class="relative">
                         <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5"></i>
                         <input type="text" id="searchRekapInput" oninput="filterRekapTable()" placeholder="Cari nama siswa atau status..." 
@@ -342,9 +335,7 @@
                                 </tr>
                             </thead>
                             <tbody id="rekapTableBody" class="divide-y divide-slate-100 bg-white">
-                                <tr>
-                                    <td colspan="4" class="text-center py-8 text-slate-400">Memuat data...</td>
-                                </tr>
+                                <tr><td colspan="4" class="text-center py-8 text-slate-400">Memuat data...</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -353,7 +344,7 @@
             </div>
 
             <div class="pt-3 border-t border-slate-100 flex items-center justify-between">
-                <p class="text-xs text-slate-500 font-medium">* Data otomatis merujuk ke sheet bulan & tahun pada tanggal yang dipilih</p>
+                <p class="text-xs text-slate-500 font-medium">* Data bersumber langsung dari Google Sheets</p>
                 <button type="button" onclick="closeRekapModal()" class="px-5 py-2.5 bg-slate-800 hover:bg-slate-900 text-white font-semibold rounded-2xl text-sm">Tutup</button>
             </div>
         </div>
@@ -366,12 +357,13 @@
 
     <!-- Script Utama -->
     <script>
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzAfxYNerIyy5Go1oMnndQHufZJH784d3NFLqfhMpX_m5Y8YXwJKiVBmzy_3iHQ2X9J_A/exec";
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw65kFdM5SPWL716fzbB-paj_pXe8E_UwY6CanLYhdPe8rxI5h7auKbZizidLo_2dkzag/exec";
 
         let isProcessing = false;
         let historyData = [];
         let globalStudentDatabase = []; 
         let rekapDatabase = [];
+        let currentRekapMode = 'harian'; // 'harian' atau 'tahunan'
 
         let doughnutChartInstance = null;
         let barChartInstance = null;
@@ -423,8 +415,6 @@
             students.forEach((student, index) => {
                 const nisn = student.nisn || '';
                 const nama = student.nama || 'Tanpa Nama';
-                const st = student.statusToday || '-';
-
                 html += `
                     <button onclick="selectStudentForAttendance('${nisn}', '${nama.replace(/'/g, "\\'")}')" 
                             class="w-full text-left p-3 rounded-2xl border border-slate-100 bg-slate-50/80 hover:bg-indigo-50 hover:border-indigo-200 transition-all flex items-center justify-between group active:scale-[0.99]">
@@ -448,10 +438,7 @@
 
         function filterSiswaList() {
             const query = document.getElementById('searchSiswaInput').value.toLowerCase().trim();
-            if (!query) {
-                renderStudentList(globalStudentDatabase);
-                return;
-            }
+            if (!query) { renderStudentList(globalStudentDatabase); return; }
             const filtered = globalStudentDatabase.filter(s => String(s.nisn).toLowerCase().includes(query) || String(s.nama).toLowerCase().includes(query));
             renderStudentList(filtered);
         }
@@ -527,42 +514,65 @@
         }
         function closeManualModal() { document.getElementById('manualModal').classList.add('hidden'); }
 
-        /* --- FUNGSI REKAP TANGGAL KUSTOM & GRAFIK --- */
+        /* --- FUNGSI REKAP & GRAFIK (HARIAN & TAHUN AJARAN) --- */
         function openRekapModal() {
             document.getElementById('rekapModal').classList.remove('hidden');
-            document.getElementById('searchRekapInput').value = '';
-            
-            // Set default date picker ke hari ini (YYYY-MM-DD)
-            const todayStr = new Date().toISOString().split('T')[0];
-            document.getElementById('customRekapDate').value = todayStr;
-
-            fetchRekapByCustomDate();
+            document.getElementById('customRekapDate').value = new Date().toISOString().split('T')[0];
+            switchRekapMode('harian');
         }
 
         function closeRekapModal() { document.getElementById('rekapModal').classList.add('hidden'); }
 
+        function switchRekapMode(mode) {
+            currentRekapMode = mode;
+            const btnHarian = document.getElementById('btnModeHarian');
+            const btnTahun = document.getElementById('btnModeTahun');
+            const harianControl = document.getElementById('harianControlSection');
+            const statsHarian = document.getElementById('statsHarianContainer');
+            const tableHarian = document.getElementById('tableHarianSection');
+            const chartDoughnutWrapper = document.getElementById('chartDoughnutWrapper');
+
+            if (mode === 'harian') {
+                btnHarian.className = "px-3 py-1.5 rounded-xl bg-white text-slate-800 font-bold shadow-sm transition-all";
+                btnTahun.className = "px-3 py-1.5 rounded-xl text-slate-600 hover:text-slate-900 transition-all";
+                harianControl.classList.remove('hidden');
+                statsHarian.classList.remove('hidden');
+                tableHarian.classList.remove('hidden');
+                chartDoughnutWrapper.classList.remove('hidden');
+                fetchRekapByCustomDate();
+            } else {
+                btnTahun.className = "px-3 py-1.5 rounded-xl bg-white text-slate-800 font-bold shadow-sm transition-all";
+                btnHarian.className = "px-3 py-1.5 rounded-xl text-slate-600 hover:text-slate-900 transition-all";
+                harianControl.classList.add('hidden');
+                statsHarian.classList.add('hidden');
+                tableHarian.classList.add('hidden');
+                chartDoughnutWrapper.classList.add('hidden'); // Sembunyikan donat, fokus ke line/bar chart per bulan
+                fetchYearSummary();
+            }
+        }
+
         function fetchRekapByCustomDate() {
             const dateVal = document.getElementById('customRekapDate').value;
-            if(!dateVal) return;
+            if (!dateVal) return;
 
             fetch(`${SCRIPT_URL}?action=getStudents&date=${dateVal}`)
                 .then(res => res.json())
                 .then(data => {
                     if (data && Array.isArray(data.students)) {
                         rekapDatabase = data.students;
-                        renderRekapTable(rekapDatabase);
+                        renderHarianTable(rekapDatabase);
                     }
                 })
-                .catch(err => console.error("Gagal mengambil rekap tanggal:", err));
+                .catch(err => console.error("Gagal ambil rekap harian:", err));
         }
 
-        function renderRekapTable(students) {
+        function renderHarianTable(students) {
             const tbody = document.getElementById('rekapTableBody');
             let h = 0, i = 0, s = 0, a = 0, belum = 0;
 
             if (students.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="4" class="text-center py-8 text-slate-400">Tidak ada data siswa.</td></tr>`;
-                updateRekapStats(0,0,0,0,0);
+                updateHarianStats(0,0,0,0,0);
                 return;
             }
 
@@ -588,12 +598,13 @@
             });
 
             tbody.innerHTML = rows;
-            updateRekapStats(h, i, s, a, belum);
-            updateCharts(h, i, s, a);
+            updateHarianStats(h, i, s, a, belum);
+            updateDoughnutChart(h, i, s, a);
+            updateBarChartHarian(h, i, s, a);
             lucide.createIcons();
         }
 
-        function updateRekapStats(h, i, s, a, belum) {
+        function updateHarianStats(h, i, s, a, belum) {
             document.getElementById('countHadir').innerText = h;
             document.getElementById('countIzin').innerText = i;
             document.getElementById('countSakit').innerText = s;
@@ -601,13 +612,55 @@
             document.getElementById('countBelum').innerText = belum;
         }
 
-        function updateCharts(h, i, s, a) {
-            const ctxDoughnut = document.getElementById('doughnutChart').getContext('2d');
-            const ctxBar = document.getElementById('barChart').getContext('2d');
+        function fetchYearSummary() {
+            document.getElementById('chartBarTitle').innerText = "Grafik Tren Kehadiran Tahun Ajaran 2026/2027 (Juli - Juni)";
+            fetch(`${SCRIPT_URL}?action=getYearSummary`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data && Array.isArray(data.summary)) {
+                        renderYearSummaryChart(data.summary);
+                    }
+                })
+                .catch(err => console.error("Gagal mengambil ringkasan tahunan:", err));
+        }
 
+        function renderYearSummaryChart(summaryData) {
+            const labels = summaryData.map(item => item.bulan);
+            const hadirData = summaryData.map(item => item.hadir);
+            const izinData = summaryData.map(item => item.izin);
+            const sakitData = summaryData.map(item => item.sakit);
+            const alpaData = summaryData.map(item => item.alpa);
+
+            const ctxBar = document.getElementById('barChart').getContext('2d');
             if (doughnutChartInstance) doughnutChartInstance.destroy();
             if (barChartInstance) barChartInstance.destroy();
 
+            barChartInstance = new Chart(ctxBar, {
+                type: 'bar', // Bisa diubah ke 'line' jika ingin grafik garis
+                data: {
+                    labels: labels,
+                    datasets: [
+                        { label: 'Hadir', data: hadirData, backgroundColor: '#10b981', borderRadius: 4 },
+                        { label: 'Izin', data: izinData, backgroundColor: '#f59e0b', borderRadius: 4 },
+                        { label: 'Sakit', data: sakitData, backgroundColor: '#3b82f6', borderRadius: 4 },
+                        { label: 'Alpa', data: alpaData, backgroundColor: '#ef4444', borderRadius: 4 }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'bottom' } },
+                    scales: {
+                        x: { stacked: true },
+                        y: { stacked: true, beginAtZero: true, ticks: { stepSize: 5 } }
+                    }
+                }
+            });
+        }
+
+        function updateDoughnutChart(h, i, s, a) {
+            const ctxDoughnut = document.getElementById('doughnutChart').getContext('2d');
+            if (doughnutChartInstance) doughnutChartInstance.destroy();
             doughnutChartInstance = new Chart(ctxDoughnut, {
                 type: 'doughnut',
                 data: {
@@ -616,12 +669,17 @@
                 },
                 options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
             });
+        }
 
+        function updateBarChartHarian(h, i, s, a) {
+            document.getElementById('chartBarTitle').innerText = "Grafik Status Kehadiran Harian";
+            const ctxBar = document.getElementById('barChart').getContext('2d');
+            if (barChartInstance) barChartInstance.destroy();
             barChartInstance = new Chart(ctxBar, {
                 type: 'bar',
                 data: {
                     labels: ['Hadir', 'Izin', 'Sakit', 'Alpa'],
-                    datasets: [{ label: 'Jumlah', data: [h, i, s, a], backgroundColor: ['#10b981', '#f59e0b', '#3b82f6', '#ef4444'], borderRadius: 6 }]
+                    datasets: [{ label: 'Jumlah Siswa', data: [h, i, s, a], backgroundColor: ['#10b981', '#f59e0b', '#3b82f6', '#ef4444'], borderRadius: 6 }]
                 },
                 options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } }
             });
@@ -629,9 +687,9 @@
 
         function filterRekapTable() {
             const query = document.getElementById('searchRekapInput').value.toLowerCase().trim();
-            if (!query) { renderRekapTable(rekapDatabase); return; }
+            if (!query) { renderHarianTable(rekapDatabase); return; }
             const filtered = rekapDatabase.filter(st => String(st.nisn).toLowerCase().includes(query) || String(st.nama).toLowerCase().includes(query) || String(st.statusToday).toLowerCase().includes(query));
-            renderRekapTable(filtered);
+            renderHarianTable(filtered);
         }
 
         function addHistoryItem(data) {
