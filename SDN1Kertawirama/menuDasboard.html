@@ -62,25 +62,27 @@
             font-family: 'Poppins', sans-serif;
             background: linear-gradient(135deg, #e0f2fe 0%, #f0fdf4 50%, #fef3c7 100%);
             min-height: 100vh;
+            width: 100%;
+            overflow-x: hidden;
         }
 
         /* Glassmorphism card effect */
         .glass-card {
-            background: rgba(255, 255, 255, 0.85);
+            background: rgba(255, 255, 255, 0.88);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
-            border: 2px solid rgba(255, 255, 255, 0.6);
-            box-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.08);
+            border: 2px solid rgba(255, 255, 255, 0.7);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
         }
 
         /* Custom Hover & Interactive Effects */
         .class-card {
-            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
         .class-card:hover {
-            transform: translateY(-12px) scale(1.03);
-            box-shadow: 0 25px 35px -12px rgba(0, 0, 0, 0.15);
+            transform: translateY(-6px) scale(1.02);
+            box-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.12);
         }
 
         /* Background Floating Shapes */
@@ -89,37 +91,9 @@
             border-radius: 50%;
             filter: blur(50px);
             z-index: 0;
-            opacity: 0.5;
-            animation: float 6s ease-in-out infinite alternate;
-        }
-
-        /* Ripple Effect on click */
-        .ripple {
-            position: relative;
-            overflow: hidden;
-        }
-
-        .ripple:after {
-            content: "";
-            display: block;
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            top: 0;
-            left: 0;
+            opacity: 0.4;
             pointer-events: none;
-            background-image: radial-gradient(circle, #fff 10%, transparent 10.01%);
-            background-repeat: no-repeat;
-            background-position: 50%;
-            transform: scale(10, 10);
-            opacity: 0;
-            transition: transform .5s, opacity 1s;
-        }
-
-        .ripple:active:after {
-            transform: scale(0, 0);
-            opacity: 0.3;
-            transition: 0s;
+            animation: float 6s ease-in-out infinite alternate;
         }
 
         /* Hide scrollbars gracefully */
@@ -132,57 +106,65 @@
         }
     </style>
 </head>
-<body class="relative flex flex-col justify-between overflow-x-hidden min-h-screen text-slate-800">
+<body class="relative flex flex-col justify-between min-h-screen text-slate-800 w-full overflow-x-hidden antialiased">
 
-    <!-- Background Decorative Bubbles (Visual Aesthetics) -->
-    <div class="bg-shape w-72 h-72 bg-blue-300 top-[-50px] left-[-50px]"></div>
-    <div class="bg-shape w-80 h-80 bg-amber-200 bottom-[-60px] right-[-60px] animation-delay-2000"></div>
-    <div class="bg-shape w-64 h-64 bg-emerald-200 top-[40%] left-[80%]"></div>
+    <!-- Background Decorative Bubbles -->
+    <div class="bg-shape w-60 sm:w-72 h-60 sm:h-72 bg-blue-300 -top-10 -left-10"></div>
+    <div class="bg-shape w-64 sm:w-80 h-64 sm:h-80 bg-amber-200 -bottom-10 -right-10"></div>
+    <div class="bg-shape w-48 sm:w-64 h-48 sm:h-64 bg-emerald-200 top-[40%] right-[5%]"></div>
 
     <!-- MAIN WRAPPER -->
-    <div class="relative z-10 flex flex-col justify-between min-h-screen">
+    <div class="relative z-10 flex flex-col justify-between min-h-screen w-full max-w-full">
         
         <!-- HEADER / NAVIGATION -->
-        <header class="w-full px-3 sm:px-8 py-3 sm:py-4 sticky top-0 z-40">
-            <div class="max-w-7xl mx-auto glass-card rounded-2xl sm:rounded-3xl p-3 sm:p-4 flex items-center justify-between shadow-sm">
+        <header class="w-full px-3 sm:px-6 py-3 sticky top-0 z-40 backdrop-blur-md">
+            <div class="w-full max-w-6xl mx-auto glass-card rounded-2xl sm:rounded-3xl p-2.5 sm:p-4 flex items-center justify-between gap-2 shadow-sm">
+                
                 <!-- School Brand Info with Logo -->
-                <div class="flex items-center space-x-3 sm:space-x-4">
-                    <!-- School Logo Image with fallback -->
-                    <div class="relative group">
+                <div class="flex items-center space-x-2.5 sm:space-x-4 min-w-0">
+                    
+                    <!-- ==================================================================== -->
+                    <!-- 🖼️ TANDA : LETAKKAN LOGO SEKOLAH ANDA DI SINI                        -->
+                    <!-- Ganti nilai src="..." di bawah dengan link URL foto logo sekolah Anda -->
+                    <!-- Contoh: src="images/logo_sd.png" atau link URL gambar               -->
+                    <!-- ==================================================================== -->
+                    <div class="relative shrink-0">
                         <img id="schoolLogo" 
                              src="https://placehold.co/120x120/0284c7/ffffff?text=SDN+1" 
                              alt="Logo SDN 1 Kertawirama" 
                              onerror="this.onerror=null; this.src='https://placehold.co/120x120/0284c7/ffffff?text=SDN+1';"
-                             class="w-10 h-10 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl object-cover shadow-md border-2 border-white/80 transform group-hover:scale-105 transition-all duration-300">
+                             class="w-10 h-10 sm:w-13 sm:h-13 rounded-xl sm:rounded-2xl object-cover shadow-sm border-2 border-white bg-white">
                     </div>
-                    <div>
-                        <h1 class="font-fredoka text-base sm:text-xl font-bold text-slate-800 leading-tight flex items-center gap-1.5 sm:gap-2">
-                            <span>SDN 1 Kertawirama</span>
+                    <!-- ==================================================================== -->
+
+                    <div class="min-w-0">
+                        <h1 class="font-fredoka text-sm sm:text-lg md:text-xl font-bold text-slate-800 leading-tight truncate">
+                            SDN 1 Kertawirama
                         </h1>
-                        <p class="text-[10px] sm:text-xs text-slate-500 font-medium line-clamp-1">
-                            Portal Absensi & Presensi Siswa — Guru Pendidik
+                        <p class="text-[10px] sm:text-xs text-slate-500 font-medium truncate">
+                            Portal Presensi Siswa
                         </p>
                     </div>
                 </div>
 
                 <!-- User Profile & Action Controls -->
-                <div class="flex items-center space-x-2 sm:space-x-4">
+                <div class="flex items-center space-x-1.5 sm:space-x-3 shrink-0">
                     <!-- Teacher Greeting Pill -->
-                    <div class="flex items-center space-x-2 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200/80 p-1 sm:pr-4 rounded-full shadow-inner">
-                        <div class="w-7 h-7 sm:w-9 sm:h-9 rounded-full bg-gradient-to-tr from-amber-500 to-orange-500 text-white flex items-center justify-center font-bold text-xs sm:text-sm shadow-sm shrink-0">
-                            <i class="fa-solid fa-user-tie"></i>
+                    <div class="flex items-center space-x-1.5 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200/80 p-1 sm:pr-3 rounded-full shadow-inner">
+                        <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-gradient-to-tr from-amber-500 to-orange-500 text-white flex items-center justify-center font-bold text-xs shadow-sm shrink-0">
+                            <i class="fa-solid fa-user-tie text-xs"></i>
                         </div>
-                        <div class="hidden md:block text-left">
-                            <p class="text-[10px] uppercase tracking-wider font-bold text-amber-700 leading-none">Guru Kelas</p>
-                            <span id="userName" class="font-fredoka text-xs sm:text-sm font-semibold text-slate-800">
+                        <div class="hidden md:block text-left pr-1">
+                            <p class="text-[9px] uppercase tracking-wider font-bold text-amber-700 leading-none">Guru Kelas</p>
+                            <span id="userName" class="font-fredoka text-xs font-semibold text-slate-800">
                                 Bpk/Ibu Pendidik
                             </span>
                         </div>
                     </div>
 
                     <!-- Logout Button -->
-                    <button onclick="logout()" class="p-2 sm:px-4 sm:py-2 rounded-xl sm:rounded-2xl bg-red-50 text-red-600 border border-red-100 hover:bg-red-500 hover:text-white transition-all text-xs sm:text-sm font-semibold flex items-center gap-1.5 shadow-sm">
-                        <i class="fa-solid fa-right-from-bracket text-sm sm:text-xs"></i>
+                    <button onclick="logout()" title="Keluar" class="p-2 sm:px-3.5 sm:py-2 rounded-xl sm:rounded-2xl bg-red-50 text-red-600 border border-red-100 hover:bg-red-500 hover:text-white transition-all text-xs font-semibold flex items-center gap-1.5 shadow-sm">
+                        <i class="fa-solid fa-right-from-bracket text-xs"></i>
                         <span class="hidden sm:inline">Keluar</span>
                     </button>
                 </div>
@@ -190,234 +172,228 @@
         </header>
 
         <!-- MAIN CONTENT CONTAINER -->
-        <main class="max-w-6xl mx-auto px-3 sm:px-6 md:px-8 py-4 sm:py-8 w-full flex-grow flex flex-col justify-center">
+        <main class="w-full max-w-6xl mx-auto px-3 sm:px-6 py-4 sm:py-6 flex-grow flex flex-col justify-center">
             
             <!-- Hero Banner / Title Section -->
-            <div class="text-center mb-6 sm:mb-10">
-                <div class="inline-flex items-center gap-1.5 sm:gap-2 bg-emerald-100 text-emerald-800 text-[11px] sm:text-sm px-3.5 py-1 sm:py-1.5 rounded-full font-semibold mb-2.5 sm:mb-3 border border-emerald-200 animate-bounce-soft shadow-sm">
+            <div class="text-center mb-5 sm:mb-8">
+                <div class="inline-flex items-center gap-1.5 bg-emerald-100 text-emerald-800 text-[10px] sm:text-xs px-3 py-1 rounded-full font-semibold mb-2 border border-emerald-200 animate-bounce-soft shadow-sm">
                     <i class="fa-solid fa-clipboard-user text-emerald-600"></i>
                     <span>Sistem Presensi Kelas • TA 2026/2027</span>
                 </div>
                 
-                <h2 class="font-fredoka text-2xl sm:text-4xl md:text-5xl font-bold text-slate-800 mb-2 sm:mb-3 tracking-wide">
+                <h2 class="font-fredoka text-xl sm:text-3xl md:text-4xl font-bold text-slate-800 mb-1.5 tracking-wide">
                     Pilih Kelas Untuk Absensi
                 </h2>
-                <p class="text-slate-600 text-xs sm:text-base max-w-xl mx-auto font-normal px-2">
-                    Silakan pilih rombongan belajar tempat Anda akan mengelola <span class="font-semibold text-emerald-700">kehadiran siswa</span>, melihat rekap harian, atau mencetak laporan presensi.
+                <p class="text-slate-600 text-xs sm:text-sm max-w-lg mx-auto font-normal px-2 leading-relaxed">
+                    Silakan pilih rombongan belajar tempat Anda akan mengelola <span class="font-semibold text-emerald-700">kehadiran siswa</span>.
                 </p>
 
                 <!-- Search / Filter Box & Quick Date Display -->
-                <div class="mt-4 sm:mt-6 flex flex-col sm:flex-row items-center justify-center gap-2.5 sm:gap-3 max-w-xl mx-auto">
+                <div class="mt-4 flex flex-col sm:flex-row items-center justify-center gap-2 max-w-lg mx-auto w-full">
                     <div class="relative w-full sm:w-2/3">
                         <input type="text" id="classSearch" onkeyup="filterClasses()" placeholder="Cari kelas (contoh: 1 atau Kelas 6)..." 
-                            class="w-full pl-9 pr-4 py-2 sm:py-2.5 rounded-xl sm:rounded-2xl bg-white/90 border-2 border-slate-200 text-xs sm:text-sm focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100 transition-all shadow-sm">
-                        <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 sm:top-3.5 text-slate-400 text-xs sm:text-sm"></i>
+                            class="w-full pl-8 pr-3 py-2 sm:py-2.5 rounded-xl sm:rounded-2xl bg-white/90 border-2 border-slate-200 text-xs focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 transition-all shadow-sm">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 sm:top-3 text-slate-400 text-xs"></i>
                     </div>
                     
-                    <div id="todayDate" class="w-full sm:w-auto px-3.5 py-2 sm:py-2.5 bg-white/80 border border-slate-200 rounded-xl sm:rounded-2xl text-xs font-semibold text-slate-700 flex items-center justify-center gap-2 shadow-sm">
-                        <i class="fa-regular fa-calendar-check text-emerald-600 text-sm"></i>
+                    <div id="todayDate" class="w-full sm:w-auto px-3 py-2 sm:py-2.5 bg-white/80 border border-slate-200 rounded-xl sm:rounded-2xl text-xs font-semibold text-slate-700 flex items-center justify-center gap-2 shadow-sm shrink-0">
+                        <i class="fa-regular fa-calendar-check text-emerald-600 text-xs"></i>
                         <span id="dateText">Hari ini</span>
                     </div>
                 </div>
             </div>
 
             <!-- CLASS GRID SYSTEM (6 CLASSES) -->
-            <!-- Mobile: 1 Column | Tablet: 2 Columns | Desktop: 3 Columns -->
-            <div id="classGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-6">
+            <!-- Mobile: 1 Column Full Width | Tablet: 2 Columns | Desktop: 3 Columns -->
+            <div id="classGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-5 w-full">
 
                 <!-- KELAS 1 -->
-                <div class="class-card-wrapper" data-class="1">
+                <div class="class-card-wrapper w-full" data-class="1">
                     <div onclick="selectClass(1, 'Kelas 1', 'I (Satu)', '24 Siswa', 'absen_kelas1.html', 'bg-emerald-500', 'from-emerald-500 to-teal-700')" 
-                         class="class-card cursor-pointer glass-card rounded-2xl sm:rounded-3xl p-4 sm:p-6 relative overflow-hidden group border-b-6 sm:border-b-8 border-emerald-500 hover:border-emerald-600">
-                        <div class="absolute -right-6 -bottom-6 w-20 sm:w-24 h-20 sm:h-24 bg-emerald-100 rounded-full opacity-50 group-hover:scale-150 transition-transform"></div>
+                         class="class-card cursor-pointer glass-card rounded-2xl sm:rounded-3xl p-4 relative overflow-hidden group border-b-4 sm:border-b-6 border-emerald-500 hover:border-emerald-600">
                         
-                        <div class="flex items-center justify-between mb-2.5 sm:mb-3">
-                            <span class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center font-fredoka text-lg sm:text-xl font-bold shadow-inner">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center font-fredoka text-lg font-bold shadow-inner">
                                 I
                             </span>
-                            <span class="text-[11px] sm:text-xs font-semibold px-2.5 sm:px-3 py-1 bg-emerald-50 text-emerald-700 rounded-full border border-emerald-200 flex items-center gap-1.5">
-                                <i class="fa-solid fa-users text-[10px] sm:text-[11px]"></i> 24 Siswa
+                            <span class="text-[11px] font-semibold px-2.5 py-1 bg-emerald-50 text-emerald-700 rounded-full border border-emerald-200 flex items-center gap-1">
+                                <i class="fa-solid fa-users text-[10px]"></i> 24 Siswa
                             </span>
                         </div>
 
-                        <div class="mb-3 sm:mb-4">
-                            <h3 class="font-fredoka text-xl sm:text-2xl font-bold text-slate-800 mb-0.5 sm:mb-1 group-hover:text-emerald-600 transition-colors">
+                        <div class="mb-3">
+                            <h3 class="font-fredoka text-lg sm:text-xl font-bold text-slate-800 mb-0.5 group-hover:text-emerald-600 transition-colors">
                                 Kelas 1
                             </h3>
-                            <p class="text-[11px] sm:text-xs text-slate-500 flex items-center gap-1.5">
+                            <p class="text-[11px] text-slate-500 flex items-center gap-1">
                                 <i class="fa-solid fa-graduation-cap text-emerald-500"></i> Tingkat Sekolah Dasar
                             </p>
                         </div>
 
-                        <div class="flex items-center justify-between pt-2.5 sm:pt-3 border-t border-slate-100">
-                            <span class="text-[11px] sm:text-xs font-medium text-slate-500">Ruang 01 • Rombel 1</span>
-                            <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-emerald-500 text-white flex items-center justify-center shadow-md group-hover:translate-x-1 transition-transform">
-                                <i class="fa-solid fa-arrow-right text-xs sm:text-sm"></i>
+                        <div class="flex items-center justify-between pt-2 border-t border-slate-100">
+                            <span class="text-[11px] font-medium text-slate-500">Ruang 01 • Rombel 1</span>
+                            <div class="w-7 h-7 rounded-full bg-emerald-500 text-white flex items-center justify-center shadow-md group-hover:translate-x-1 transition-transform">
+                                <i class="fa-solid fa-arrow-right text-xs"></i>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- KELAS 2 -->
-                <div class="class-card-wrapper" data-class="2">
+                <div class="class-card-wrapper w-full" data-class="2">
                     <div onclick="selectClass(2, 'Kelas 2', 'II (Dua)', '26 Siswa', 'absen_kelas2.html', 'bg-sky-500', 'from-sky-500 to-blue-700')" 
-                         class="class-card cursor-pointer glass-card rounded-2xl sm:rounded-3xl p-4 sm:p-6 relative overflow-hidden group border-b-6 sm:border-b-8 border-sky-500 hover:border-sky-600">
-                        <div class="absolute -right-6 -bottom-6 w-20 sm:w-24 h-20 sm:h-24 bg-sky-100 rounded-full opacity-50 group-hover:scale-150 transition-transform"></div>
+                         class="class-card cursor-pointer glass-card rounded-2xl sm:rounded-3xl p-4 relative overflow-hidden group border-b-4 sm:border-b-6 border-sky-500 hover:border-sky-600">
                         
-                        <div class="flex items-center justify-between mb-2.5 sm:mb-3">
-                            <span class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-sky-100 text-sky-700 flex items-center justify-center font-fredoka text-lg sm:text-xl font-bold shadow-inner">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="w-10 h-10 rounded-xl bg-sky-100 text-sky-700 flex items-center justify-center font-fredoka text-lg font-bold shadow-inner">
                                 II
                             </span>
-                            <span class="text-[11px] sm:text-xs font-semibold px-2.5 sm:px-3 py-1 bg-sky-50 text-sky-700 rounded-full border border-sky-200 flex items-center gap-1.5">
-                                <i class="fa-solid fa-users text-[10px] sm:text-[11px]"></i> 26 Siswa
+                            <span class="text-[11px] font-semibold px-2.5 py-1 bg-sky-50 text-sky-700 rounded-full border border-sky-200 flex items-center gap-1">
+                                <i class="fa-solid fa-users text-[10px]"></i> 26 Siswa
                             </span>
                         </div>
 
-                        <div class="mb-3 sm:mb-4">
-                            <h3 class="font-fredoka text-xl sm:text-2xl font-bold text-slate-800 mb-0.5 sm:mb-1 group-hover:text-sky-600 transition-colors">
+                        <div class="mb-3">
+                            <h3 class="font-fredoka text-lg sm:text-xl font-bold text-slate-800 mb-0.5 group-hover:text-sky-600 transition-colors">
                                 Kelas 2
                             </h3>
-                            <p class="text-[11px] sm:text-xs text-slate-500 flex items-center gap-1.5">
+                            <p class="text-[11px] text-slate-500 flex items-center gap-1">
                                 <i class="fa-solid fa-graduation-cap text-sky-500"></i> Tingkat Sekolah Dasar
                             </p>
                         </div>
 
-                        <div class="flex items-center justify-between pt-2.5 sm:pt-3 border-t border-slate-100">
-                            <span class="text-[11px] sm:text-xs font-medium text-slate-500">Ruang 02 • Rombel 1</span>
-                            <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-sky-500 text-white flex items-center justify-center shadow-md group-hover:translate-x-1 transition-transform">
-                                <i class="fa-solid fa-arrow-right text-xs sm:text-sm"></i>
+                        <div class="flex items-center justify-between pt-2 border-t border-slate-100">
+                            <span class="text-[11px] font-medium text-slate-500">Ruang 02 • Rombel 1</span>
+                            <div class="w-7 h-7 rounded-full bg-sky-500 text-white flex items-center justify-center shadow-md group-hover:translate-x-1 transition-transform">
+                                <i class="fa-solid fa-arrow-right text-xs"></i>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- KELAS 3 -->
-                <div class="class-card-wrapper" data-class="3">
+                <div class="class-card-wrapper w-full" data-class="3">
                     <div onclick="selectClass(3, 'Kelas 3', 'III (Tiga)', '25 Siswa', 'absen_kelas3.html', 'bg-amber-500', 'from-amber-500 to-orange-600')" 
-                         class="class-card cursor-pointer glass-card rounded-2xl sm:rounded-3xl p-4 sm:p-6 relative overflow-hidden group border-b-6 sm:border-b-8 border-amber-500 hover:border-amber-600">
-                        <div class="absolute -right-6 -bottom-6 w-20 sm:w-24 h-20 sm:h-24 bg-amber-100 rounded-full opacity-50 group-hover:scale-150 transition-transform"></div>
+                         class="class-card cursor-pointer glass-card rounded-2xl sm:rounded-3xl p-4 relative overflow-hidden group border-b-4 sm:border-b-6 border-amber-500 hover:border-amber-600">
                         
-                        <div class="flex items-center justify-between mb-2.5 sm:mb-3">
-                            <span class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-amber-100 text-amber-700 flex items-center justify-center font-fredoka text-lg sm:text-xl font-bold shadow-inner">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="w-10 h-10 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center font-fredoka text-lg font-bold shadow-inner">
                                 III
                             </span>
-                            <span class="text-[11px] sm:text-xs font-semibold px-2.5 sm:px-3 py-1 bg-amber-50 text-amber-700 rounded-full border border-amber-200 flex items-center gap-1.5">
-                                <i class="fa-solid fa-users text-[10px] sm:text-[11px]"></i> 25 Siswa
+                            <span class="text-[11px] font-semibold px-2.5 py-1 bg-amber-50 text-amber-700 rounded-full border border-amber-200 flex items-center gap-1">
+                                <i class="fa-solid fa-users text-[10px]"></i> 25 Siswa
                             </span>
                         </div>
 
-                        <div class="mb-3 sm:mb-4">
-                            <h3 class="font-fredoka text-xl sm:text-2xl font-bold text-slate-800 mb-0.5 sm:mb-1 group-hover:text-amber-600 transition-colors">
+                        <div class="mb-3">
+                            <h3 class="font-fredoka text-lg sm:text-xl font-bold text-slate-800 mb-0.5 group-hover:text-amber-600 transition-colors">
                                 Kelas 3
                             </h3>
-                            <p class="text-[11px] sm:text-xs text-slate-500 flex items-center gap-1.5">
+                            <p class="text-[11px] text-slate-500 flex items-center gap-1">
                                 <i class="fa-solid fa-graduation-cap text-amber-500"></i> Tingkat Sekolah Dasar
                             </p>
                         </div>
 
-                        <div class="flex items-center justify-between pt-2.5 sm:pt-3 border-t border-slate-100">
-                            <span class="text-[11px] sm:text-xs font-medium text-slate-500">Ruang 03 • Rombel 1</span>
-                            <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-amber-500 text-white flex items-center justify-center shadow-md group-hover:translate-x-1 transition-transform">
-                                <i class="fa-solid fa-arrow-right text-xs sm:text-sm"></i>
+                        <div class="flex items-center justify-between pt-2 border-t border-slate-100">
+                            <span class="text-[11px] font-medium text-slate-500">Ruang 03 • Rombel 1</span>
+                            <div class="w-7 h-7 rounded-full bg-amber-500 text-white flex items-center justify-center shadow-md group-hover:translate-x-1 transition-transform">
+                                <i class="fa-solid fa-arrow-right text-xs"></i>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- KELAS 4 -->
-                <div class="class-card-wrapper" data-class="4">
+                <div class="class-card-wrapper w-full" data-class="4">
                     <div onclick="selectClass(4, 'Kelas 4', 'IV (Empat)', '28 Siswa', 'absen_kelas4.html', 'bg-purple-500', 'from-purple-500 to-indigo-700')" 
-                         class="class-card cursor-pointer glass-card rounded-2xl sm:rounded-3xl p-4 sm:p-6 relative overflow-hidden group border-b-6 sm:border-b-8 border-purple-500 hover:border-purple-600">
-                        <div class="absolute -right-6 -bottom-6 w-20 sm:w-24 h-20 sm:h-24 bg-purple-100 rounded-full opacity-50 group-hover:scale-150 transition-transform"></div>
+                         class="class-card cursor-pointer glass-card rounded-2xl sm:rounded-3xl p-4 relative overflow-hidden group border-b-4 sm:border-b-6 border-purple-500 hover:border-purple-600">
                         
-                        <div class="flex items-center justify-between mb-2.5 sm:mb-3">
-                            <span class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-purple-100 text-purple-700 flex items-center justify-center font-fredoka text-lg sm:text-xl font-bold shadow-inner">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="w-10 h-10 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center font-fredoka text-lg font-bold shadow-inner">
                                 IV
                             </span>
-                            <span class="text-[11px] sm:text-xs font-semibold px-2.5 sm:px-3 py-1 bg-purple-50 text-purple-700 rounded-full border border-purple-200 flex items-center gap-1.5">
-                                <i class="fa-solid fa-users text-[10px] sm:text-[11px]"></i> 28 Siswa
+                            <span class="text-[11px] font-semibold px-2.5 py-1 bg-purple-50 text-purple-700 rounded-full border border-purple-200 flex items-center gap-1">
+                                <i class="fa-solid fa-users text-[10px]"></i> 28 Siswa
                             </span>
                         </div>
 
-                        <div class="mb-3 sm:mb-4">
-                            <h3 class="font-fredoka text-xl sm:text-2xl font-bold text-slate-800 mb-0.5 sm:mb-1 group-hover:text-purple-600 transition-colors">
+                        <div class="mb-3">
+                            <h3 class="font-fredoka text-lg sm:text-xl font-bold text-slate-800 mb-0.5 group-hover:text-purple-600 transition-colors">
                                 Kelas 4
                             </h3>
-                            <p class="text-[11px] sm:text-xs text-slate-500 flex items-center gap-1.5">
+                            <p class="text-[11px] text-slate-500 flex items-center gap-1">
                                 <i class="fa-solid fa-graduation-cap text-purple-500"></i> Tingkat Sekolah Dasar
                             </p>
                         </div>
 
-                        <div class="flex items-center justify-between pt-2.5 sm:pt-3 border-t border-slate-100">
-                            <span class="text-[11px] sm:text-xs font-medium text-slate-500">Ruang 04 • Rombel 1</span>
-                            <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-purple-500 text-white flex items-center justify-center shadow-md group-hover:translate-x-1 transition-transform">
-                                <i class="fa-solid fa-arrow-right text-xs sm:text-sm"></i>
+                        <div class="flex items-center justify-between pt-2 border-t border-slate-100">
+                            <span class="text-[11px] font-medium text-slate-500">Ruang 04 • Rombel 1</span>
+                            <div class="w-7 h-7 rounded-full bg-purple-500 text-white flex items-center justify-center shadow-md group-hover:translate-x-1 transition-transform">
+                                <i class="fa-solid fa-arrow-right text-xs"></i>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- KELAS 5 -->
-                <div class="class-card-wrapper" data-class="5">
+                <div class="class-card-wrapper w-full" data-class="5">
                     <div onclick="selectClass(5, 'Kelas 5', 'V (Lima)', '27 Siswa', 'absen_kelas5.html', 'bg-rose-500', 'from-rose-500 to-red-700')" 
-                         class="class-card cursor-pointer glass-card rounded-2xl sm:rounded-3xl p-4 sm:p-6 relative overflow-hidden group border-b-6 sm:border-b-8 border-rose-500 hover:border-rose-600">
-                        <div class="absolute -right-6 -bottom-6 w-20 sm:w-24 h-20 sm:h-24 bg-rose-100 rounded-full opacity-50 group-hover:scale-150 transition-transform"></div>
+                         class="class-card cursor-pointer glass-card rounded-2xl sm:rounded-3xl p-4 relative overflow-hidden group border-b-4 sm:border-b-6 border-rose-500 hover:border-rose-600">
                         
-                        <div class="flex items-center justify-between mb-2.5 sm:mb-3">
-                            <span class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-rose-100 text-rose-700 flex items-center justify-center font-fredoka text-lg sm:text-xl font-bold shadow-inner">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="w-10 h-10 rounded-xl bg-rose-100 text-rose-700 flex items-center justify-center font-fredoka text-lg font-bold shadow-inner">
                                 V
                             </span>
-                            <span class="text-[11px] sm:text-xs font-semibold px-2.5 sm:px-3 py-1 bg-rose-50 text-rose-700 rounded-full border border-rose-200 flex items-center gap-1.5">
-                                <i class="fa-solid fa-users text-[10px] sm:text-[11px]"></i> 27 Siswa
+                            <span class="text-[11px] font-semibold px-2.5 py-1 bg-rose-50 text-rose-700 rounded-full border border-rose-200 flex items-center gap-1">
+                                <i class="fa-solid fa-users text-[10px]"></i> 27 Siswa
                             </span>
                         </div>
 
-                        <div class="mb-3 sm:mb-4">
-                            <h3 class="font-fredoka text-xl sm:text-2xl font-bold text-slate-800 mb-0.5 sm:mb-1 group-hover:text-rose-600 transition-colors">
+                        <div class="mb-3">
+                            <h3 class="font-fredoka text-lg sm:text-xl font-bold text-slate-800 mb-0.5 group-hover:text-rose-600 transition-colors">
                                 Kelas 5
                             </h3>
-                            <p class="text-[11px] sm:text-xs text-slate-500 flex items-center gap-1.5">
+                            <p class="text-[11px] text-slate-500 flex items-center gap-1">
                                 <i class="fa-solid fa-graduation-cap text-rose-500"></i> Tingkat Sekolah Dasar
                             </p>
                         </div>
 
-                        <div class="flex items-center justify-between pt-2.5 sm:pt-3 border-t border-slate-100">
-                            <span class="text-[11px] sm:text-xs font-medium text-slate-500">Ruang 05 • Rombel 1</span>
-                            <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-rose-500 text-white flex items-center justify-center shadow-md group-hover:translate-x-1 transition-transform">
-                                <i class="fa-solid fa-arrow-right text-xs sm:text-sm"></i>
+                        <div class="flex items-center justify-between pt-2 border-t border-slate-100">
+                            <span class="text-[11px] font-medium text-slate-500">Ruang 05 • Rombel 1</span>
+                            <div class="w-7 h-7 rounded-full bg-rose-500 text-white flex items-center justify-center shadow-md group-hover:translate-x-1 transition-transform">
+                                <i class="fa-solid fa-arrow-right text-xs"></i>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- KELAS 6 -->
-                <div class="class-card-wrapper" data-class="6">
+                <div class="class-card-wrapper w-full" data-class="6">
                     <div onclick="selectClass(6, 'Kelas 6', 'VI (Enam)', '30 Siswa', 'absen_kelas6.html', 'bg-indigo-600', 'from-indigo-600 to-blue-900')" 
-                         class="class-card cursor-pointer glass-card rounded-2xl sm:rounded-3xl p-4 sm:p-6 relative overflow-hidden group border-b-6 sm:border-b-8 border-indigo-600 hover:border-indigo-700">
-                        <div class="absolute -right-6 -bottom-6 w-20 sm:w-24 h-20 sm:h-24 bg-indigo-100 rounded-full opacity-50 group-hover:scale-150 transition-transform"></div>
+                         class="class-card cursor-pointer glass-card rounded-2xl sm:rounded-3xl p-4 relative overflow-hidden group border-b-4 sm:border-b-6 border-indigo-600 hover:border-indigo-700">
                         
-                        <div class="flex items-center justify-between mb-2.5 sm:mb-3">
-                            <span class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-indigo-100 text-indigo-700 flex items-center justify-center font-fredoka text-lg sm:text-xl font-bold shadow-inner">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="w-10 h-10 rounded-xl bg-indigo-100 text-indigo-700 flex items-center justify-center font-fredoka text-lg font-bold shadow-inner">
                                 VI
                             </span>
-                            <span class="text-[11px] sm:text-xs font-semibold px-2.5 sm:px-3 py-1 bg-indigo-50 text-indigo-700 rounded-full border border-indigo-200 flex items-center gap-1.5">
-                                <i class="fa-solid fa-users text-[10px] sm:text-[11px]"></i> 30 Siswa
+                            <span class="text-[11px] font-semibold px-2.5 py-1 bg-indigo-50 text-indigo-700 rounded-full border border-indigo-200 flex items-center gap-1">
+                                <i class="fa-solid fa-users text-[10px]"></i> 30 Siswa
                             </span>
                         </div>
 
-                        <div class="mb-3 sm:mb-4">
-                            <h3 class="font-fredoka text-xl sm:text-2xl font-bold text-slate-800 mb-0.5 sm:mb-1 group-hover:text-indigo-600 transition-colors">
+                        <div class="mb-3">
+                            <h3 class="font-fredoka text-lg sm:text-xl font-bold text-slate-800 mb-0.5 group-hover:text-indigo-600 transition-colors">
                                 Kelas 6
                             </h3>
-                            <p class="text-[11px] sm:text-xs text-slate-500 flex items-center gap-1.5">
+                            <p class="text-[11px] text-slate-500 flex items-center gap-1">
                                 <i class="fa-solid fa-graduation-cap text-indigo-500"></i> Tingkat Sekolah Dasar
                             </p>
                         </div>
 
-                        <div class="flex items-center justify-between pt-2.5 sm:pt-3 border-t border-slate-100">
-                            <span class="text-[11px] sm:text-xs font-medium text-slate-500">Ruang 06 • Rombel 1</span>
-                            <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-indigo-600 text-white flex items-center justify-center shadow-md group-hover:translate-x-1 transition-transform">
-                                <i class="fa-solid fa-arrow-right text-xs sm:text-sm"></i>
+                        <div class="flex items-center justify-between pt-2 border-t border-slate-100">
+                            <span class="text-[11px] font-medium text-slate-500">Ruang 06 • Rombel 1</span>
+                            <div class="w-7 h-7 rounded-full bg-indigo-600 text-white flex items-center justify-center shadow-md group-hover:translate-x-1 transition-transform">
+                                <i class="fa-solid fa-arrow-right text-xs"></i>
                             </div>
                         </div>
                     </div>
@@ -426,42 +402,42 @@
             </div>
 
             <!-- SEARCH NO RESULTS -->
-            <div id="noResults" class="hidden text-center py-12 glass-card rounded-3xl mt-4">
-                <i class="fa-solid fa-magnifying-glass-slash text-4xl text-slate-300 mb-3"></i>
-                <h4 class="font-fredoka text-lg text-slate-700">Kelas Tidak Ditemukan</h4>
+            <div id="noResults" class="hidden text-center py-10 glass-card rounded-3xl mt-4 w-full">
+                <i class="fa-solid fa-magnifying-glass-slash text-3xl text-slate-300 mb-2"></i>
+                <h4 class="font-fredoka text-base text-slate-700">Kelas Tidak Ditemukan</h4>
                 <p class="text-xs text-slate-500">SDN 1 Kertawirama hanya memiliki kelas 1 sampai 6.</p>
             </div>
         </main>
 
         <!-- FOOTER -->
-        <footer class="w-full text-center py-4 sm:py-5 text-[11px] sm:text-xs text-slate-500 font-medium border-t border-slate-200/50 bg-white/40 backdrop-blur-sm mt-6">
+        <footer class="w-full text-center py-3.5 text-[10px] sm:text-xs text-slate-500 font-medium border-t border-slate-200/50 bg-white/40 backdrop-blur-sm mt-4">
             <p>© 2026 SDN 1 Kertawirama • Modul Presensi & Kehadiran Guru Pendidik</p>
         </footer>
     </div>
 
     <!-- CONFIRMATION MODAL INTERACTIVE FOR TEACHER -->
     <div id="confirmModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300">
-        <div id="modalBox" class="glass-card bg-white rounded-3xl p-5 sm:p-8 max-w-xs sm:max-w-sm w-full text-center shadow-2xl transform scale-90 transition-transform duration-300 relative border-2 border-white">
+        <div id="modalBox" class="glass-card bg-white rounded-3xl p-5 sm:p-7 max-w-xs sm:max-w-sm w-full text-center shadow-2xl transform scale-90 transition-transform duration-300 relative border-2 border-white">
             
             <!-- Class Icon Badge inside Modal -->
-            <div id="modalBadge" class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl sm:rounded-3xl bg-emerald-500 text-white mx-auto flex items-center justify-center font-fredoka text-2xl sm:text-3xl font-bold shadow-lg mb-3 sm:mb-4 transform -rotate-3">
+            <div id="modalBadge" class="w-16 h-16 rounded-2xl bg-emerald-500 text-white mx-auto flex items-center justify-center font-fredoka text-2xl font-bold shadow-lg mb-3 transform -rotate-3">
                 I
             </div>
 
-            <h3 id="modalTitle" class="font-fredoka text-xl sm:text-2xl font-bold text-slate-800 mb-1">
+            <h3 id="modalTitle" class="font-fredoka text-lg sm:text-xl font-bold text-slate-800 mb-1">
                 Absensi Kelas 1
             </h3>
-            <p id="modalDesc" class="text-xs text-slate-500 mb-5 sm:mb-6">
+            <p id="modalDesc" class="text-xs text-slate-500 mb-5">
                 Buka lembar input presensi harian untuk rombel ini.
             </p>
 
             <div class="space-y-2">
-                <button id="modalConfirmBtn" class="w-full py-3 sm:py-3.5 px-5 sm:px-6 rounded-xl sm:rounded-2xl text-white font-fredoka font-semibold shadow-md hover:shadow-lg transition-all text-xs sm:text-sm tracking-wide flex items-center justify-center gap-2">
+                <button id="modalConfirmBtn" class="w-full py-3 px-4 rounded-xl text-white font-fredoka font-semibold shadow-md hover:shadow-lg transition-all text-xs tracking-wide flex items-center justify-center gap-2">
                     <i class="fa-solid fa-pen-to-square"></i>
                     <span>Input Presensi Hari Ini</span>
                 </button>
 
-                <button onclick="closeModal()" class="w-full py-2 sm:py-2.5 px-5 sm:px-6 rounded-xl sm:rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-600 font-semibold text-xs sm:text-sm transition-all">
+                <button onclick="closeModal()" class="w-full py-2 px-4 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 font-semibold text-xs transition-all">
                     Batal / Pilih Kelas Lain
                 </button>
             </div>
@@ -472,26 +448,22 @@
     <script>
         /* 
         ========================================================================
-        📌 PETUNJUK EDIT FILE TARGET / HALAMAN TERHUBUNG UNTUK GURU:
-        Silakan ganti nilai di bawah ini sesuai dengan nama file HTML masing-masing
-        kelas yang sudah Bapak/Ibu buat.
+        📌 PETUNJUK EDIT FILE TARGET UNTUK GURU:
+        Silakan ganti nilai di bawah sesuai nama file HTML masing-masing kelas.
         ========================================================================
         */
         const HALAMAN_KELAS = {
-            1: 'Siswa/Kelas1.html',  // <-- Ganti dengan nama file HTML Kelas 1 Anda
-            2: 'absen_kelas2.html',  // <-- Ganti dengan nama file HTML Kelas 2 Anda
-            3: 'absen_kelas3.html',  // <-- Ganti dengan nama file HTML Kelas 3 Anda
-            4: 'absen_kelas4.html',  // <-- Ganti dengan nama file HTML Kelas 4 Anda
-            5: 'absen_kelas5.html',  // <-- Ganti dengan nama file HTML Kelas 5 Anda
-            6: 'absen_kelas6.html'   // <-- Ganti dengan nama file HTML Kelas 6 Anda
+            1: 'Siswa/Kelas1.html',  
+            2: 'absen_kelas2.html',  
+            3: 'absen_kelas3.html',  
+            4: 'absen_kelas4.html',  
+            5: 'absen_kelas5.html',  
+            6: 'absen_kelas6.html'   
         };
 
         let targetUrl = '';
-        // Audio diatur agar selalu aktif secara otomatis
-        let audioEnabled = true;
         let synth = null;
 
-        // Display current date in Indonesian format
         function setTodayDate() {
             const dateObj = new Date();
             const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
@@ -503,9 +475,8 @@
         }
         setTodayDate();
 
-        // Initialize Audio Synthesizer via Tone.js
         function initAudio() {
-            if (!synth) {
+            if (!synth && typeof Tone !== 'undefined') {
                 synth = new Tone.Synth().toDestination();
             }
         }
@@ -513,21 +484,20 @@
         function playBeep(note = "C5", duration = "8n") {
             try {
                 initAudio();
-                Tone.start();
-                synth.triggerAttackRelease(note, duration);
+                if(Tone) {
+                    Tone.start();
+                    synth.triggerAttackRelease(note, duration);
+                }
             } catch(e) {
                 console.log("Audio play suppressed");
             }
         }
 
-        // Action when teacher clicks a class card
         function selectClass(classNumber, className, romanNumeral, studentCount, dummyUrl, bgClass, gradientClass) {
             playBeep("E5", "8n");
 
-            // Mengambil URL target langsung dari daftar HALAMAN_KELAS
             targetUrl = HALAMAN_KELAS[classNumber] || 'index.html';
 
-            // Setup Modal visual dynamics
             const modal = document.getElementById('confirmModal');
             const modalBox = document.getElementById('modalBox');
             const modalBadge = document.getElementById('modalBadge');
@@ -535,25 +505,22 @@
             const modalDesc = document.getElementById('modalDesc');
             const confirmBtn = document.getElementById('modalConfirmBtn');
 
-            // Apply specific class branding to modal
-            modalBadge.className = `w-20 h-20 rounded-3xl ${bgClass} text-white mx-auto flex items-center justify-center font-fredoka text-3xl font-bold shadow-lg mb-4 transform -rotate-3`;
-            modalBadge.innerText = romanNumeral.split(' ')[0]; // Take Roman part
+            modalBadge.className = `w-16 h-16 rounded-2xl ${bgClass} text-white mx-auto flex items-center justify-center font-fredoka text-2xl font-bold shadow-lg mb-3 transform -rotate-3`;
+            modalBadge.innerText = romanNumeral.split(' ')[0];
             
             modalTitle.innerText = `Absensi ${className}`;
             modalDesc.innerText = `Buka lembar input presensi harian untuk Rombel ${className} (${studentCount}).`;
 
-            confirmBtn.className = `w-full py-3.5 px-6 rounded-2xl bg-gradient-to-r ${gradientClass} text-white font-fredoka font-semibold shadow-md hover:shadow-lg transition-all text-sm tracking-wide flex items-center justify-center gap-2 transform active:scale-95`;
+            confirmBtn.className = `w-full py-3 px-4 rounded-xl bg-gradient-to-r ${gradientClass} text-white font-fredoka font-semibold shadow-md hover:shadow-lg transition-all text-xs tracking-wide flex items-center justify-center gap-2 transform active:scale-95`;
             confirmBtn.onclick = function() {
                 playBeep("C6", "4n");
                 confirmBtn.innerHTML = `<i class="fa-solid fa-circle-notch animate-spin"></i> Membuka Presensi...`;
                 
-                // Redirect smoothly ke file target
                 setTimeout(() => {
                     window.location.href = targetUrl;
-                }, 600);
+                }, 500);
             };
 
-            // Show Modal with Animation
             modal.classList.remove('opacity-0', 'pointer-events-none');
             modalBox.classList.remove('scale-90');
             modalBox.classList.add('scale-100');
@@ -569,7 +536,6 @@
             modal.classList.add('opacity-0', 'pointer-events-none');
         }
 
-        // Live Filter/Search Class functionality
         function filterClasses() {
             const input = document.getElementById('classSearch').value.toLowerCase();
             const cards = document.querySelectorAll('.class-card-wrapper');
@@ -599,11 +565,10 @@
         function logout() {
             playBeep("A4", "8n");
             if(confirm("Apakah Bapak/Ibu Guru yakin ingin keluar dari sistem presensi?")) {
-                window.location.href = "login.html"; // Redirect to login page
+                window.location.href = "login.html";
             }
         }
 
-        // Keyboard navigation (Esc to close modal)
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
                 closeModal();
