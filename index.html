@@ -10,6 +10,8 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <!-- Canvas Confetti for celebrate effect -->
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+<!-- Tone.js for web audio interactive sound effects -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
 
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
@@ -239,7 +241,7 @@
             Portal Presensi Resmi
           </span>
           <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">Selamat Datang!</h2>
-          <p class="text-xs sm:text-sm text-slate-500">Pilih lokasi sekolah dan peran akun Anda untuk melanjutkan ke dashboard.</p>
+          <p class="text-xs sm:text-sm text-slate-500">Pilih unit sekolah dan peran Anda, lalu masukkan kata sandi.</p>
         </div>
 
         <!-- Glassmorphism Form Container -->
@@ -268,20 +270,20 @@
                 </span>
                 <select id="school" required class="custom-input pl-10 pr-10 py-3 sm:py-3.5 w-full bg-slate-50 border border-slate-200 rounded-xl text-slate-800 font-medium focus:bg-white focus:border-blue-500 focus:outline-none appearance-none cursor-pointer">
                   <option value="" disabled selected>Pilih unit sekolah...</option>
-                  <option>SD Negeri 1 Cikadu</option>
-                  <option>SD Negeri 1 Jambar</option>
-                  <option>SD Negeri 1 Kertawirama</option>
-                  <option>SD Negeri 1 Nusaherang</option>
-                  <option>SD Negeri 2 Cikadu</option>
-                  <option>SD Negeri 2 Jambar</option>
-                  <option>SD Negeri 2 Kertawirama</option>
-                  <option>SD Negeri 3 Cikadu</option>
-                  <option>SD Negeri 3 Haurkuning</option>
-                  <option>SD Negeri 3 Jambar</option>
-                  <option>SD Negeri Ciasih</option>
-                  <option>SD Negeri Haurkuning</option>
-                  <option>SD Negeri Kertayuga</option>
-                  <option>SD Negeri Windusari</option>
+                  <option value="SD Negeri 1 Cikadu">SD Negeri 1 Cikadu</option>
+                  <option value="SD Negeri 1 Jambar">SD Negeri 1 Jambar</option>
+                  <option value="SD Negeri 1 Kertawirama">SD Negeri 1 Kertawirama</option>
+                  <option value="SD Negeri 1 Nusaherang">SD Negeri 1 Nusaherang</option>
+                  <option value="SD Negeri 2 Cikadu">SD Negeri 2 Cikadu</option>
+                  <option value="SD Negeri 2 Jambar">SD Negeri 2 Jambar</option>
+                  <option value="SD Negeri 2 Kertawirama">SD Negeri 2 Kertawirama</option>
+                  <option value="SD Negeri 3 Cikadu">SD Negeri 3 Cikadu</option>
+                  <option value="SD Negeri 3 Haurkuning">SD Negeri 3 Haurkuning</option>
+                  <option value="SD Negeri 3 Jambar">SD Negeri 3 Jambar</option>
+                  <option value="SD Negeri Ciasih">SD Negeri Ciasih</option>
+                  <option value="SD Negeri Haurkuning">SD Negeri Haurkuning</option>
+                  <option value="SD Negeri Kertayuga">SD Negeri Kertayuga</option>
+                  <option value="SD Negeri Windusari">SD Negeri Windusari</option>
                 </select>
                 <span class="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none text-slate-400">
                   <i class="fa-solid fa-chevron-down text-xs"></i>
@@ -303,24 +305,11 @@
                   <option value="Guru">Guru / Tenaga Pendidik</option>
                   <option value="Siswa">Siswa / Wali Murid</option>
                   <option value="Admin Sekolah">Admin Sekolah</option>
-                  <option value="Admin Kecamatan">Admin UPTD / Korwil</option>
+                  <option value="Admin UPTD">Admin UPTD / Korwil</option>
                 </select>
                 <span class="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none text-slate-400">
                   <i class="fa-solid fa-chevron-down text-xs"></i>
                 </span>
-              </div>
-            </div>
-
-            <!-- Username Input -->
-            <div>
-              <label for="username" class="block text-[11px] sm:text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5 sm:mb-2">
-                Username / NIP / NISN
-              </label>
-              <div class="relative">
-                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
-                  <i class="fa-solid fa-id-card text-sm"></i>
-                </span>
-                <input id="username" type="text" autocomplete="username" placeholder="Masukkan ID atau username" required class="custom-input pl-10 pr-4 py-3 sm:py-3.5 w-full bg-slate-50 border border-slate-200 rounded-xl text-slate-800 font-medium focus:bg-white focus:border-blue-500 focus:outline-none placeholder:text-slate-400">
               </div>
             </div>
 
@@ -333,7 +322,7 @@
                 <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
                   <i class="fa-solid fa-lock text-sm"></i>
                 </span>
-                <input id="password" type="password" autocomplete="current-password" placeholder="••••••••" required class="custom-input pl-10 pr-12 py-3 sm:py-3.5 w-full bg-slate-50 border border-slate-200 rounded-xl text-slate-800 font-medium focus:bg-white focus:border-blue-500 focus:outline-none placeholder:text-slate-400">
+                <input id="password" type="password" autocomplete="current-password" placeholder="Masukkan kata sandi..." required class="custom-input pl-10 pr-12 py-3 sm:py-3.5 w-full bg-slate-50 border border-slate-200 rounded-xl text-slate-800 font-medium focus:bg-white focus:border-blue-500 focus:outline-none placeholder:text-slate-400">
                 <button type="button" id="togglePass" class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-blue-600 transition-colors p-2">
                   <i class="fa-solid fa-eye text-sm" id="eyeIcon"></i>
                 </button>
@@ -365,8 +354,8 @@
           <div class="bg-blue-50/80 border border-blue-100 rounded-xl sm:rounded-2xl p-3 sm:p-3.5 flex gap-2.5 sm:gap-3 text-slate-600 text-[11px] sm:text-xs leading-relaxed">
             <i class="fa-solid fa-circle-info text-blue-500 text-sm sm:text-base flex-shrink-0 mt-0.5"></i>
             <div>
-              <strong class="font-semibold text-blue-900">Prototipe Interaktif:</strong> 
-              Form disesuaikan untuk tampilan Desktop & Mobile Phone.
+              <strong class="font-semibold text-blue-900">Petunjuk Akses:</strong> 
+              Pilih unit sekolah dan peran untuk memeriksa kata sandi & mengarahkan ke file HTML tujuan.
             </div>
           </div>
 
@@ -381,14 +370,100 @@
     </div>
   </div>
 
-  <!-- JavaScript for Canvas Particles & Responsive Touch Actions -->
+  <!-- JAVASCRIPT LOGIC WITH SOUND EFFECTS & CONFIGURABLE DATABASES -->
   <script>
+    /*
+    ========================================================================================
+    📌 KONFIGURASI DATABASE AKSES & TARGET FILE HTML:
+    Silakan ganti kata sandi ("pass") dan file tujuan ("targetUrl") di bawah ini sesuai kebutuhan!
+    ========================================================================================
+    */
+    const DATABASE_AKSES = {
+      // 1. SD Negeri 1 Kertawirama
+      "SD Negeri 1 Kertawirama": {
+        "Guru": { pass: "guru123", targetUrl: "SDN1Kertawirama/menuDasboard.html" },
+        "Siswa": { pass: "siswa123", targetUrl: "siswa_kerta1.html" },
+        "Admin Sekolah": { pass: "admin123", targetUrl: "admin_kerta1.html" },
+        "Admin UPTD": { pass: "uptd123", targetUrl: "uptd_dashboard.html" }
+      },
+
+      // 2. SD Negeri 1 Cikadu
+      "SD Negeri 1 Cikadu": {
+        "Guru": { pass: "cikadu123", targetUrl: "absen_cikadu1.html" },
+        "Siswa": { pass: "siswa123", targetUrl: "siswa_cikadu1.html" },
+        "Admin Sekolah": { pass: "admin123", targetUrl: "admin_cikadu1.html" },
+        "Admin UPTD": { pass: "uptd123", targetUrl: "uptd_dashboard.html" }
+      },
+
+      // 3. SD Negeri 1 Jambar
+      "SD Negeri 1 Jambar": {
+        "Guru": { pass: "jambar123", targetUrl: "absen_jambar1.html" },
+        "Siswa": { pass: "siswa123", targetUrl: "siswa_jambar1.html" },
+        "Admin Sekolah": { pass: "admin123", targetUrl: "admin_jambar1.html" },
+        "Admin UPTD": { pass: "uptd123", targetUrl: "uptd_dashboard.html" }
+      },
+
+      // 4. SD Negeri 1 Nusaherang
+      "SD Negeri 1 Nusaherang": {
+        "Guru": { pass: "nusa123", targetUrl: "absen_nusa1.html" },
+        "Siswa": { pass: "siswa123", targetUrl: "siswa_nusa1.html" },
+        "Admin Sekolah": { pass: "admin123", targetUrl: "admin_nusa1.html" },
+        "Admin UPTD": { pass: "uptd123", targetUrl: "uptd_dashboard.html" }
+      },
+
+      // Default fallback password jika sekolah lain belum diset secara spesifik
+      "DEFAULT": {
+        "Guru": { pass: "123456", targetUrl: "select_class.html" },
+        "Siswa": { pass: "123456", targetUrl: "siswa_dashboard.html" },
+        "Admin Sekolah": { pass: "123456", targetUrl: "admin_dashboard.html" },
+        "Admin UPTD": { pass: "123456", targetUrl: "uptd_dashboard.html" }
+      }
+    };
+
+    /* 
+    ========================================================================================
+    🔊 SOUND EFFECTS SYSTEM (Tone.js & Web Audio API)
+    ========================================================================================
+    */
+    let synth = null;
+
+    function initAudio() {
+      if (!synth && typeof Tone !== 'undefined') {
+        synth = new Tone.Synth().toDestination();
+      }
+    }
+
+    function playSound(type) {
+      try {
+        initAudio();
+        if (!Tone) return;
+        Tone.start();
+
+        if (type === 'click') {
+          synth.triggerAttackRelease("C5", "16n");
+        } else if (type === 'toggle') {
+          synth.triggerAttackRelease("E5", "16n");
+        } else if (type === 'error') {
+          synth.triggerAttackRelease("A3", "8n");
+        } else if (type === 'success') {
+          const now = Tone.now();
+          synth.triggerAttackRelease("C5", "8n", now);
+          synth.triggerAttackRelease("E5", "8n", now + 0.1);
+          synth.triggerAttackRelease("G5", "8n", now + 0.2);
+          synth.triggerAttackRelease("C6", "4n", now + 0.3);
+        }
+      } catch (e) {
+        console.log("Audio play suppressed");
+      }
+    }
+
     // --- 1. Responsive Interactive Particles Canvas ---
     const canvas = document.getElementById('particles-canvas');
     const ctx = canvas.getContext('2d');
     let particlesArray = [];
 
     function resizeCanvas() {
+      if (!canvas.parentElement) return;
       canvas.width = canvas.parentElement.clientWidth;
       canvas.height = canvas.parentElement.clientHeight;
     }
@@ -424,7 +499,6 @@
 
     function initParticles() {
       particlesArray = [];
-      // Dynamic particle density based on screen width
       const density = window.innerWidth < 640 ? 20000 : 12000;
       const numberOfParticles = Math.floor((canvas.width * canvas.height) / density);
       for (let i = 0; i < numberOfParticles; i++) {
@@ -460,18 +534,23 @@
     }
     animateParticles();
 
-    // --- 2. Password Visibility Toggle ---
+    // --- 2. Password Visibility Toggle with Sound ---
     const passwordInput = document.getElementById('password');
     const togglePassBtn = document.getElementById('togglePass');
     const eyeIcon = document.getElementById('eyeIcon');
 
     togglePassBtn.addEventListener('click', () => {
+      playSound('toggle');
       const isPassword = passwordInput.type === 'password';
       passwordInput.type = isPassword ? 'text' : 'password';
       eyeIcon.className = isPassword ? 'fa-solid fa-eye-slash text-blue-600' : 'fa-solid fa-eye text-slate-400';
     });
 
-    // --- 3. Interactive Form Handling & Dynamic Alerts ---
+    // Sound effect on select box change
+    document.getElementById('school').addEventListener('change', () => playSound('click'));
+    document.getElementById('role').addEventListener('change', () => playSound('click'));
+
+    // --- 3. Interactive Form Handling, Password Checking & Dynamic Navigation ---
     const loginForm = document.getElementById('loginForm');
     const formCard = document.getElementById('formCard');
     const submitBtn = document.getElementById('submitBtn');
@@ -485,35 +564,47 @@
 
       const school = document.getElementById('school').value;
       const role = document.getElementById('role').value;
-      const username = document.getElementById('username').value.trim();
       const password = passwordInput.value.trim();
 
-      // Form validation with shake animation
-      if (!school || !role || !username || !password) {
+      // Form Validation
+      if (!school || !role || !password) {
+        playSound('error');
         formCard.classList.remove('animate-shake');
         void formCard.offsetWidth; // Trigger reflow
         formCard.classList.add('animate-shake');
 
-        showNotice('error', '<i class="fa-solid fa-triangle-exclamation mr-1 text-red-500"></i> Lengkapi semua kolom form terlebih dahulu.');
+        showNotice('error', '<i class="fa-solid fa-triangle-exclamation mr-1 text-red-500"></i> Pilih sekolah, peran, dan masukkan kata sandi.');
         return;
       }
 
-      // Loading State
+      // Verification Logic based on DATABASE_AKSES
+      const schoolData = DATABASE_AKSES[school] || DATABASE_AKSES["DEFAULT"];
+      const roleConfig = schoolData[role] || (DATABASE_AKSES["DEFAULT"][role] || { pass: "123456", targetUrl: "index.html" });
+
+      if (password !== roleConfig.pass) {
+        playSound('error');
+        formCard.classList.remove('animate-shake');
+        void formCard.offsetWidth;
+        formCard.classList.add('animate-shake');
+
+        showNotice('error', `<i class="fa-solid fa-lock text-red-500 mr-1"></i> Kata sandi salah untuk akun <b>${role}</b> di <b>${school}</b>.<br><span class="text-[10px] text-slate-400">(Petunjuk uji coba pass: <b>${roleConfig.pass}</b>)</span>`);
+        return;
+      }
+
+      // Successful Login
+      playSound('success');
+
       submitBtn.disabled = true;
-      btnText.textContent = 'Memproses...';
+      btnText.textContent = 'Memverifikasi...';
       btnIcon.className = 'fa-solid fa-circle-notch fa-spin text-xs';
 
       setTimeout(() => {
-        submitBtn.disabled = false;
-        btnText.textContent = 'Masuk ke Dashboard';
-        btnIcon.className = 'fa-solid fa-arrow-right text-xs';
-
         showNotice('success', `
           <div class="flex items-start space-x-2">
             <i class="fa-solid fa-circle-check text-emerald-600 text-base mt-0.5"></i>
             <div>
-              <strong class="font-bold text-emerald-900">Simulasi Berhasil!</strong><br>
-              Terhubung sebagai <b>${role}</b> di <b>${school}</b>.
+              <strong class="font-bold text-emerald-900">Login Berhasil!</strong><br>
+              Mengarahkan ke dashboard <b>${role}</b>...
             </div>
           </div>
         `);
@@ -525,7 +616,13 @@
             origin: { y: 0.7 }
           });
         }
-      }, 1000);
+
+        // Redirect to configured HTML file
+        setTimeout(() => {
+          window.location.href = roleConfig.targetUrl;
+        }, 1200);
+
+      }, 800);
     });
 
     function showNotice(type, htmlContent) {
@@ -542,7 +639,8 @@
 
     forgotBtn.addEventListener('click', (e) => {
       e.preventDefault();
-      showNotice('error', '<i class="fa-solid fa-info-circle mr-1"></i> Hubungi Operator IT sekolah Anda untuk reset kata sandi.');
+      playSound('click');
+      showNotice('error', '<i class="fa-solid fa-info-circle mr-1"></i> Hubungi Operator IT sekolah Anda untuk mereset kata sandi.');
     });
   </script>
 </body>
