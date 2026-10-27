@@ -241,7 +241,7 @@
             Portal Presensi Resmi
           </span>
           <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">Selamat Datang!</h2>
-          <p class="text-xs sm:text-sm text-slate-500">Pilih unit sekolah dan peran Anda, lalu masukkan kata sandi.</p>
+          <p class="text-xs sm:text-sm text-slate-500">Masukkan Username, pilih peran, dan kata sandi Anda.</p>
         </div>
 
         <!-- Glassmorphism Form Container -->
@@ -259,39 +259,7 @@
           </div>
 
           <form id="loginForm" class="space-y-4 sm:space-y-5" novalidate>
-            <!-- Select School -->
-            <div>
-              <label for="school" class="block text-[11px] sm:text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5 sm:mb-2">
-                Pilih Sekolah Dasar
-              </label>
-              <div class="relative">
-                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
-                  <i class="fa-solid fa-school text-sm"></i>
-                </span>
-                <select id="school" required class="custom-input pl-10 pr-10 py-3 sm:py-3.5 w-full bg-slate-50 border border-slate-200 rounded-xl text-slate-800 font-medium focus:bg-white focus:border-blue-500 focus:outline-none appearance-none cursor-pointer">
-                  <option value="" disabled selected>Pilih unit sekolah...</option>
-                  <option value="SD Negeri 1 Cikadu">SD Negeri 1 Cikadu</option>
-                  <option value="SD Negeri 1 Jambar">SD Negeri 1 Jambar</option>
-                  <option value="SD Negeri 1 Kertawirama">SD Negeri 1 Kertawirama</option>
-                  <option value="SD Negeri 1 Nusaherang">SD Negeri 1 Nusaherang</option>
-                  <option value="SD Negeri 2 Cikadu">SD Negeri 2 Cikadu</option>
-                  <option value="SD Negeri 2 Jambar">SD Negeri 2 Jambar</option>
-                  <option value="SD Negeri 2 Kertawirama">SD Negeri 2 Kertawirama</option>
-                  <option value="SD Negeri 3 Cikadu">SD Negeri 3 Cikadu</option>
-                  <option value="SD Negeri 3 Haurkuning">SD Negeri 3 Haurkuning</option>
-                  <option value="SD Negeri 3 Jambar">SD Negeri 3 Jambar</option>
-                  <option value="SD Negeri Ciasih">SD Negeri Ciasih</option>
-                  <option value="SD Negeri Haurkuning">SD Negeri Haurkuning</option>
-                  <option value="SD Negeri Kertayuga">SD Negeri Kertayuga</option>
-                  <option value="SD Negeri Windusari">SD Negeri Windusari</option>
-                </select>
-                <span class="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none text-slate-400">
-                  <i class="fa-solid fa-chevron-down text-xs"></i>
-                </span>
-              </div>
-            </div>
-
-            <!-- Select Role -->
+            <!-- Select Role First -->
             <div>
               <label for="role" class="block text-[11px] sm:text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5 sm:mb-2">
                 Masuk Sebagai
@@ -310,6 +278,19 @@
                 <span class="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none text-slate-400">
                   <i class="fa-solid fa-chevron-down text-xs"></i>
                 </span>
+              </div>
+            </div>
+
+            <!-- Input Username (Simplified to just Username) -->
+            <div>
+              <label for="school" class="block text-[11px] sm:text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5 sm:mb-2">
+                Username
+              </label>
+              <div class="relative">
+                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                  <i class="fa-solid fa-user text-sm"></i>
+                </span>
+                <input id="school" type="text" placeholder="Masukkan username Anda..." required class="custom-input pl-10 pr-4 py-3 sm:py-3.5 w-full bg-slate-50 border border-slate-200 rounded-xl text-slate-800 font-medium focus:bg-white focus:border-blue-500 focus:outline-none placeholder:text-slate-400">
               </div>
             </div>
 
@@ -355,7 +336,7 @@
             <i class="fa-solid fa-circle-info text-blue-500 text-sm sm:text-base flex-shrink-0 mt-0.5"></i>
             <div>
               <strong class="font-semibold text-blue-900">Petunjuk Akses:</strong> 
-              Pilih unit sekolah dan peran untuk memeriksa kata sandi & mengarahkan ke file HTML tujuan.
+              Ketikkan Username (misal nama sekolah seperti <code class="bg-blue-100 text-blue-800 px-1 py-0.5 rounded">SD Negeri 1 Kertawirama</code>) dan pilih peran untuk login.
             </div>
           </div>
 
@@ -374,12 +355,27 @@
   <script>
     /*
     ========================================================================================
-    📌 KONFIGURASI DATABASE AKSES & TARGET FILE HTML:
-    Silakan ganti kata sandi ("pass") dan file tujuan ("targetUrl") di bawah ini sesuai kebutuhan!
+    📌 KONFIGURASI DATABASE AKSES & TARGET FILE HTML (LENGKAP 14 SEKOLAH DASAR NUSAHERANG):
     ========================================================================================
     */
     const DATABASE_AKSES = {
-      // 1. SD Negeri 1 Kertawirama
+      // 1. SD Negeri 1 Cikadu
+      "SD Negeri 1 Cikadu": {
+        "Guru": { pass: "cikadu123", targetUrl: "select_class.html" },
+        "Siswa": { pass: "siswa123", targetUrl: "siswa_cikadu1.html" },
+        "Admin Sekolah": { pass: "admin123", targetUrl: "admin_cikadu1.html" },
+        "Admin UPTD": { pass: "uptd123", targetUrl: "uptd_dashboard.html" }
+      },
+
+      // 2. SD Negeri 1 Jambar
+      "SD Negeri 1 Jambar": {
+        "Guru": { pass: "jambar123", targetUrl: "select_class.html" },
+        "Siswa": { pass: "siswa123", targetUrl: "siswa_jambar1.html" },
+        "Admin Sekolah": { pass: "admin123", targetUrl: "admin_jambar1.html" },
+        "Admin UPTD": { pass: "uptd123", targetUrl: "uptd_dashboard.html" }
+      },
+
+      // 3. SD Negeri 1 Kertawirama
       "SD Negeri 1 Kertawirama": {
         "Guru": { pass: "guru123", targetUrl: "SDN1Kertawirama/menuDasboard.html" },
         "Siswa": { pass: "siswa123", targetUrl: "siswa_kerta1.html" },
@@ -387,36 +383,100 @@
         "Admin UPTD": { pass: "uptd123", targetUrl: "uptd_dashboard.html" }
       },
 
-      // 2. SD Negeri 1 Cikadu
-      "SD Negeri 1 Cikadu": {
-        "Guru": { pass: "cikadu123", targetUrl: "absen_cikadu1.html" },
-        "Siswa": { pass: "siswa123", targetUrl: "siswa_cikadu1.html" },
-        "Admin Sekolah": { pass: "admin123", targetUrl: "admin_cikadu1.html" },
-        "Admin UPTD": { pass: "uptd123", targetUrl: "uptd_dashboard.html" }
-      },
-
-      // 3. SD Negeri 1 Jambar
-      "SD Negeri 1 Jambar": {
-        "Guru": { pass: "jambar123", targetUrl: "absen_jambar1.html" },
-        "Siswa": { pass: "siswa123", targetUrl: "siswa_jambar1.html" },
-        "Admin Sekolah": { pass: "admin123", targetUrl: "admin_jambar1.html" },
-        "Admin UPTD": { pass: "uptd123", targetUrl: "uptd_dashboard.html" }
-      },
-
       // 4. SD Negeri 1 Nusaherang
       "SD Negeri 1 Nusaherang": {
-        "Guru": { pass: "nusa123", targetUrl: "absen_nusa1.html" },
+        "Guru": { pass: "nusa123", targetUrl: "select_class.html" },
         "Siswa": { pass: "siswa123", targetUrl: "siswa_nusa1.html" },
         "Admin Sekolah": { pass: "admin123", targetUrl: "admin_nusa1.html" },
         "Admin UPTD": { pass: "uptd123", targetUrl: "uptd_dashboard.html" }
       },
 
-      // Default fallback password jika sekolah lain belum diset secara spesifik
+      // 5. SD Negeri 2 Cikadu
+      "SD Negeri 2 Cikadu": {
+        "Guru": { pass: "cikadu2pass", targetUrl: "select_class.html" },
+        "Siswa": { pass: "siswa123", targetUrl: "siswa_cikadu2.html" },
+        "Admin Sekolah": { pass: "admin123", targetUrl: "admin_cikadu2.html" },
+        "Admin UPTD": { pass: "uptd123", targetUrl: "uptd_dashboard.html" }
+      },
+
+      // 6. SD Negeri 2 Jambar
+      "SD Negeri 2 Jambar": {
+        "Guru": { pass: "jambar2pass", targetUrl: "select_class.html" },
+        "Siswa": { pass: "siswa123", targetUrl: "siswa_jambar2.html" },
+        "Admin Sekolah": { pass: "admin123", targetUrl: "admin_jambar2.html" },
+        "Admin UPTD": { pass: "uptd123", targetUrl: "uptd_dashboard.html" }
+      },
+
+      // 7. SD Negeri 2 Kertawirama
+      "SD Negeri 2 Kertawirama": {
+        "Guru": { pass: "kerta2pass", targetUrl: "select_class.html" },
+        "Siswa": { pass: "siswa123", targetUrl: "siswa_kerta2.html" },
+        "Admin Sekolah": { pass: "admin123", targetUrl: "admin_kerta2.html" },
+        "Admin UPTD": { pass: "uptd123", targetUrl: "uptd_dashboard.html" }
+      },
+
+      // 8. SD Negeri 3 Cikadu
+      "SD Negeri 3 Cikadu": {
+        "Guru": { pass: "cikadu3pass", targetUrl: "select_class.html" },
+        "Siswa": { pass: "siswa123", targetUrl: "siswa_cikadu3.html" },
+        "Admin Sekolah": { pass: "admin123", targetUrl: "admin_cikadu3.html" },
+        "Admin UPTD": { pass: "uptd123", targetUrl: "uptd_dashboard.html" }
+      },
+
+      // 9. SD Negeri 3 Haurkuning
+      "SD Negeri 3 Haurkuning": {
+        "Guru": { pass: "haur3pass", targetUrl: "select_class.html" },
+        "Siswa": { pass: "siswa123", targetUrl: "siswa_haur3.html" },
+        "Admin Sekolah": { pass: "admin123", targetUrl: "admin_haur3.html" },
+        "Admin UPTD": { pass: "uptd123", targetUrl: "uptd_dashboard.html" }
+      },
+
+      // 10. SD Negeri 3 Jambar
+      "SD Negeri 3 Jambar": {
+        "Guru": { pass: "jambar3pass", targetUrl: "select_class.html" },
+        "Siswa": { pass: "siswa123", targetUrl: "siswa_jambar3.html" },
+        "Admin Sekolah": { pass: "admin123", targetUrl: "admin_jambar3.html" },
+        "Admin UPTD": { pass: "uptd123", targetUrl: "uptd_dashboard.html" }
+      },
+
+      // 11. SD Negeri Ciasih
+      "SD Negeri Ciasih": {
+        "Guru": { pass: "ciasihpass", targetUrl: "select_class.html" },
+        "Siswa": { pass: "siswa123", targetUrl: "siswa_ciasih.html" },
+        "Admin Sekolah": { pass: "admin123", targetUrl: "admin_ciasih.html" },
+        "Admin UPTD": { pass: "uptd123", targetUrl: "uptd_dashboard.html" }
+      },
+
+      // 12. SD Negeri Haurkuning
+      "SD Negeri Haurkuning": {
+        "Guru": { pass: "haurpass", targetUrl: "select_class.html" },
+        "Siswa": { pass: "siswa123", targetUrl: "siswa_haurkuning.html" },
+        "Admin Sekolah": { pass: "admin123", targetUrl: "admin_haurkuning.html" },
+        "Admin UPTD": { pass: "uptd123", targetUrl: "uptd_dashboard.html" }
+      },
+
+      // 13. SD Negeri Kertayuga
+      "SD Negeri Kertayuga": {
+        "Guru": { pass: "kertayugapass", targetUrl: "select_class.html" },
+        "Siswa": { pass: "siswa123", targetUrl: "siswa_kertayuga.html" },
+        "Admin Sekolah": { pass: "admin123", targetUrl: "admin_kertayuga.html" },
+        "Admin UPTD": { pass: "uptd123", targetUrl: "uptd_dashboard.html" }
+      },
+
+      // 14. SD Negeri Windusari
+      "SD Negeri Windusari": {
+        "Guru": { pass: "windusaripass", targetUrl: "select_class.html" },
+        "Siswa": { pass: "siswa123", targetUrl: "siswa_windusari.html" },
+        "Admin Sekolah": { pass: "admin123", targetUrl: "admin_windusari.html" },
+        "Admin UPTD": { pass: "uptd123", targetUrl: "uptd_dashboard.html" }
+      },
+
+      // Default fallback password jika sekolah belum didaftarkan di objek khusus
       "DEFAULT": {
-        "Guru": { pass: "123456", targetUrl: "select_class.html" },
-        "Siswa": { pass: "123456", targetUrl: "siswa_dashboard.html" },
-        "Admin Sekolah": { pass: "123456", targetUrl: "admin_dashboard.html" },
-        "Admin UPTD": { pass: "123456", targetUrl: "uptd_dashboard.html" }
+        "Guru": { pass: "guru123", targetUrl: "select_class.html" },
+        "Siswa": { pass: "siswa123", targetUrl: "siswa_dashboard.html" },
+        "Admin Sekolah": { pass: "admin123", targetUrl: "admin_dashboard.html" },
+        "Admin UPTD": { pass: "uptd123", targetUrl: "uptd_dashboard.html" }
       }
     };
 
@@ -546,11 +606,10 @@
       eyeIcon.className = isPassword ? 'fa-solid fa-eye-slash text-blue-600' : 'fa-solid fa-eye text-slate-400';
     });
 
-    // Sound effect on select box change
-    document.getElementById('school').addEventListener('change', () => playSound('click'));
+    // Sound effect on select role change
     document.getElementById('role').addEventListener('change', () => playSound('click'));
 
-    // --- 3. Interactive Form Handling, Password Checking & Dynamic Navigation ---
+    // --- 3. Interactive Form Handling, Username (School Name) & Dynamic Navigation ---
     const loginForm = document.getElementById('loginForm');
     const formCard = document.getElementById('formCard');
     const submitBtn = document.getElementById('submitBtn');
@@ -562,24 +621,28 @@
     loginForm.addEventListener('submit', (e) => {
       e.preventDefault();
 
-      const school = document.getElementById('school').value;
+      const schoolInput = document.getElementById('school').value.trim();
       const role = document.getElementById('role').value;
       const password = passwordInput.value.trim();
 
       // Form Validation
-      if (!school || !role || !password) {
+      if (!schoolInput || !role || !password) {
         playSound('error');
         formCard.classList.remove('animate-shake');
         void formCard.offsetWidth; // Trigger reflow
         formCard.classList.add('animate-shake');
 
-        showNotice('error', '<i class="fa-solid fa-triangle-exclamation mr-1 text-red-500"></i> Pilih sekolah, peran, dan masukkan kata sandi.');
+        showNotice('error', '<i class="fa-solid fa-triangle-exclamation mr-1 text-red-500"></i> Isikan Username, pilih peran, dan kata sandi.');
         return;
       }
 
-      // Verification Logic based on DATABASE_AKSES
-      const schoolData = DATABASE_AKSES[school] || DATABASE_AKSES["DEFAULT"];
-      const roleConfig = schoolData[role] || (DATABASE_AKSES["DEFAULT"][role] || { pass: "123456", targetUrl: "index.html" });
+      // Matching school name ignoring case / exact key lookup
+      const matchedSchoolKey = Object.keys(DATABASE_AKSES).find(
+        k => k.toLowerCase() === schoolInput.toLowerCase()
+      );
+
+      const schoolData = matchedSchoolKey ? DATABASE_AKSES[matchedSchoolKey] : DATABASE_AKSES["DEFAULT"];
+      const roleConfig = schoolData[role] || (DATABASE_AKSES["DEFAULT"][role] || { pass: "123456", targetUrl: "select_class.html" });
 
       if (password !== roleConfig.pass) {
         playSound('error');
@@ -587,7 +650,7 @@
         void formCard.offsetWidth;
         formCard.classList.add('animate-shake');
 
-        showNotice('error', `<i class="fa-solid fa-lock text-red-500 mr-1"></i> Kata sandi salah untuk akun <b>${role}</b> di <b>${school}</b>.<br><span class="text-[10px] text-slate-400">(Petunjuk uji coba pass: <b>${roleConfig.pass}</b>)</span>`);
+        showNotice('error', `<i class="fa-solid fa-lock text-red-500 mr-1"></i> Kata sandi salah untuk <b>${role}</b> di <b>${schoolInput}</b>.<br><span class="text-[10px] text-slate-400">(Petunjuk uji coba pass: <b>${roleConfig.pass}</b>)</span>`);
         return;
       }
 
@@ -604,7 +667,7 @@
             <i class="fa-solid fa-circle-check text-emerald-600 text-base mt-0.5"></i>
             <div>
               <strong class="font-bold text-emerald-900">Login Berhasil!</strong><br>
-              Mengarahkan ke dashboard <b>${role}</b>...
+              Mengarahkan ke dashboard <b>${role}</b> (${matchedSchoolKey || schoolInput})...
             </div>
           </div>
         `);
