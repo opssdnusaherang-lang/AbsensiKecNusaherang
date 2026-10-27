@@ -284,13 +284,13 @@
             <!-- Input Username (Simplified to just Username) -->
             <div>
               <label for="school" class="block text-[11px] sm:text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5 sm:mb-2">
-                Username
+                Username / Kode Sekolah
               </label>
               <div class="relative">
                 <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
                   <i class="fa-solid fa-user text-sm"></i>
                 </span>
-                <input id="school" type="text" placeholder="Masukkan username Anda..." required class="custom-input pl-10 pr-4 py-3 sm:py-3.5 w-full bg-slate-50 border border-slate-200 rounded-xl text-slate-800 font-medium focus:bg-white focus:border-blue-500 focus:outline-none placeholder:text-slate-400">
+                <input id="school" type="text" placeholder="Contoh: sdn1 atau SD Negeri 1 Kertawirama..." required class="custom-input pl-10 pr-4 py-3 sm:py-3.5 w-full bg-slate-50 border border-slate-200 rounded-xl text-slate-800 font-medium focus:bg-white focus:border-blue-500 focus:outline-none placeholder:text-slate-400">
               </div>
             </div>
 
@@ -666,49 +666,66 @@
         void formCard.offsetWidth; // Trigger reflow
         formCard.classList.add('animate-shake');
 
-        showNotice('error', '<i class="fa-solid fa-triangle-exclamation mr-1 text-red-500"></i> Silakan isi Username dan Kata Sandi Anda.');
+        showNotice('error', '<i class="fa-solid fa-triangle-exclamation mr-1 text-red-500"></i> Silakan isi Username/Kode Sekolah dan Kata Sandi Anda.');
         return;
       }
 
-      // Matching school name ignoring case / exact key lookup
+      // Matching school name/code ignoring case / exact key lookup
       const matchedSchoolKey = Object.keys(DATABASE_AKSES).find(
         k => k.toLowerCase() === schoolInput.toLowerCase()
       );
 
-      const schoolData = matchedSchoolKey ? DATABASE_AKSES[matchedSchoolKey] : DATABASE_AKSES["DEFAULT"];
-      const roleConfig = schoolData[role] || (DATABASE_AKSES["DEFAULT"][role] || { pass: "123456", targetUrl: "select_class.html" });
-
-      if (password !== roleConfig.pass) {
+      // Check Username / Kode Sekolah Validation
+      if (!matchedSchoolKey) {
         playSound('error');
         formCard.classList.remove('animate-shake');
         void formCard.offsetWidth;
         formCard.classList.add('animate-shake');
 
-        showNotice('error', `<i class="fa-solid fa-lock text-red-500 mr-1"></i> Kata sandi salah untuk <b>${role}</b> di <b>${schoolInput}</b>.<br><span class="text-[10px] text-slate-400">(Petunjuk uji coba pass: <b>${roleConfig.pass}</b>)</span>`);
+        showNotice('error', `<i class="fa-solid fa-user-xmark text-red-500 mr-1"></i> Username / Kode Sekolah <b>"${schoolInput}"</b> tidak ditemukan atau belum terdaftar dalam sistem.`);
+        return;
+      }
+
+      const schoolData = DATABASE_AKSES[matchedSchoolKey];
+      const roleConfig = schoolData ? schoolData[role] : null;
+
+      if (!roleConfig || password !== roleConfig.pass) {
+        playSound('error');
+        formCard.classList.remove('animate-shake');
+        void formCard.offsetWidth;
+        formCard.classList.add('animate-shake');
+
+        showNotice('error', `<i class="fa-solid fa-lock text-red-500 mr-1"></i> Username atau Password Salah untuk peran <b>${role}</b> di <b>${matchedSchoolKey}</b>!`);
         return;
       }
 
       // Successful Login
       playSound('success');
 
+      // 1. Buat token izin akses khusus untuk sekolah ini (sessionStorage)
+      sessionStorage.setItem('isLoggedIn', 'true');
+      sessionStorage.setItem('activeSchool', matchedSchoolKey);
+      sessionStorage.setItem('userRole', role);
+
       submitBtn.disabled = true;
       btnText.textContent = 'Memverifikasi...';
       btnIcon.className = 'fa-solid fa-circle-notch fa-spin text-xs';
 
-      // Push history state sebelum navigasi agar tombol Back/Forward browser berfungsi rapi & tidak hang
+      // Push history state sebelum navigasi agar tombol Back/Forward browser berfungsi rapi
       history.pushState(
-        { page: 'dashboard', role: role, school: matchedSchoolKey || schoolInput },
+        { page: 'dashboard', role: role, school: matchedSchoolKey },
         `Dashboard - ${role}`,
         window.location.href
       );
 
+      // 2. Arahkan ke file HTML menu / dashboard sekolah tersebut
       setTimeout(() => {
         showNotice('success', `
           <div class="flex items-start space-x-2">
             <i class="fa-solid fa-circle-check text-emerald-600 text-base mt-0.5"></i>
             <div>
               <strong class="font-bold text-emerald-900">Login Berhasil!</strong><br>
-              Mengarahkan ke dashboard <b>${role}</b> (${matchedSchoolKey || schoolInput})...
+              Mengarahkan ke dashboard <b>${role}</b> (${matchedSchoolKey})...
             </div>
           </div>
         `);
