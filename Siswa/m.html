@@ -14,6 +14,8 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <!-- Chart.js CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- SheetJS (xlsx) untuk Export Excel -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     
     <script>
         tailwind.config = {
@@ -180,7 +182,7 @@
 
     </main>
 
-    <!-- Modal Absen Manual (Tombol Status Default Mati / Tidak Ada yang Terpilih) -->
+    <!-- Modal Absen Manual -->
     <div id="manualModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-50 flex items-center justify-center p-3 hidden">
         <div class="bg-white rounded-3xl shadow-2xl max-w-lg w-full p-5 sm:p-6 animate-slide-up relative border border-white/20 flex flex-col max-h-[90vh]">
             <div class="flex items-center justify-between pb-3 border-b border-slate-100">
@@ -256,10 +258,18 @@
                     </div>
                 </div>
 
-                <div class="flex items-center gap-1 bg-slate-100 p-1 rounded-2xl border border-slate-200 text-[11px] sm:text-xs font-semibold self-start sm:self-auto overflow-x-auto max-w-full">
-                    <button id="btnModeHarian" onclick="switchRekapMode('harian')" class="px-2.5 py-1.5 rounded-xl bg-white text-slate-800 shadow-sm transition-all whitespace-nowrap">Harian</button>
-                    <button id="btnModeBulan" onclick="switchRekapMode('bulan')" class="px-2.5 py-1.5 rounded-xl text-slate-600 hover:text-slate-900 transition-all whitespace-nowrap">Per Bulan</button>
-                    <button id="btnModeTahun" onclick="switchRekapMode('tahunan')" class="px-2.5 py-1.5 rounded-xl text-slate-600 hover:text-slate-900 transition-all whitespace-nowrap">Per Tahun (2026/2027)</button>
+                <div class="flex items-center gap-2">
+                    <div class="flex items-center gap-1 bg-slate-100 p-1 rounded-2xl border border-slate-200 text-[11px] sm:text-xs font-semibold overflow-x-auto max-w-full">
+                        <button id="btnModeHarian" onclick="switchRekapMode('harian')" class="px-2.5 py-1.5 rounded-xl bg-white text-slate-800 shadow-sm transition-all whitespace-nowrap">Harian</button>
+                        <button id="btnModeBulan" onclick="switchRekapMode('bulan')" class="px-2.5 py-1.5 rounded-xl text-slate-600 hover:text-slate-900 transition-all whitespace-nowrap">Per Bulan</button>
+                        <button id="btnModeTahun" onclick="switchRekapMode('tahunan')" class="px-2.5 py-1.5 rounded-xl text-slate-600 hover:text-slate-900 transition-all whitespace-nowrap">Per Tahun</button>
+                    </div>
+
+                    <!-- TOMBOL DOWNLOAD EXCEL -->
+                    <button onclick="exportToExcel()" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition-all shadow-md">
+                        <i data-lucide="download" class="w-3.5 h-3.5"></i>
+                        <span class="hidden sm:inline">Download Excel</span>
+                    </button>
                 </div>
 
                 <button onclick="closeRekapModal()" class="text-slate-400 hover:text-slate-600 p-1.5 rounded-full hover:bg-slate-100 absolute top-3 right-3 sm:relative sm:top-0 sm:right-0">
@@ -377,6 +387,7 @@
         let historyData = [];
         let globalStudentDatabase = []; 
         let rekapDatabase = [];
+        let yearSummaryDatabase = null;
         let currentRekapMode = 'harian'; 
 
         let doughnutChartInstance = null;
@@ -464,7 +475,6 @@
         function selectStudentForAttendance(nisn, nama) {
             const selectedStatus = document.querySelector('input[name="statusKeterangan"]:checked');
             
-            // Validasi: Pastikan Ibu Guru sudah memilih status (Hadir/Izin/Sakit/Alpa) sebelum klik nama siswa
             if (!selectedStatus) {
                 alert("⚠️ Harap pilih Status Kehadiran terlebih dahulu (Hadir, Izin, Sakit, atau Alpa) di bagian atas sebelum mengklik nama siswa!");
                 return;
@@ -537,13 +547,30 @@
             document.getElementById('manualModal').classList.remove('hidden');
             document.getElementById('searchSiswaInput').value = '';
             
-            // Reset pilihan status radio button setiap kali modal dibuka agar tidak ada yang terpilih otomatis
             const radios = document.querySelectorAll('input[name="statusKeterangan"]');
             radios.forEach(r => r.checked = false);
 
             fetchStudentList(); 
         }
         function closeManualModal() { document.getElementById('manualModal').classList.add('hidden'); }
+
+        /* --- HELPER LOADING ANIMATION --- */
+        function showTableLoading(message = "Memuat data...") {
+            const tbody = document.getElementById('rekapTableBody');
+            if (tbody) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="text-center py-10 text-slate-400">
+                            <div class="flex flex-col items-center justify-center gap-2">
+                                <i data-lucide="loader-2" class="w-7 h-7 animate-spin text-indigo-600"></i>
+                                <p class="text-xs font-semibold text-slate-600">${message}</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                lucide.createIcons();
+            }
+        }
 
         /* --- REKAP & GRAFIK --- */
         function openRekapModal() {
@@ -598,6 +625,7 @@
             const dateVal = document.getElementById('customRekapDate').value;
             if (!dateVal) return;
 
+            showTableLoading("Memuat data rekap harian...");
             fetch(`${SCRIPT_URL}?action=getStudents&date=${dateVal}&mode=harian`)
                 .then(res => res.json())
                 .then(data => {
@@ -606,13 +634,17 @@
                         renderHarianTable(rekapDatabase);
                     }
                 })
-                .catch(err => console.error("Gagal ambil rekap harian:", err));
+                .catch(err => {
+                    console.error("Gagal ambil rekap harian:", err);
+                    document.getElementById('rekapTableBody').innerHTML = `<tr><td colspan="4" class="text-center py-6 text-rose-500 font-medium">Gagal memuat data dari server.</td></tr>`;
+                });
         }
 
         function fetchRekapPerBulanOtomatis() {
             const bulanVal = document.getElementById('selectBulanOtomatis').value; 
             const targetDateStr = `${bulanVal}-01`;
 
+            showTableLoading("Memuat rekap presensi per bulan...");
             fetch(`${SCRIPT_URL}?action=getStudents&date=${targetDateStr}&mode=bulan`)
                 .then(res => res.json())
                 .then(data => {
@@ -621,7 +653,28 @@
                         renderBulananTable(rekapDatabase);
                     }
                 })
-                .catch(err => console.error("Gagal ambil rekap bulanan:", err));
+                .catch(err => {
+                    console.error("Gagal ambil rekap bulanan:", err);
+                    document.getElementById('rekapTableBody').innerHTML = `<tr><td colspan="6" class="text-center py-6 text-rose-500 font-medium">Gagal memuat data dari server.</td></tr>`;
+                });
+        }
+
+        function fetchYearSummary() {
+            document.getElementById('chartBarTitle').innerText = "Akumulasi Total Tahun Ajaran (Juli 2026 - Juni 2027)";
+            
+            // Tampilkan animasi loading sementara pada bar chart
+            const ctxBar = document.getElementById('barChart').getContext('2d');
+            if (barChartInstance) barChartInstance.destroy();
+            
+            fetch(`${SCRIPT_URL}?action=getYearSummary`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data && data.totals) {
+                        yearSummaryDatabase = data;
+                        renderYearSummaryChart(data.totals);
+                    }
+                })
+                .catch(err => console.error("Gagal mengambil ringkasan tahunan:", err));
         }
 
         function renderHarianTable(students) {
@@ -725,18 +778,6 @@
             document.getElementById('countBelum').innerText = belum;
         }
 
-        function fetchYearSummary() {
-            document.getElementById('chartBarTitle').innerText = "Akumulasi Total Tahun Ajaran (Juli 2026 - Juni 2027)";
-            fetch(`${SCRIPT_URL}?action=getYearSummary`)
-                .then(res => res.json())
-                .then(data => {
-                    if (data && data.totals) {
-                        renderYearSummaryChart(data.totals);
-                    }
-                })
-                .catch(err => console.error("Gagal mengambil ringkasan tahunan:", err));
-        }
-
         function renderYearSummaryChart(totals) {
             const h = totals.hadir || 0;
             const i = totals.izin || 0;
@@ -804,6 +845,75 @@
             const filtered = rekapDatabase.filter(st => String(st.nisn || '').toLowerCase().includes(query) || String(st.nama || '').toLowerCase().includes(query));
             if(currentRekapMode === 'harian') renderHarianTable(filtered);
             else if(currentRekapMode === 'bulan') renderBulananTable(filtered);
+        }
+
+        /* --- EXPORT TO EXCEL --- */
+        function exportToExcel() {
+            if (typeof XLSX === 'undefined') {
+                alert("Pustaka SheetJS belum dimuat dengan sempurna, periksa koneksi internet Anda.");
+                return;
+            }
+
+            let exportData = [];
+            let fileName = "Rekap_Presensi.xlsx";
+
+            if (currentRekapMode === 'harian') {
+                const dateVal = document.getElementById('customRekapDate').value;
+                fileName = `Rekap_Presensi_Harian_${dateVal}.xlsx`;
+
+                exportData = rekapDatabase.map((st, idx) => ({
+                    "No": idx + 1,
+                    "Nama Siswa": st.nama,
+                    "NISN": st.nisn || "-",
+                    "Status Kehadiran": st.statusToday || "-"
+                }));
+
+            } else if (currentRekapMode === 'bulan') {
+                const bulanVal = document.getElementById('selectBulanOtomatis').value;
+                fileName = `Rekap_Presensi_Bulan_${bulanVal}.xlsx`;
+
+                exportData = rekapDatabase.map((st, idx) => ({
+                    "No": idx + 1,
+                    "Nama Siswa": st.nama,
+                    "Hadir (H)": st.hadir,
+                    "Izin (I)": st.izin,
+                    "Sakit (S)": st.sakit,
+                    "Alpa (A)": st.alpa
+                }));
+
+            } else if (currentRekapMode === 'tahunan') {
+                fileName = `Rekap_Presensi_Tahun_Ajaran_2026_2027.xlsx`;
+
+                if (yearSummaryDatabase && Array.isArray(yearSummaryDatabase.summary)) {
+                    exportData = yearSummaryDatabase.summary.map((item, idx) => ({
+                        "No": idx + 1,
+                        "Bulan": item.bulan,
+                        "Hadir": item.hadir,
+                        "Izin": item.izin,
+                        "Sakit": item.sakit,
+                        "Alpa": item.alpa
+                    }));
+
+                    exportData.push({
+                        "No": "TOTAL",
+                        "Bulan": "Akumulasi 1 Tahun",
+                        "Hadir": yearSummaryDatabase.totals.hadir,
+                        "Izin": yearSummaryDatabase.totals.izin,
+                        "Sakit": yearSummaryDatabase.totals.sakit,
+                        "Alpa": yearSummaryDatabase.totals.alpa
+                    });
+                }
+            }
+
+            if (exportData.length === 0) {
+                alert("Data kosong atau belum selesai dimuat.");
+                return;
+            }
+
+            const worksheet = XLSX.utils.json_to_sheet(exportData);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "Rekap Presensi");
+            XLSX.writeFile(workbook, fileName);
         }
 
         function addHistoryItem(data) {
