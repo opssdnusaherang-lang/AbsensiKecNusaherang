@@ -469,16 +469,38 @@
         "Siswa": { pass: "siswa123", targetUrl: "siswa_windusari.html" },
         "Admin Sekolah": { pass: "admin123", targetUrl: "admin_windusari.html" },
         "Admin UPTD": { pass: "uptd123", targetUrl: "uptd_dashboard.html" }
-      },
-
-      // Default fallback password jika sekolah belum didaftarkan di objek khusus
-      "DEFAULT": {
-        "Guru": { pass: "guru123", targetUrl: "select_class.html" },
-        "Siswa": { pass: "siswa123", targetUrl: "siswa_dashboard.html" },
-        "Admin Sekolah": { pass: "admin123", targetUrl: "admin_dashboard.html" },
-        "Admin UPTD": { pass: "uptd123", targetUrl: "uptd_dashboard.html" }
       }
     };
+
+    /* 
+    ========================================================================================
+    🌐 BROWSER HISTORY MANAGEMENT (ANTI-NAYUT UNTUK BACK/FORWARD BROWSER)
+    ========================================================================================
+    */
+    window.addEventListener('DOMContentLoaded', () => {
+      // Inisialisasi state awal agar history browser tercatat dengan jelas
+      if (!history.state) {
+        history.replaceState({ page: 'portal_login', step: 1 }, document.title, window.location.href);
+      }
+    });
+
+    // Menangani tombol back/forward di browser agar tidak terjadi error / halaman gantung
+    window.addEventListener('popstate', (event) => {
+      if (event.state) {
+        // Reset form state dan notifikasi saat pengguna memencet tombol Back / Forward browser
+        const notice = document.getElementById('notice');
+        if (notice) notice.classList.add('hidden');
+        
+        const submitBtn = document.getElementById('submitBtn');
+        const btnText = document.getElementById('btnText');
+        const btnIcon = document.getElementById('btnIcon');
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          if (btnText) btnText.textContent = 'Masuk ke Dashboard';
+          if (btnIcon) btnIcon.className = 'fa-solid fa-arrow-right text-xs transition-transform group-hover:translate-x-1';
+        }
+      }
+    });
 
     /* 
     ========================================================================================
@@ -625,14 +647,26 @@
       const role = document.getElementById('role').value;
       const password = passwordInput.value.trim();
 
-      // Form Validation
-      if (!schoolInput || !role || !password) {
+      // Explicit Check: Peringatan Khusus Jika Peran Belum Dipilih
+      if (!role) {
+        playSound('error');
+        formCard.classList.remove('animate-shake');
+        void formCard.offsetWidth;
+        formCard.classList.add('animate-shake');
+
+        showNotice('error', '<i class="fa-solid fa-user-xmark mr-1 text-red-500"></i> <b>Peran pengguna belum dipilih!</b> Silakan pilih peran (Guru/Siswa/Admin) terlebih dahulu.');
+        document.getElementById('role').focus();
+        return;
+      }
+
+      // Validasi Lengkap Form Input
+      if (!schoolInput || !password) {
         playSound('error');
         formCard.classList.remove('animate-shake');
         void formCard.offsetWidth; // Trigger reflow
         formCard.classList.add('animate-shake');
 
-        showNotice('error', '<i class="fa-solid fa-triangle-exclamation mr-1 text-red-500"></i> Isikan Username, pilih peran, dan kata sandi.');
+        showNotice('error', '<i class="fa-solid fa-triangle-exclamation mr-1 text-red-500"></i> Silakan isi Username dan Kata Sandi Anda.');
         return;
       }
 
@@ -661,6 +695,13 @@
       btnText.textContent = 'Memverifikasi...';
       btnIcon.className = 'fa-solid fa-circle-notch fa-spin text-xs';
 
+      // Push history state sebelum navigasi agar tombol Back/Forward browser berfungsi rapi & tidak hang
+      history.pushState(
+        { page: 'dashboard', role: role, school: matchedSchoolKey || schoolInput },
+        `Dashboard - ${role}`,
+        window.location.href
+      );
+
       setTimeout(() => {
         showNotice('success', `
           <div class="flex items-start space-x-2">
@@ -680,7 +721,7 @@
           });
         }
 
-        // Redirect to configured HTML file
+        // Redirect ke target URL
         setTimeout(() => {
           window.location.href = roleConfig.targetUrl;
         }, 1200);
