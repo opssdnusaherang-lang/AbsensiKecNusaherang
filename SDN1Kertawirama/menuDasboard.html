@@ -1,4 +1,4 @@
-
+<!DOCTYPE html>
 <html lang="id" class="h-full">
 <head>
     <meta charset="UTF-8">
@@ -162,12 +162,6 @@
 
                 <!-- User Profile & Action Controls -->
                 <div class="flex items-center space-x-2 sm:space-x-4">
-                    <!-- Audio Mute/Play Toggle -->
-                    <button id="soundToggleBtn" onclick="toggleAudio()" class="p-2.5 sm:px-4 sm:py-2 rounded-2xl bg-white border border-slate-200 text-slate-600 hover:text-amber-500 hover:border-amber-300 transition-all text-xs sm:text-sm font-semibold flex items-center gap-2 shadow-sm">
-                        <i id="soundIcon" class="fa-solid fa-volume-xmark text-amber-500"></i>
-                        <span class="hidden md:inline" id="soundText">Suara: Mati</span>
-                    </button>
-
                     <!-- Teacher Greeting Pill -->
                     <div class="flex items-center space-x-2.5 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200/80 p-1.5 sm:pr-4 rounded-full shadow-inner">
                         <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-gradient-to-tr from-amber-500 to-orange-500 text-white flex items-center justify-center font-bold text-sm shadow-sm">
@@ -246,7 +240,7 @@
                                 Kelas 1
                             </h3>
                             <p class="text-xs text-slate-500 flex items-center gap-1.5">
-                                <i class="fa-solid fa-file-code text-emerald-500"></i> File Target: <span class="font-mono text-emerald-700 font-semibold">absen_kelas1.html</span>
+                                <i class="fa-solid fa-graduation-cap text-emerald-500"></i> Tingkat Sekolah Dasar
                             </p>
                         </div>
 
@@ -279,7 +273,7 @@
                                 Kelas 2
                             </h3>
                             <p class="text-xs text-slate-500 flex items-center gap-1.5">
-                                <i class="fa-solid fa-file-code text-sky-500"></i> File Target: <span class="font-mono text-sky-700 font-semibold">absen_kelas2.html</span>
+                                <i class="fa-solid fa-graduation-cap text-sky-500"></i> Tingkat Sekolah Dasar
                             </p>
                         </div>
 
@@ -312,7 +306,7 @@
                                 Kelas 3
                             </h3>
                             <p class="text-xs text-slate-500 flex items-center gap-1.5">
-                                <i class="fa-solid fa-file-code text-amber-500"></i> File Target: <span class="font-mono text-amber-700 font-semibold">absen_kelas3.html</span>
+                                <i class="fa-solid fa-graduation-cap text-amber-500"></i> Tingkat Sekolah Dasar
                             </p>
                         </div>
 
@@ -345,7 +339,7 @@
                                 Kelas 4
                             </h3>
                             <p class="text-xs text-slate-500 flex items-center gap-1.5">
-                                <i class="fa-solid fa-file-code text-purple-500"></i> File Target: <span class="font-mono text-purple-700 font-semibold">absen_kelas4.html</span>
+                                <i class="fa-solid fa-graduation-cap text-purple-500"></i> Tingkat Sekolah Dasar
                             </p>
                         </div>
 
@@ -378,7 +372,7 @@
                                 Kelas 5
                             </h3>
                             <p class="text-xs text-slate-500 flex items-center gap-1.5">
-                                <i class="fa-solid fa-file-code text-rose-500"></i> File Target: <span class="font-mono text-rose-700 font-semibold">absen_kelas5.html</span>
+                                <i class="fa-solid fa-graduation-cap text-rose-500"></i> Tingkat Sekolah Dasar
                             </p>
                         </div>
 
@@ -411,7 +405,7 @@
                                 Kelas 6
                             </h3>
                             <p class="text-xs text-slate-500 flex items-center gap-1.5">
-                                <i class="fa-solid fa-file-code text-indigo-500"></i> File Target: <span class="font-mono text-indigo-700 font-semibold">absen_kelas6.html</span>
+                                <i class="fa-solid fa-graduation-cap text-indigo-500"></i> Tingkat Sekolah Dasar
                             </p>
                         </div>
 
@@ -495,8 +489,25 @@
 
     <!-- JAVASCRIPT LOGIC -->
     <script>
+        /* 
+        ========================================================================
+        📌 PETUNJUK EDIT FILE TARGET / HALAMAN TERHUBUNG UNTUK GURU:
+        Silakan ganti nilai di bawah ini sesuai dengan nama file HTML masing-masing
+        kelas yang sudah Bapak/Ibu buat.
+        ========================================================================
+        */
+        const HALAMAN_KELAS = {
+            1: 'Siswa/Kelas1.html',  // <-- Ganti dengan nama file HTML Kelas 1 Anda
+            2: 'absen_kelas2.html',  // <-- Ganti dengan nama file HTML Kelas 2 Anda
+            3: 'absen_kelas3.html',  // <-- Ganti dengan nama file HTML Kelas 3 Anda
+            4: 'absen_kelas4.html',  // <-- Ganti dengan nama file HTML Kelas 4 Anda
+            5: 'absen_kelas5.html',  // <-- Ganti dengan nama file HTML Kelas 5 Anda
+            6: 'absen_kelas6.html'   // <-- Ganti dengan nama file HTML Kelas 6 Anda
+        };
+
         let targetUrl = '';
-        let audioEnabled = false;
+        // Audio diatur agar selalu aktif secara otomatis
+        let audioEnabled = true;
         let synth = null;
 
         // Display current date in Indonesian format
@@ -519,38 +530,21 @@
         }
 
         function playBeep(note = "C5", duration = "8n") {
-            if (audioEnabled) {
-                try {
-                    initAudio();
-                    Tone.start();
-                    synth.triggerAttackRelease(note, duration);
-                } catch(e) {
-                    console.log("Audio play suppressed");
-                }
-            }
-        }
-
-        function toggleAudio() {
-            audioEnabled = !audioEnabled;
-            const icon = document.getElementById('soundIcon');
-            const text = document.getElementById('soundText');
-
-            if (audioEnabled) {
-                icon.className = "fa-solid fa-volume-high text-emerald-500";
-                text.innerText = "Suara: On";
-                playBeep("G5", "8n");
-            } else {
-                icon.className = "fa-solid fa-volume-xmark text-amber-500";
-                text.innerText = "Suara: Mati";
+            try {
+                initAudio();
+                Tone.start();
+                synth.triggerAttackRelease(note, duration);
+            } catch(e) {
+                console.log("Audio play suppressed");
             }
         }
 
         // Action when teacher clicks a class card
-        function selectClass(classNumber, className, romanNumeral, studentCount, url, bgClass, gradientClass) {
+        function selectClass(classNumber, className, romanNumeral, studentCount, dummyUrl, bgClass, gradientClass) {
             playBeep("E5", "8n");
 
-            // Setup Target URL
-            targetUrl = url;
+            // Mengambil URL target langsung dari daftar HALAMAN_KELAS
+            targetUrl = HALAMAN_KELAS[classNumber] || 'index.html';
 
             // Setup Modal visual dynamics
             const modal = document.getElementById('confirmModal');
@@ -572,7 +566,7 @@
                 playBeep("C6", "4n");
                 confirmBtn.innerHTML = `<i class="fa-solid fa-circle-notch animate-spin"></i> Membuka Presensi...`;
                 
-                // Redirect smoothly
+                // Redirect smoothly ke file target
                 setTimeout(() => {
                     window.location.href = targetUrl;
                 }, 600);
@@ -612,10 +606,12 @@
             });
 
             const noResults = document.getElementById('noResults');
-            if (visibleCount === 0) {
-                noResults.classList.remove('hidden');
-            } else {
-                noResults.classList.add('hidden');
+            if (noResults) {
+                if (visibleCount === 0) {
+                    noResults.classList.remove('hidden');
+                } else {
+                    noResults.classList.add('hidden');
+                }
             }
         }
 
