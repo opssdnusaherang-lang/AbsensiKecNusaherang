@@ -23,7 +23,7 @@
       if (sessionStorage.getItem('isLoggedIn') !== 'true') {
         // Jika belum login / mencoba akses langsung URL, lempar paksa balik ke index.html utama
         alert('Akses ditolak! Silakan login terlebih dahulu.');
-        window.location.replace('../index.html'); // Sesuaikan path relatif ke index.html utama
+        window.location.replace('../../index.html'); // Sesuaikan path relatif ke index.html utama
       }
 
       // 2. Kunci tombol Back / Forward agar tidak bisa kembali ke state sebelumnya secara bebas
