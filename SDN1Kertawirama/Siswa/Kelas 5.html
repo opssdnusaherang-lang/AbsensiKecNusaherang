@@ -19,19 +19,16 @@
     
     <!-- Script Sesi Login, Proteksi Tombol Back, & Logout -->
     <script>
-      // 1. Cek apakah pengguna sudah login lewat index.html
       if (sessionStorage.getItem('isLoggedIn') !== 'true') {
         alert('Akses ditolak! Silakan login terlebih dahulu.');
         window.location.replace('../../index.html');
       }
 
-      // 2. Kunci tombol Back / Forward agar tidak bisa kembali ke state sebelumnya secara bebas
       history.pushState(null, null, location.href);
       window.onpopstate = function () {
         history.go(1);
       };
 
-      // 3. Fungsi Logout khusus di dalam file menu sekolah
       function logoutSekolah() {
         window.location.replace('../menuDasboard.html');
       }
@@ -61,7 +58,7 @@
         #reader { border: none !important; }
         #reader video { border-radius: 1rem !important; object-fit: cover; }
         #reader__dashboard_section_csr button {
-            background-color: #4f46e5 !important;
+            background-color: #f43f5e !important;
             color: white !important;
             padding: 0.5rem 1rem !important;
             border-radius: 0.75rem !important;
@@ -69,7 +66,7 @@
             border: none !important;
             cursor: pointer !important;
             margin-top: 8px !important;
-            box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.3);
+            box-shadow: 0 4px 6px -1px rgba(244, 63, 94, 0.3);
         }
         .glass-card { background: rgba(255, 255, 255, 0.90); backdrop-filter: blur(12px); }
         .custom-scrollbar::-webkit-scrollbar { width: 5px; height: 5px; }
@@ -77,20 +74,20 @@
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
     </style>
 </head>
-<body class="bg-slate-100 min-h-screen font-sans text-slate-800 antialiased flex flex-col justify-between selection:bg-indigo-500 selection:text-white">
+<body class="bg-slate-100 min-h-screen font-sans text-slate-800 antialiased flex flex-col justify-between selection:bg-rose-500 selection:text-white">
 
     <!-- Audio Element untuk Suara Beep Scan & Suara Berhasil/Gagal -->
     <audio id="soundSuccess" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto"></audio>
     <audio id="soundError" src="https://assets.mixkit.co/active_storage/sfx/2873/2873-preview.mp3" preload="auto"></audio>
 
-    <!-- Header -->
-    <header class="bg-gradient-to-r from-indigo-700 via-purple-700 to-indigo-800 text-white shadow-xl relative overflow-hidden">
-        <div class="absolute -top-10 -left-10 w-40 h-40 bg-pink-500/20 rounded-full blur-3xl pointer-events-none"></div>
-        <div class="absolute -bottom-10 right-10 w-60 h-60 bg-indigo-400/20 rounded-full blur-3xl pointer-events-none"></div>
+    <!-- Header (Bernuansa Merah / Rose) -->
+    <header class="bg-gradient-to-r from-rose-600 via-red-600 to-rose-700 text-white shadow-xl relative overflow-hidden">
+        <div class="absolute -top-10 -left-10 w-40 h-40 bg-red-400/20 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute -bottom-10 right-10 w-60 h-60 bg-rose-400/20 rounded-full blur-3xl pointer-events-none"></div>
 
         <div class="max-w-6xl mx-auto px-3 sm:px-6 py-4 sm:py-5 relative z-10">
             <div class="flex flex-wrap items-center justify-between pb-3 mb-3 border-b border-white/10 gap-2">
-                <button onclick="logoutSekolah()" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-red-500/80 hover:bg-red-600 text-white text-xs font-semibold transition-all backdrop-blur-md border border-white/15 shadow-sm">
+                <button onclick="logoutSekolah()" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-red-800/80 hover:bg-red-900 text-white text-xs font-semibold transition-all backdrop-blur-md border border-white/15 shadow-sm">
                     <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
                     <span>Keluar / Logout</span>
                 </button>
@@ -100,7 +97,7 @@
                         <i data-lucide="refresh-cw" class="w-3.5 h-3.5" id="refreshIcon"></i>
                         <span class="hidden sm:inline">Sync</span>
                     </button>
-                    <button onclick="openRekapModal()" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold bg-emerald-500 hover:bg-emerald-600 text-white border border-emerald-400/30 transition-all shadow-md">
+                    <button onclick="openRekapModal()" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold bg-rose-500 hover:bg-rose-600 text-white border border-rose-400/30 transition-all shadow-md">
                         <i data-lucide="bar-chart-3" class="w-3.5 h-3.5"></i>
                         <span>Rekap & Grafik</span>
                     </button>
@@ -110,25 +107,25 @@
             <div class="flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
                 <div class="flex items-center space-x-3">
                     <div class="p-2.5 bg-white/15 rounded-2xl backdrop-blur-md border border-white/25 shadow-inner animate-float hidden sm:block">
-                        <i data-lucide="qr-code" class="w-7 h-7 text-indigo-200"></i>
+                        <i data-lucide="qr-code" class="w-7 h-7 text-rose-200"></i>
                     </div>
                     <div>
-                        <h1 class="text-xl sm:text-2xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white via-indigo-100 to-purple-200">
+                        <h1 class="text-xl sm:text-2xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white via-rose-100 to-red-200">
                             Presensi Digital Siswa
                         </h1>
-                        <p class="text-[11px] sm:text-xs text-indigo-100/90 font-medium">Sistem Absensi QR Code & Database Spreadsheet</p>
+                        <p class="text-[11px] sm:text-xs text-rose-100/90 font-medium">Sistem Absensi QR Code & Database Spreadsheet</p>
                     </div>
                 </div>
 
                 <div class="bg-white/15 backdrop-blur-md px-3 py-2 rounded-2xl border border-white/25 flex items-center space-x-2.5 shadow-lg">
-                    <div class="p-1.5 bg-pink-500/30 rounded-xl border border-pink-300/30 animate-pulse">
-                        <i data-lucide="sparkles" class="w-4 h-4 text-pink-200"></i>
+                    <div class="p-1.5 bg-rose-500/30 rounded-xl border border-rose-300/30 animate-pulse">
+                        <i data-lucide="sparkles" class="w-4 h-4 text-rose-200"></i>
                     </div>
                     <div>
-                        <p class="text-[10px] text-indigo-100 font-medium">Selamat Datang,</p>
+                        <p class="text-[10px] text-rose-100 font-medium">Selamat Datang,</p>
                         <p class="text-xs sm:text-sm font-bold text-white flex items-center gap-1">
                             <span>Ibu Guru</span>
-                            <i data-lucide="heart" class="w-3.5 h-3.5 text-pink-300 fill-pink-300 inline animate-bounce"></i>
+                            <i data-lucide="heart" class="w-3.5 h-3.5 text-rose-300 fill-rose-300 inline animate-bounce"></i>
                         </p>
                     </div>
                 </div>
@@ -143,25 +140,25 @@
             <div class="glass-card rounded-3xl shadow-lg border border-white/60 p-4 sm:p-6 transition-all">
                 <div class="flex items-center justify-between mb-3">
                     <h2 class="text-sm sm:text-base font-bold text-slate-800 flex items-center gap-2">
-                        <span class="p-1.5 sm:p-2 bg-indigo-50 text-indigo-600 rounded-xl">
+                        <span class="p-1.5 sm:p-2 bg-rose-50 text-rose-600 rounded-xl">
                             <i data-lucide="camera" class="w-4 h-4 sm:w-5 sm:h-5"></i>
                         </span>
                         Scanner Kartu Presensi
                     </h2>
-                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-emerald-100 text-emerald-800 shadow-sm">
-                        <span class="w-1.5 h-1.5 mr-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-rose-100 text-rose-800 shadow-sm">
+                        <span class="w-1.5 h-1.5 mr-1.5 rounded-full bg-rose-500 animate-pulse"></span>
                         Aktif
                     </span>
                 </div>
 
                 <div class="relative bg-slate-900 rounded-2xl overflow-hidden p-1.5 shadow-inner border border-slate-700">
                     <div id="reader" class="w-full rounded-xl overflow-hidden"></div>
-                    <div class="pointer-events-none absolute left-0 right-0 h-1 bg-gradient-to-r from-transparent via-indigo-400 to-transparent shadow-[0_0_15px_#818cf8] animate-radar-scan opacity-75"></div>
+                    <div class="pointer-events-none absolute left-0 right-0 h-1 bg-gradient-to-r from-transparent via-rose-400 to-transparent shadow-[0_0_15px_#fb7185] animate-radar-scan opacity-75"></div>
                 </div>
 
                 <div id="resultBox" class="mt-4 p-3.5 rounded-2xl transition-all duration-300 bg-slate-100 border border-slate-200 text-center">
                     <div id="resultIcon" class="mb-1.5 flex justify-center">
-                        <i data-lucide="scan-line" class="w-7 h-7 text-indigo-500 animate-pulse"></i>
+                        <i data-lucide="scan-line" class="w-7 h-7 text-rose-500 animate-pulse"></i>
                     </div>
                     <div id="resultText" class="text-xs sm:text-sm font-medium text-slate-600">
                         Arahkan QR Code Kartu Siswa ke Kamera
@@ -169,12 +166,12 @@
                 </div>
 
                 <div class="mt-4 pt-3 border-t border-slate-200/80 grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                    <button onclick="openManualModal()" class="py-2.5 px-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-2xl text-xs font-semibold shadow-md active:scale-[0.99] flex items-center justify-center gap-2">
-                        <i data-lucide="users" class="w-4 h-4 text-purple-200"></i>
+                    <button onclick="openManualModal()" class="py-2.5 px-3 bg-gradient-to-r from-rose-500 to-red-600 hover:from-rose-600 hover:to-red-700 text-white rounded-2xl text-xs font-semibold shadow-md active:scale-[0.99] flex items-center justify-center gap-2">
+                        <i data-lucide="users" class="w-4 h-4 text-rose-200"></i>
                         <span>Absen Manual (Klik Nama)</span>
                     </button>
                     <button onclick="openRekapModal()" class="py-2.5 px-3 bg-slate-800 hover:bg-slate-900 text-white rounded-2xl text-xs font-semibold shadow-md active:scale-[0.99] flex items-center justify-center gap-2">
-                        <i data-lucide="bar-chart-2" class="w-4 h-4 text-emerald-400"></i>
+                        <i data-lucide="bar-chart-2" class="w-4 h-4 text-rose-400"></i>
                         <span>Lihat Grafik & Rekap</span>
                     </button>
                 </div>
@@ -185,12 +182,12 @@
             <div class="glass-card rounded-3xl shadow-lg border border-white/60 p-4 sm:p-6 flex flex-col h-full">
                 <div class="flex items-center justify-between mb-3">
                     <h3 class="text-sm sm:text-base font-bold text-slate-800 flex items-center gap-2">
-                        <span class="p-1.5 sm:p-2 bg-indigo-50 text-indigo-600 rounded-xl">
+                        <span class="p-1.5 sm:p-2 bg-rose-50 text-rose-600 rounded-xl">
                             <i data-lucide="history" class="w-4 h-4 sm:w-5 sm:h-5"></i>
                         </span>
                         Aktivitas Absen Terakhir
                     </h3>
-                    <span id="historyCount" class="text-xs font-semibold bg-indigo-100 text-indigo-700 px-2.5 py-0.5 rounded-full shadow-sm">0 Siswa</span>
+                    <span id="historyCount" class="text-xs font-semibold bg-rose-100 text-rose-700 px-2.5 py-0.5 rounded-full shadow-sm">0 Siswa</span>
                 </div>
 
                 <div id="historyList" class="flex-grow overflow-y-auto max-h-[300px] sm:max-h-[360px] space-y-2 pr-1 custom-scrollbar">
@@ -211,7 +208,7 @@
         <div class="bg-white rounded-3xl shadow-2xl max-w-lg w-full p-5 sm:p-6 animate-slide-up relative border border-white/20 flex flex-col max-h-[90vh]">
             <div class="flex items-center justify-between pb-3 border-b border-slate-100">
                 <div class="flex items-center gap-2.5">
-                    <div class="p-2.5 bg-indigo-50 text-indigo-600 rounded-2xl">
+                    <div class="p-2.5 bg-rose-50 text-rose-600 rounded-2xl">
                         <i data-lucide="user-check" class="w-5 h-5"></i>
                     </div>
                     <div>
@@ -250,12 +247,12 @@
                 <div class="relative">
                     <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-3"></i>
                     <input type="text" id="searchSiswaInput" oninput="filterSiswaList()" placeholder="Cari nama atau NISN..." 
-                           class="w-full pl-10 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-2xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                           class="w-full pl-10 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-2xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-rose-500">
                 </div>
 
                 <div id="studentListContainer" class="flex-grow overflow-y-auto space-y-2 pr-1 custom-scrollbar min-h-[200px]">
                     <div class="text-center py-8 text-slate-400">
-                        <i data-lucide="loader-2" class="w-6 h-6 animate-spin mx-auto text-indigo-500 mb-2"></i>
+                        <i data-lucide="loader-2" class="w-6 h-6 animate-spin mx-auto text-rose-500 mb-2"></i>
                         <p class="text-xs font-medium">Memuat daftar siswa...</p>
                     </div>
                 </div>
@@ -273,7 +270,7 @@
             
             <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-slate-100 gap-2.5">
                 <div class="flex items-center gap-2.5">
-                    <div class="p-2.5 bg-emerald-50 text-emerald-600 rounded-2xl">
+                    <div class="p-2.5 bg-rose-50 text-rose-600 rounded-2xl">
                         <i data-lucide="bar-chart-3" class="w-5 h-5 sm:w-6 sm:h-6"></i>
                     </div>
                     <div>
@@ -290,7 +287,7 @@
                     </div>
 
                     <!-- TOMBOL DOWNLOAD EXCEL -->
-                    <button onclick="exportToExcel()" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition-all shadow-md">
+                    <button onclick="exportToExcel()" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-2xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold transition-all shadow-md">
                         <i data-lucide="download" class="w-3.5 h-3.5"></i>
                         <span class="hidden sm:inline">Download Excel</span>
                     </button>
@@ -304,7 +301,7 @@
             <div id="harianControlSection" class="mt-2.5 flex items-center gap-2 bg-slate-50 p-2 rounded-2xl border border-slate-200 text-xs">
                 <label class="font-bold text-slate-700 whitespace-nowrap">Pilih Tanggal:</label>
                 <input type="date" id="customRekapDate" onchange="fetchRekapByCustomDate()" 
-                       class="px-2.5 py-1 bg-white border border-slate-200 rounded-xl font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 w-full">
+                       class="px-2.5 py-1 bg-white border border-slate-200 rounded-xl font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-rose-500 w-full">
             </div>
 
             <div id="bulanControlSection" class="mt-2.5 hidden items-center gap-2 bg-slate-50 p-2 rounded-2xl border border-slate-200 text-xs">
@@ -369,7 +366,7 @@
                     <div class="relative">
                         <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-3"></i>
                         <input type="text" id="searchRekapInput" oninput="filterRekapTable()" placeholder="Cari nama siswa..." 
-                               class="w-full pl-10 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-2xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                               class="w-full pl-10 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-2xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-rose-500">
                     </div>
 
                     <div class="border border-slate-200 rounded-2xl overflow-hidden shadow-sm overflow-x-auto">
@@ -405,7 +402,7 @@
 
     <!-- Script Utama -->
     <script>
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzZIQBcgj-ZUvFjdL6qIPJgVzvL8bmHBhLSU4Af0NhY4LRiiOY_7AKgYOgfg0QsAkGo/exec";
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx5nmjuOsaMYrGvpf-jlIbQTQMhBWvHaFBZoN1LrUu17l0-wAyTXsa_AkFAliFDOeQh/exec";
 
         let isProcessing = false;
         let historyData = [];
@@ -419,7 +416,6 @@
 
         lucide.createIcons();
 
-        // Fungsi Pemutar Suara / Audio Pop/Beep
         function playBeep(type = 'success') {
             try {
                 if (type === 'success') {
@@ -455,7 +451,6 @@
             }
         }
 
-        // Ambil daftar siswa berdasarkan tanggal hari ini (default scanner)
         function fetchStudentList() {
             const todayStr = new Date().toISOString().split('T')[0];
             fetch(`${SCRIPT_URL}?action=getStudents&date=${todayStr}&mode=harian`)
@@ -468,7 +463,6 @@
                 .catch(err => console.error("Gagal ambil siswa:", err));
         }
 
-        // Ambil daftar siswa untuk absen manual berdasarkan tanggal aktif rekap harian
         function fetchStudentListForManualModal() {
             const dateVal = document.getElementById('customRekapDate').value || new Date().toISOString().split('T')[0];
             const dateLabelEl = document.getElementById('manualModalDateLabel');
@@ -478,7 +472,7 @@
             if(container) {
                 container.innerHTML = `
                     <div class="text-center py-8 text-slate-400">
-                        <i data-lucide="loader-2" class="w-6 h-6 animate-spin mx-auto text-indigo-500 mb-2"></i>
+                        <i data-lucide="loader-2" class="w-6 h-6 animate-spin mx-auto text-rose-500 mb-2"></i>
                         <p class="text-xs font-medium">Memuat data tanggal ${dateVal}...</p>
                     </div>
                 `;
@@ -510,14 +504,14 @@
                 const statusToday = (student.statusToday || '-').toUpperCase();
                 
                 let isAbsen = statusToday !== '-' && statusToday !== '';
-                let cardBg = isAbsen ? 'bg-emerald-50/90 border-emerald-200 hover:bg-emerald-100' : 'bg-slate-50/80 border-slate-100 hover:bg-indigo-50 hover:border-indigo-200';
-                let statusBadge = isAbsen ? `<span class="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-800 bg-emerald-200 px-2 py-0.5 rounded-lg">✅ Sudah Absen (${statusToday})</span>` : `<span class="inline-flex items-center gap-1 text-[11px] font-semibold text-indigo-600 bg-white px-2 py-1 rounded-xl border border-slate-200"><span>Absen</span><i data-lucide="check" class="w-3 h-3"></i></span>`;
+                let cardBg = isAbsen ? 'bg-rose-50/90 border-rose-200 hover:bg-rose-100' : 'bg-slate-50/80 border-slate-100 hover:bg-rose-50 hover:border-rose-200';
+                let statusBadge = isAbsen ? `<span class="inline-flex items-center gap-1 text-[10px] font-bold text-rose-800 bg-rose-200 px-2 py-0.5 rounded-lg">✅ Sudah Absen (${statusToday})</span>` : `<span class="inline-flex items-center gap-1 text-[11px] font-semibold text-rose-600 bg-white px-2 py-1 rounded-xl border border-slate-200"><span>Absen</span><i data-lucide="check" class="w-3 h-3"></i></span>`;
 
                 html += `
                     <button onclick="selectStudentForAttendance('${nisn}', '${nama.replace(/'/g, "\\'")}')" 
                             class="w-full text-left p-2.5 rounded-2xl border ${cardBg} transition-all flex items-center justify-between group active:scale-[0.99]">
                         <div class="flex items-center gap-2.5">
-                            <div class="w-7 h-7 rounded-xl ${isAbsen ? 'bg-emerald-200 text-emerald-800' : 'bg-indigo-100 text-indigo-700'} flex items-center justify-center font-bold text-xs">${index + 1}</div>
+                            <div class="w-7 h-7 rounded-xl ${isAbsen ? 'bg-rose-200 text-rose-800' : 'bg-rose-100 text-rose-700'} flex items-center justify-center font-bold text-xs">${index + 1}</div>
                             <div>
                                 <p class="text-xs sm:text-sm font-bold text-slate-800">${nama}</p>
                                 <p class="text-[10px] text-slate-500">NISN: ${nisn}</p>
@@ -562,14 +556,14 @@
                 box.className = "mt-4 p-3 rounded-2xl bg-amber-50 border border-amber-300 text-amber-800 text-center animate-pulse";
                 iconContainer.innerHTML = `<i data-lucide="loader-2" class="w-7 h-7 text-amber-600 animate-spin"></i>`;
             } else if (state === 'success') {
-                box.className = "mt-4 p-3 rounded-2xl bg-emerald-50 border border-emerald-300 text-emerald-900 text-center shadow-md";
-                iconContainer.innerHTML = `<i data-lucide="check-circle-2" class="w-8 h-8 text-emerald-600"></i>`;
-            } else if (state === 'error') {
                 box.className = "mt-4 p-3 rounded-2xl bg-rose-50 border border-rose-300 text-rose-900 text-center shadow-md";
-                iconContainer.innerHTML = `<i data-lucide="x-circle" class="w-8 h-8 text-rose-600"></i>`;
+                iconContainer.innerHTML = `<i data-lucide="check-circle-2" class="w-8 h-8 text-rose-600"></i>`;
+            } else if (state === 'error') {
+                box.className = "mt-4 p-3 rounded-2xl bg-red-50 border border-red-300 text-red-900 text-center shadow-md";
+                iconContainer.innerHTML = `<i data-lucide="x-circle" class="w-8 h-8 text-red-600"></i>`;
             } else {
                 box.className = "mt-4 p-3 rounded-2xl bg-slate-100 border border-slate-200 text-slate-600 text-center";
-                iconContainer.innerHTML = `<i data-lucide="scan-line" class="w-7 h-7 text-indigo-500 animate-pulse"></i>`;
+                iconContainer.innerHTML = `<i data-lucide="scan-line" class="w-7 h-7 text-rose-500 animate-pulse"></i>`;
             }
             textContainer.innerHTML = `<p class="font-bold text-xs sm:text-sm">${title}</p><p class="text-[11px] mt-0.5">${message}</p>`;
             lucide.createIcons();
@@ -597,7 +591,6 @@
                     updateStatusUI('success', `✅ [${statusInput.toUpperCase()}]: ${studentName}`, `NISN: ${nisn} • Tanggal: ${customDate || 'Hari Ini'} • Jam: ${jamText}`);
                     addHistoryItem({ nisn: nisn, nama: studentName, jam: jamText, status: statusInput });
                     
-                    // Jika modal rekap sedang aktif dan tanggalnya sama, refresh rekap harian secara otomatis
                     const activeDate = document.getElementById('customRekapDate').value;
                     if (currentRekapMode === 'harian' && (!customDate || customDate === activeDate)) {
                         fetchRekapByCustomDate();
@@ -630,7 +623,6 @@
             const radios = document.querySelectorAll('input[name="statusKeterangan"]');
             radios.forEach(r => r.checked = false);
 
-            // Set tanggal di modal manual mengikuti tanggal di rekap harian jika rekap sudah pernah dibuka, atau hari ini
             const activeDate = document.getElementById('customRekapDate').value || new Date().toISOString().split('T')[0];
             document.getElementById('customRekapDate').value = activeDate;
 
@@ -639,7 +631,6 @@
 
         function closeManualModal() { document.getElementById('manualModal').classList.add('hidden'); }
 
-        /* --- HELPER LOADING ANIMATION --- */
         function showTableLoading(message = "Memuat data...") {
             const tbody = document.getElementById('rekapTableBody');
             if (tbody) {
@@ -647,7 +638,7 @@
                     <tr>
                         <td colspan="6" class="text-center py-10 text-slate-400">
                             <div class="flex flex-col items-center justify-center gap-2">
-                                <i data-lucide="loader-2" class="w-7 h-7 animate-spin text-indigo-600"></i>
+                                <i data-lucide="loader-2" class="w-7 h-7 animate-spin text-rose-600"></i>
                                 <p class="text-xs font-semibold text-slate-600">${message}</p>
                             </div>
                         </td>
@@ -657,7 +648,6 @@
             }
         }
 
-        /* --- REKAP & GRAFIK --- */
         function openRekapModal() {
             document.getElementById('rekapModal').classList.remove('hidden');
             if (!document.getElementById('customRekapDate').value) {
@@ -818,7 +808,7 @@
                 <tr>
                     <th class="p-2.5 text-center w-10">No</th>
                     <th class="p-2.5">Nama Siswa</th>
-                    <th class="p-2.5 text-center text-emerald-700 font-bold">H (Hadir)</th>
+                    <th class="p-2.5 text-center text-rose-700 font-bold">H (Hadir)</th>
                     <th class="p-2.5 text-center text-amber-700 font-bold">I (Izin)</th>
                     <th class="p-2.5 text-center text-blue-700 font-bold">S (Sakit)</th>
                     <th class="p-2.5 text-center text-rose-700 font-bold">A (Alpa)</th>
@@ -842,7 +832,7 @@
                     <tr class="hover:bg-slate-50">
                         <td class="p-2.5 text-center font-bold text-slate-500 text-xs">${idx + 1}</td>
                         <td class="p-2.5 font-bold text-slate-800 text-xs sm:text-sm">${st.nama}</td>
-                        <td class="p-2.5 text-center font-bold text-emerald-700 bg-emerald-50/40 text-xs">${st.hadir}</td>
+                        <td class="p-2.5 text-center font-bold text-rose-700 bg-rose-50/40 text-xs">${st.hadir}</td>
                         <td class="p-2.5 text-center font-bold text-amber-700 bg-amber-50/40 text-xs">${st.izin}</td>
                         <td class="p-2.5 text-center font-bold text-blue-700 bg-blue-50/40 text-xs">${st.sakit}</td>
                         <td class="p-2.5 text-center font-bold text-rose-700 bg-rose-50/40 text-xs">${st.alpa}</td>
@@ -881,7 +871,7 @@
                     datasets: [{
                         label: 'Jumlah 1 Tahun Ajaran',
                         data: [h, i, s, a],
-                        backgroundColor: ['#10b981', '#f59e0b', '#3b82f6', '#ef4444'],
+                        backgroundColor: ['#f43f5e', '#f59e0b', '#3b82f6', '#ef4444'],
                         borderRadius: 6
                     }]
                 },
@@ -901,7 +891,7 @@
                 type: 'doughnut',
                 data: {
                     labels: ['Hadir', 'Izin', 'Sakit', 'Alpa'],
-                    datasets: [{ data: [h, i, s, a], backgroundColor: ['#10b981', '#f59e0b', '#3b82f6', '#ef4444'], borderWidth: 2, borderColor: '#fff' }]
+                    datasets: [{ data: [h, i, s, a], backgroundColor: ['#f43f5e', '#f59e0b', '#3b82f6', '#ef4444'], borderWidth: 2, borderColor: '#fff' }]
                 },
                 options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
             });
@@ -915,7 +905,7 @@
                 type: 'bar',
                 data: {
                     labels: ['Hadir', 'Izin', 'Sakit', 'Alpa'],
-                    datasets: [{ label: 'Jumlah', data: [h, i, s, a], backgroundColor: ['#10b981', '#f59e0b', '#3b82f6', '#ef4444'], borderRadius: 6 }]
+                    datasets: [{ label: 'Jumlah', data: [h, i, s, a], backgroundColor: ['#f43f5e', '#f59e0b', '#3b82f6', '#ef4444'], borderRadius: 6 }]
                 },
                 options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } }
             });
@@ -933,7 +923,6 @@
             else if(currentRekapMode === 'bulan') renderBulananTable(filtered);
         }
 
-        /* --- EXPORT TO EXCEL --- */
         function exportToExcel() {
             if (typeof XLSX === 'undefined') {
                 alert("Pustaka SheetJS belum dimuat dengan sempurna, periksa koneksi internet Anda.");
@@ -1010,7 +999,7 @@
             if (emptyHistory) emptyHistory.remove();
             countBadge.innerText = `${historyData.length} Siswa`;
 
-            let badgeStyle = "bg-emerald-100 text-emerald-800", iconStyle = "bg-emerald-100 text-emerald-700", iconName = "user-check";
+            let badgeStyle = "bg-rose-100 text-rose-800", iconStyle = "bg-rose-100 text-rose-700", iconName = "user-check";
             if (data.status === 'Izin') { badgeStyle = "bg-amber-100 text-amber-800"; iconStyle = "bg-amber-100 text-amber-700"; iconName = "file-text"; }
             else if (data.status === 'Sakit') { badgeStyle = "bg-blue-100 text-blue-800"; iconStyle = "bg-blue-100 text-blue-700"; iconName = "activity"; }
             else if (data.status === 'Alpa') { badgeStyle = "bg-rose-100 text-rose-800"; iconStyle = "bg-rose-100 text-rose-700"; iconName = "user-x"; }
