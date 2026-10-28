@@ -21,9 +21,8 @@
     <script>
       // 1. Cek apakah pengguna sudah login lewat index.html
       if (sessionStorage.getItem('isLoggedIn') !== 'true') {
-        // Jika belum login / mencoba akses langsung URL, lempar paksa balik ke index.html utama
         alert('Akses ditolak! Silakan login terlebih dahulu.');
-        window.location.replace('../../index.html'); // Sesuaikan path relatif ke index.html utama
+        window.location.replace('../../index.html');
       }
 
       // 2. Kunci tombol Back / Forward agar tidak bisa kembali ke state sebelumnya secara bebas
@@ -34,8 +33,7 @@
 
       // 3. Fungsi Logout khusus di dalam file menu sekolah
       function logoutSekolah() {
-        //sessionStorage.clear(); // Hapus sesi
-        window.location.replace('../menuDasboard.html'); // Kembali ke halaman utama
+        window.location.replace('../menuDasboard.html');
       }
     </script>
 
@@ -218,7 +216,7 @@
                     </div>
                     <div>
                         <h3 class="font-bold text-base text-slate-800">Pilih Siswa Manual</h3>
-                        <p class="text-[11px] text-slate-500">Wajib pilih status dulu sebelum klik nama</p>
+                        <p id="manualModalDateLabel" class="text-[11px] text-slate-500">Tanggal: -</p>
                     </div>
                 </div>
                 <button onclick="closeManualModal()" class="text-slate-400 hover:text-slate-600 p-1.5 rounded-full hover:bg-slate-100">
@@ -432,7 +430,6 @@
                     if (audio) { audio.currentTime = 0; audio.play().catch(() => {}); }
                 }
             } catch (e) {
-                // Fallback dengan AudioContext jika audio tag diblokir browser
                 try {
                     const ctx = new (window.AudioContext || window.webkitAudioContext)();
                     const osc = ctx.createOscillator();
@@ -458,6 +455,7 @@
             }
         }
 
+        // Ambil daftar siswa berdasarkan tanggal hari ini (default scanner)
         function fetchStudentList() {
             const todayStr = new Date().toISOString().split('T')[0];
             fetch(`${SCRIPT_URL}?action=getStudents&date=${todayStr}&mode=harian`)
@@ -465,10 +463,40 @@
                 .then(data => {
                     if (data && Array.isArray(data.students)) {
                         globalStudentDatabase = data.students;
-                        renderStudentList(globalStudentDatabase);
                     }
                 })
                 .catch(err => console.error("Gagal ambil siswa:", err));
+        }
+
+        // Ambil daftar siswa untuk absen manual berdasarkan tanggal aktif rekap harian
+        function fetchStudentListForManualModal() {
+            const dateVal = document.getElementById('customRekapDate').value || new Date().toISOString().split('T')[0];
+            const dateLabelEl = document.getElementById('manualModalDateLabel');
+            if(dateLabelEl) dateLabelEl.innerText = `Tanggal: ${dateVal}`;
+
+            const container = document.getElementById('studentListContainer');
+            if(container) {
+                container.innerHTML = `
+                    <div class="text-center py-8 text-slate-400">
+                        <i data-lucide="loader-2" class="w-6 h-6 animate-spin mx-auto text-indigo-500 mb-2"></i>
+                        <p class="text-xs font-medium">Memuat data tanggal ${dateVal}...</p>
+                    </div>
+                `;
+                lucide.createIcons();
+            }
+
+            fetch(`${SCRIPT_URL}?action=getStudents&date=${dateVal}&mode=harian`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data && Array.isArray(data.students)) {
+                        globalStudentDatabase = data.students;
+                        renderStudentList(globalStudentDatabase);
+                    }
+                })
+                .catch(err => {
+                    console.error("Gagal ambil siswa:", err);
+                    if(container) container.innerHTML = `<div class="text-center py-8 text-rose-500 text-xs">Gagal memuat data siswa.</div>`;
+                });
         }
 
         function renderStudentList(students) {
@@ -519,8 +547,10 @@
             }
 
             const status = selectedStatus.value;
+            const targetDate = document.getElementById('customRekapDate').value || new Date().toISOString().split('T')[0];
+            
             closeManualModal();
-            processAttendance(nisn, nama, status);
+            processAttendance(nisn, nama, status, targetDate);
         }
 
         function updateStatusUI(state, title, message) {
@@ -545,40 +575,52 @@
             lucide.createIcons();
         }
 
-        function processAttendance(nisn, namaInput = "", statusInput = "Hadir") {
+        function processAttendance(nisn, namaInput = "", statusInput = "Hadir", customDate = "") {
             if (isProcessing) return;
             isProcessing = true;
             updateStatusUI('loading', 'Memproses Presensi...', `NISN: ${nisn} (${statusInput})`);
 
+            const payload = { nisn: nisn, nama: namaInput, status: statusInput };
+            if (customDate) payload.date = customDate;
+
             fetch(SCRIPT_URL, {
                 method: 'POST',
-                body: JSON.stringify({ nisn: nisn, nama: namaInput, status: statusInput })
+                body: JSON.stringify(payload)
             })
             .then(res => res.json())
             .then(response => {
                 if (response.result === 'success') {
-                    playBeep('success'); // Memutar suara berhasil
+                    playBeep('success');
                     const studentName = response.nama || namaInput || "Siswa";
                     const now = new Date();
                     const jamText = response.jam || now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
-                    updateStatusUI('success', `✅ [${statusInput.toUpperCase()}]: ${studentName}`, `NISN: ${nisn} • Jam: ${jamText}`);
+                    updateStatusUI('success', `✅ [${statusInput.toUpperCase()}]: ${studentName}`, `NISN: ${nisn} • Tanggal: ${customDate || 'Hari Ini'} • Jam: ${jamText}`);
                     addHistoryItem({ nisn: nisn, nama: studentName, jam: jamText, status: statusInput });
+                    
+                    // Jika modal rekap sedang aktif dan tanggalnya sama, refresh rekap harian secara otomatis
+                    const activeDate = document.getElementById('customRekapDate').value;
+                    if (currentRekapMode === 'harian' && (!customDate || customDate === activeDate)) {
+                        fetchRekapByCustomDate();
+                    }
                     fetchStudentList(); 
                 } else {
-                    playBeep('error'); // Memutar suara gagal
+                    playBeep('error');
                     updateStatusUI('error', 'Gagal Mencatat', response.message || 'Data tidak ditemukan');
                 }
                 setTimeout(() => { isProcessing = false; updateStatusUI('idle', 'Arahkan Kartu Siswa', 'Siap scan berikutnya'); }, 3000);
             })
             .catch(err => {
-                playBeep('error'); // Memutar suara gagal
+                playBeep('error');
                 updateStatusUI('error', 'Koneksi Terputus', 'Gagal terhubung ke server.');
                 setTimeout(() => { isProcessing = false; updateStatusUI('idle'); }, 3500);
             });
         }
 
         function onScanSuccess(decodedText) {
-            if (!isProcessing) processAttendance(decodedText.trim(), "", "Hadir");
+            if (!isProcessing) {
+                const todayStr = new Date().toISOString().split('T')[0];
+                processAttendance(decodedText.trim(), "", "Hadir", todayStr);
+            }
         }
 
         function openManualModal() {
@@ -588,8 +630,13 @@
             const radios = document.querySelectorAll('input[name="statusKeterangan"]');
             radios.forEach(r => r.checked = false);
 
-            fetchStudentList(); 
+            // Set tanggal di modal manual mengikuti tanggal di rekap harian jika rekap sudah pernah dibuka, atau hari ini
+            const activeDate = document.getElementById('customRekapDate').value || new Date().toISOString().split('T')[0];
+            document.getElementById('customRekapDate').value = activeDate;
+
+            fetchStudentListForManualModal(); 
         }
+
         function closeManualModal() { document.getElementById('manualModal').classList.add('hidden'); }
 
         /* --- HELPER LOADING ANIMATION --- */
@@ -613,7 +660,9 @@
         /* --- REKAP & GRAFIK --- */
         function openRekapModal() {
             document.getElementById('rekapModal').classList.remove('hidden');
-            document.getElementById('customRekapDate').value = new Date().toISOString().split('T')[0];
+            if (!document.getElementById('customRekapDate').value) {
+                document.getElementById('customRekapDate').value = new Date().toISOString().split('T')[0];
+            }
             switchRekapMode('harian');
         }
 
@@ -663,7 +712,7 @@
             const dateVal = document.getElementById('customRekapDate').value;
             if (!dateVal) return;
 
-            showTableLoading("Memuat data rekap harian...");
+            showTableLoading(`Memuat data rekap tanggal ${dateVal}...`);
             fetch(`${SCRIPT_URL}?action=getStudents&date=${dateVal}&mode=harian`)
                 .then(res => res.json())
                 .then(data => {
