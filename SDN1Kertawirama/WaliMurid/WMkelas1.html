@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal Monitoring Presensi & Rekap Wali Murid</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0f7ff',
+                            100: '#e0effe',
+                            500: '#0284c7',
+                            600: '#0369a1',
+                            700: '#075985',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
+</head>
+<body class="text-slate-800 antialiased min-h-screen flex flex-col">
+
+    <!-- Top Navigation Bar -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between py-3 md:h-20 items-center gap-3 md:gap-0">
+                <!-- Logo & Portal Title -->
+                <div class="flex items-center space-x-3 w-full md:w-auto justify-between md:justify-start">
+                    <div class="flex items-center space-x-3">
+                        <div class="bg-gradient-to-tr from-brand-700 to-indigo-600 text-white p-2.5 rounded-xl shadow-md flex items-center justify-center">
+                            <i class="fa-solid fa-graduation-cap text-xl"></i>
+                        </div>
+                        <div>
+                            <h1 class="font-bold text-lg text-slate-900 leading-tight">EduParent Digital</h1>
+                            <p class="text-xs text-slate-500 font-medium">Portal Monitoring Presensi & Laporan Wali Murid</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PARENT HEADER INFO & STUDENT SELECTOR -->
+                <div class="flex flex-wrap sm:flex-nowrap items-center gap-2.5 w-full md:w-auto">
+                    <!-- Label Teks Kelas (Bukan Dropdown) -->
+                    <div class="flex items-center bg-slate-100 border border-slate-200 rounded-xl px-3 py-2">
+                        <i class="fa-solid fa-school text-brand-600 mr-2 text-xs"></i>
+                        <span class="text-xs font-semibold text-slate-800">Kelas 1 SDN 1 KERTAWIRAMA</span>
+                    </div>
+
+                    <!-- Pilih Murid Dropdown -->
+                    <div class="relative flex-1 sm:w-60">
+                        <div class="flex items-center bg-slate-100 hover:bg-slate-200 border border-slate-200 rounded-xl px-3 py-2 transition">
+                            <i class="fa-solid fa-circle-user text-indigo-600 mr-2 text-xs"></i>
+                            <select id="studentSelector" onchange="changeStudent(this.value)" class="bg-transparent text-xs font-semibold text-slate-700 outline-none w-full cursor-pointer">
+                                <!-- Dynamic Options -->
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Parent Profile Header -->
+                    <div class="hidden md:flex items-center space-x-2.5 border-l border-slate-200 pl-4">
+                        <div class="bg-indigo-600 text-white w-9 h-9 rounded-full flex items-center justify-center font-bold text-xs shadow-sm">
+                            WM
+                        </div>
+                        <div>
+                            <p class="text-xs font-semibold text-slate-900 leading-none">Wali Murid</p>
+                            <span class="text-[10px] text-emerald-600 font-medium"><i class="fa-solid fa-circle text-[8px] mr-1"></i>Akses Terhubung</span>
+                        </div>
+                        <!-- Tombol Keluar / Logout Header -->
+                        <a href="login.html" title="Keluar dari Sistem" class="ml-2 p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition duration-150 flex items-center justify-center">
+                            <i class="fa-solid fa-right-from-bracket text-base"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+
+        <!-- Quick Search Bar & Direct Link & Logout Button Mobile -->
+        <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-3">
+            <div class="flex items-center justify-between w-full sm:w-auto">
+                <div class="flex items-center space-x-2 text-xs text-slate-500">
+                    <i class="fa-solid fa-circle-info text-brand-600 text-sm"></i>
+                    <span>Tampilan ini secara otomatis menyesuaikan data wali murid sesuai link/pilihan siswa.</span>
+                </div>
+                <!-- Tombol Logout Mobile (Tampil di layar kecil) -->
+                <a href="login.html" class="md:hidden text-xs font-semibold text-rose-600 bg-rose-50 hover:bg-rose-100 px-3 py-1.5 rounded-lg flex items-center space-x-1 transition">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                    <span>Keluar</span>
+                </a>
+            </div>
+            <div class="relative w-full sm:w-64">
+                <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-xs text-slate-400"></i>
+                <input type="text" id="searchInput" onkeyup="handleQuickSearch(this.value)" placeholder="Cari nama atau NISN..." class="w-full text-xs bg-slate-50 border border-slate-200 rounded-lg pl-8 pr-3 py-2 outline-none focus:ring-2 focus:ring-brand-500/30 focus:border-brand-500">
+            </div>
+        </div>
+
+        <!-- Student Quick Profile Banner -->
+        <div id="studentBanner" class="bg-gradient-to-r from-brand-700 via-brand-600 to-indigo-700 rounded-2xl p-6 text-white shadow-lg relative overflow-hidden">
+            <div class="absolute right-0 top-0 bottom-0 w-1/3 opacity-10 pointer-events-none flex items-center justify-end pr-10">
+                <i class="fa-solid fa-clipboard-user text-[180px]"></i>
+            </div>
+            
+            <div class="relative z-10 flex flex-col md:flex-row items-center md:items-start space-y-4 md:space-y-0 md:space-x-6">
+                <!-- Avatar Siswa (Diambil dari Google Drive / Link Gambar) -->
+                <div class="relative">
+                    <img id="studentPhoto" src="" alt="Siswa" class="w-24 h-24 rounded-2xl object-cover border-4 border-white/20 shadow-md">
+                </div>
+                
+                <!-- Info -->
+                <div class="flex-grow text-center md:text-left space-y-1">
+                    <div class="flex flex-wrap justify-center md:justify-start items-center gap-2">
+                        <h2 id="studentName" class="text-2xl font-bold tracking-tight">--</h2>
+                        <span id="studentNISN" class="bg-white/20 backdrop-blur-md px-2.5 py-0.5 rounded-full text-xs font-medium">--</span>
+                    </div>
+                    <p id="studentClass" class="text-brand-100 text-sm font-medium">Kelas 1 SDN 1 KERTAWIRAMA</p>
+                    <p id="homeroomTeacher" class="text-xs text-white/80 pt-1"><i class="fa-solid fa-chalkboard-user mr-1.5"></i>Wali Kelas: <span class="font-semibold text-white">--</span></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Navigation Tabs -->
+        <div class="border-b border-slate-200 flex space-x-2 sm:space-x-6 overflow-x-auto custom-scrollbar">
+            <button onclick="switchTab('attendance')" id="tab-attendance" class="tab-btn px-4 py-3 font-semibold text-sm border-b-2 border-brand-600 text-brand-600 whitespace-nowrap transition flex items-center">
+                <i class="fa-solid fa-calendar-check mr-2"></i> Presensi Detail
+            </button>
+            <button onclick="switchTab('ai-consult')" id="tab-ai-consult" class="tab-btn px-4 py-3 font-medium text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-700 whitespace-nowrap transition flex items-center text-indigo-600">
+                <i class="fa-solid fa-wand-magic-sparkles mr-2"></i> Konsultasi AI Ortu
+            </button>
+        </div>
+
+        <!-- TAB CONTENT 1: PRESENSI DETAIL (UTAMA) -->
+        <div id="content-attendance" class="tab-content space-y-6">
+            <!-- Attendance Summary Counters -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
+                    <div>
+                        <span class="text-xs font-semibold text-slate-400 uppercase">Total Hadir</span>
+                        <p id="countHadir" class="text-2xl font-bold text-emerald-600 mt-1">0</p>
+                    </div>
+                    <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-lg font-bold"><i class="fa-solid fa-check"></i></div>
+                </div>
+                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
+                    <div>
+                        <span class="text-xs font-semibold text-slate-400 uppercase">Izin</span>
+                        <p id="countIzin" class="text-2xl font-bold text-blue-600 mt-1">0</p>
+                    </div>
+                    <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-lg font-bold"><i class="fa-solid fa-envelope-open-text"></i></div>
+                </div>
+                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
+                    <div>
+                        <span class="text-xs font-semibold text-slate-400 uppercase">Sakit</span>
+                        <p id="countSakit" class="text-2xl font-bold text-amber-600 mt-1">0</p>
+                    </div>
+                    <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-lg font-bold"><i class="fa-solid fa-notes-medical"></i></div>
+                </div>
+                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
+                    <div>
+                        <span class="text-xs font-semibold text-slate-400 uppercase">Tanpa Keterangan (Alpa)</span>
+                        <p id="countAlpa" class="text-2xl font-bold text-rose-600 mt-1">0</p>
+                    </div>
+                    <div class="w-10 h-10 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center text-lg font-bold"><i class="fa-solid fa-xmark"></i></div>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+                    <div>
+                        <h3 class="font-bold text-slate-800 text-lg"><i class="fa-solid fa-calendar-days text-brand-600 mr-2"></i>Riwayat Absensi Harian</h3>
+                        <p class="text-xs text-slate-500">Daftar rekaman waktu masuk dan pulang siswa berdasarkan QR Code / Spreadsheet</p>
+                    </div>
+                    <div class="flex space-x-2 text-xs font-semibold">
+                        <span class="px-3 py-1.5 bg-emerald-100 text-emerald-800 rounded-lg flex items-center"><i class="fa-solid fa-circle text-[8px] text-emerald-500 mr-1.5"></i> Hadir</span>
+                        <span class="px-3 py-1.5 bg-blue-100 text-blue-800 rounded-lg flex items-center"><i class="fa-solid fa-circle text-[8px] text-blue-500 mr-1.5"></i> Izin</span>
+                        <span class="px-3 py-1.5 bg-amber-100 text-amber-800 rounded-lg flex items-center"><i class="fa-solid fa-circle text-[8px] text-amber-500 mr-1.5"></i> Sakit</span>
+                        <span class="px-3 py-1.5 bg-rose-100 text-rose-800 rounded-lg flex items-center"><i class="fa-solid fa-circle text-[8px] text-rose-500 mr-1.5"></i> Alpa</span>
+                    </div>
+                </div>
+
+                <!-- Table -->
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm">
+                        <thead class="bg-slate-50 text-slate-600 text-xs font-semibold uppercase tracking-wider border-b border-slate-200">
+                            <tr>
+                                <th class="p-3">Tanggal</th>
+                                <th class="p-3">Jam Masuk</th>
+                                <th class="p-3">Jam Pulang</th>
+                                <th class="p-3">Status Presensi</th>
+                                <th class="p-3">Keterangan Catatan</th>
+                            </tr>
+                        </thead>
+                        <tbody id="attendanceTableBody" class="divide-y divide-slate-100">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB CONTENT 2: AI KONSULTASI ORTU -->
+        <div id="content-ai-consult" class="tab-content space-y-6 hidden">
+            <div class="bg-white rounded-2xl border border-indigo-100 shadow-sm overflow-hidden flex flex-col h-[600px]">
+                <!-- AI Header -->
+                <div class="bg-gradient-to-r from-indigo-700 to-brand-700 p-4 text-white flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center text-xl">
+                            <i class="fa-solid fa-wand-magic-sparkles text-amber-300"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-base leading-tight">Asisten Parenting & Presensi AI</h3>
+                            <p class="text-xs text-indigo-200">Diskusi perkembangan kehadiran dan bimbingan belajar anak di rumah</p>
+                        </div>
+                    </div>
+                    <span class="bg-indigo-500/30 text-xs text-indigo-100 px-3 py-1 rounded-full font-medium border border-indigo-300/20">Gemini AI</span>
+                </div>
+
+                <!-- Chat Body -->
+                <div id="aiChatBox" class="flex-grow p-4 overflow-y-auto space-y-4 custom-scrollbar bg-slate-50/50">
+                    <div class="flex items-start space-x-3">
+                        <div class="w-8 h-8 rounded-full bg-indigo-600 text-white flex items-center justify-center text-xs shrink-0 font-bold">AI</div>
+                        <div class="bg-white p-4 rounded-2xl rounded-tl-none border border-slate-200 text-xs sm:text-sm text-slate-700 max-w-[85%] shadow-sm leading-relaxed space-y-2">
+                            <p class="font-semibold text-indigo-700">Selamat datang Bapak/Ibu Wali Murid! 👋</p>
+                            <p>Saya asisten pemantau presensi dan akademik siswa. Silakan tanyakan hal seputar kehadiran, kedisiplinan, atau tips memotivasi <b id="aiStudentRefName">siswa</b> di rumah.</p>
+                            <div class="flex flex-wrap gap-2 pt-1">
+                                <button onclick="quickAsk('Bagaimana rekap tingkat kehadiran anak saya bulan ini?')" class="text-xs bg-indigo-50 hover:bg-indigo-100 text-indigo-700 px-2.5 py-1 rounded-lg transition font-medium text-left">📅 Rekap Presensi Bulan Ini</button>
+                                <button onclick="quickAsk('Berikan tips agar anak tidak terlambat bangun pagi dan disiplin sekolah.')" class="text-xs bg-indigo-50 hover:bg-indigo-100 text-indigo-700 px-2.5 py-1 rounded-lg transition font-medium text-left">⏰ Tips Kedisiplinan Pagi</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Input Field -->
+                <div class="p-3 bg-white border-t border-slate-200">
+                    <form id="aiForm" onsubmit="handleAISubmit(event)" class="flex items-center space-x-2">
+                        <input type="text" id="aiInput" placeholder="Ketik pertanyaan seputar presensi atau belajar anak..." class="flex-grow text-sm px-4 py-3 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition">
+                        <button type="submit" id="aiSendBtn" class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-3 rounded-xl text-sm font-semibold transition flex items-center justify-center shrink-0">
+                            <span>Kirim</span>
+                            <i class="fa-solid fa-paper-plane ml-2 text-xs"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-4 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-500">
+            &copy; 2026 EduParent Platform - Portal Monitoring Presensi & Laporan Wali Murid Terpadu.
+        </div>
+    </footer>
+
+    <!-- Application Logic Script -->
+    <script>
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzZIQBcgj-ZUvFjdL6qIPJgVzvL8bmHBhLSU4Af0NhY4LRiiOY_7AKgYOgfg0QsAkGo/exec";
+
+        // GOOGLE DRIVE DIRECT PHOTO HELPER BY FORMAT "NISN_NAMA LENGKAP"
+        // Fungsi ini membentuk referensi nama file foto berdasarkan format NISN_NamaLengkap (contoh: 0119283001_Ananda Bintang Pratama)
+        function getDrivePhotoByName(nisn, studentName) {
+            const fileName = `${nisn}_${studentName}`;
+            // Menggunakan service visual avatar berbasis format NISN_NamaLengkap sebagai fallback jika link Drive belum di-embed secara langsung
+            const formattedName = encodeURIComponent(fileName);
+            return `https://ui-avatars.com/api/?name=${formattedName}&background=0284c7&color=ffffff&size=200&font-size=0.35&bold=true`;
+        }
+
+        // DATA SISWA KELAS 1 SDN 1 KERTAWIRAMA
+        let allStudentsData = [
+            {
+                id: 0,
+                nisn: "0119283001",
+                name: "Ananda Bintang Pratama",
+                class: "Kelas 1 SDN 1 KERTAWIRAMA",
+                homeroomTeacher: "Siti Rahmawati, S.Pd",
+                photo: getDrivePhotoByName("0119283001", "Ananda Bintang Pratama"),
+                attendance: { present: 20, total: 20, sakit: 0, izin: 0, alpa: 0 },
+                attendanceLog: [
+                    { date: "28 Okt 2026", in: "06:40 WIB", out: "12:00 WIB", status: "Hadir", desc: "Tepat Waktu" },
+                    { date: "27 Okt 2026", in: "06:42 WIB", out: "12:00 WIB", status: "Hadir", desc: "Tepat Waktu" },
+                    { date: "26 Okt 2026", in: "06:38 WIB", out: "12:00 WIB", status: "Hadir", desc: "Tepat Waktu" },
+                    { date: "23 Okt 2026", in: "06:45 WIB", out: "12:00 WIB", status: "Hadir", desc: "Tepat Waktu" }
+                ]
+            },
+            {
+                id: 1,
+                nisn: "0119283002",
+                name: "Clarissa Aurelia",
+                class: "Kelas 1 SDN 1 KERTAWIRAMA",
+                homeroomTeacher: "Siti Rahmawati, S.Pd",
+                photo: getDrivePhotoByName("0119283002", "Clarissa Aurelia"),
+                attendance: { present: 18, total: 20, sakit: 1, izin: 1, alpa: 0 },
+                attendanceLog: [
+                    { date: "28 Okt 2026", in: "06:50 WIB", out: "12:00 WIB", status: "Hadir", desc: "Tepat Waktu" },
+                    { date: "27 Okt 2026", in: "-", out: "-", status: "Sakit", desc: "Surat Izin Demam" },
+                    { date: "26 Okt 2026", in: "06:45 WIB", out: "12:00 WIB", status: "Hadir", desc: "Tepat Waktu" }
+                ]
+            },
+            {
+                id: 2,
+                nisn: "0119284005",
+                name: "Dimas Anggara",
+                class: "Kelas 1 SDN 1 KERTAWIRAMA",
+                homeroomTeacher: "Siti Rahmawati, S.Pd",
+                photo: getDrivePhotoByName("0119284005", "Dimas Anggara"),
+                attendance: { present: 19, total: 20, sakit: 1, izin: 0, alpa: 0 },
+                attendanceLog: [
+                    { date: "28 Okt 2026", in: "06:44 WIB", out: "12:00 WIB", status: "Hadir", desc: "Tepat Waktu" },
+                    { date: "27 Okt 2026", in: "06:48 WIB", out: "12:00 WIB", status: "Hadir", desc: "Tepat Waktu" }
+                ]
+            }
+        ];
+
+        let filteredStudents = [...allStudentsData];
+
+        // INITIALIZATION ON PAGE LOAD
+        window.onload = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const nisnParam = urlParams.get('nisn');
+
+            populateStudentDropdown(allStudentsData);
+
+            let initialStudentId = allStudentsData[0].id;
+            if (nisnParam) {
+                const found = allStudentsData.find(s => s.nisn === nisnParam);
+                if (found) initialStudentId = found.id;
+            }
+
+            renderStudentDashboard(initialStudentId);
+            fetchSpreadsheetData();
+        };
+
+        // FETCH REALTIME SPREADSHEET DATA
+        function fetchSpreadsheetData() {
+            const todayStr = new Date().toISOString().split('T')[0];
+            fetch(`${SCRIPT_URL}?action=getStudents&date=${todayStr}&mode=harian`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data && Array.isArray(data.students) && data.students.length > 0) {
+                        data.students.forEach((sheetStudent) => {
+                            const studentNisn = String(sheetStudent.nisn || "");
+                            const studentName = sheetStudent.nama || "Siswa Baru";
+                            
+                            // Ambil URL Foto dari Spreadsheet/Drive jika ada, atau buat otomatis sesuai format NISN_NAMA LENGKAP
+                            const studentPhotoUrl = sheetStudent.fotoDrive || sheetStudent.photo || getDrivePhotoByName(studentNisn, studentName);
+
+                            const existing = allStudentsData.find(s => s.nisn === studentNisn);
+                            if (existing) {
+                                existing.photo = studentPhotoUrl;
+                                if (sheetStudent.statusToday && sheetStudent.statusToday !== '-') {
+                                    existing.attendanceLog.unshift({
+                                        date: new Date().toLocaleDateString('id-ID'),
+                                        in: sheetStudent.jam || "06:45 WIB",
+                                        out: "12:00 WIB",
+                                        status: sheetStudent.statusToday,
+                                        desc: "Scan Presensi Spreadsheet"
+                                    });
+                                }
+                            } else {
+                                allStudentsData.push({
+                                    id: allStudentsData.length,
+                                    nisn: studentNisn,
+                                    name: studentName,
+                                    class: "Kelas 1 SDN 1 KERTAWIRAMA",
+                                    homeroomTeacher: "Siti Rahmawati, S.Pd",
+                                    photo: studentPhotoUrl,
+                                    attendance: { present: 15, total: 16, sakit: 0, izin: 1, alpa: 0 },
+                                    attendanceLog: [{ date: new Date().toLocaleDateString('id-ID'), in: sheetStudent.jam || "06:45 WIB", out: "12:00 WIB", status: sheetStudent.statusToday || "Hadir", desc: "Auto Sync Spreadsheet" }]
+                                });
+                            }
+                        });
+
+                        handleQuickSearch(document.getElementById('searchInput').value);
+                    }
+                })
+                .catch(err => console.error("Sync error:", err));
+        }
+
+        // POPULATE DROPDOWN BASED ON FILTERED LIST
+        function populateStudentDropdown(studentsList) {
+            const studentSelect = document.getElementById('studentSelector');
+            studentSelect.innerHTML = '';
+
+            if (studentsList.length === 0) {
+                studentSelect.innerHTML = '<option value="">-- Tidak Ada Siswa --</option>';
+                return;
+            }
+
+            studentsList.forEach(st => {
+                const opt = document.createElement('option');
+                opt.value = st.id;
+                opt.textContent = `${st.name}`;
+                studentSelect.appendChild(opt);
+            });
+        }
+
+        // HANDLE QUICK SEARCH INPUT
+        function handleQuickSearch(keyword) {
+            const query = (keyword || "").toLowerCase().trim();
+
+            filteredStudents = allStudentsData.filter(st => {
+                return st.name.toLowerCase().includes(query) || st.nisn.toLowerCase().includes(query);
+            });
+
+            populateStudentDropdown(filteredStudents);
+
+            if (filteredStudents.length > 0) {
+                renderStudentDashboard(filteredStudents[0].id);
+            } else {
+                clearDashboard();
+            }
+        }
+
+        // SWITCH STUDENT SELECTOR
+        function changeStudent(studentId) {
+            if (studentId === "" || studentId === undefined) return;
+            renderStudentDashboard(parseInt(studentId));
+        }
+
+        // RENDER ALL DATA TO DASHBOARD
+        function renderStudentDashboard(studentId) {
+            const student = allStudentsData.find(s => s.id === studentId);
+            if (!student) return;
+
+            document.getElementById('studentSelector').value = student.id;
+
+            // Update Header & Banner Info
+            document.getElementById('studentName').innerText = student.name;
+            document.getElementById('aiStudentRefName').innerText = student.name;
+            document.getElementById('studentNISN').innerText = `NISN: ${student.nisn}`;
+            document.getElementById('studentClass').innerText = student.class;
+            document.getElementById('homeroomTeacher').querySelector('span').innerText = student.homeroomTeacher;
+            
+            // Set foto murid sesuai format NISN_NAMA LENGKAP
+            const photoEl = document.getElementById('studentPhoto');
+            photoEl.src = student.photo || getDrivePhotoByName(student.nisn, student.name);
+            photoEl.onerror = function() {
+                // Fallback jika URL foto Drive tidak dapat dimuat
+                this.src = getDrivePhotoByName(student.nisn, student.name);
+            };
+
+            // Presensi Tab Counter Cards
+            document.getElementById('countHadir').innerText = student.attendance.present;
+            document.getElementById('countIzin').innerText = student.attendance.izin || 0;
+            document.getElementById('countSakit').innerText = student.attendance.sakit || 0;
+            document.getElementById('countAlpa').innerText = student.attendance.alpa || 0;
+
+            // Render Attendance Table
+            const attTable = document.getElementById('attendanceTableBody');
+            attTable.innerHTML = '';
+            if (!student.attendanceLog || student.attendanceLog.length === 0) {
+                attTable.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-xs text-slate-400">Belum ada rekaman presensi.</td></tr>`;
+            } else {
+                student.attendanceLog.forEach(a => {
+                    let badgeClass = "bg-emerald-100 text-emerald-800 border border-emerald-200";
+                    if(a.status === 'Izin') badgeClass = "bg-blue-100 text-blue-800 border border-blue-200";
+                    if(a.status === 'Sakit') badgeClass = "bg-amber-100 text-amber-800 border border-amber-200";
+                    if(a.status === 'Alpa') badgeClass = "bg-rose-100 text-rose-800 border border-rose-200";
+
+                    attTable.innerHTML += `
+                        <tr class="hover:bg-slate-50 transition">
+                            <td class="p-3 font-semibold text-slate-800">${a.date}</td>
+                            <td class="p-3 text-slate-600 font-medium">${a.in}</td>
+                            <td class="p-3 text-slate-600 font-medium">${a.out}</td>
+                            <td class="p-3"><span class="px-2.5 py-1 text-xs font-bold rounded-full ${badgeClass}">${a.status}</span></td>
+                            <td class="p-3 text-slate-500 text-xs">${a.desc}</td>
+                        </tr>
+                    `;
+                });
+            }
+        }
+
+        // CLEAR DASHBOARD IF NO RESULT
+        function clearDashboard() {
+            document.getElementById('studentName').innerText = "Tidak Ditemukan";
+            document.getElementById('studentNISN').innerText = "--";
+            document.getElementById('studentClass').innerText = "Kelas 1 SDN 1 KERTAWIRAMA";
+            document.getElementById('attendanceTableBody').innerHTML = `<tr><td colspan="5" class="p-6 text-center text-slate-400">Tidak ada data siswa yang cocok.</td></tr>`;
+        }
+
+        // TAB NAVIGATION
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('border-brand-600', 'text-brand-600', 'font-semibold');
+                btn.classList.add('border-transparent', 'text-slate-500', 'font-medium');
+            });
+
+            document.getElementById(`content-${tabId}`).classList.remove('hidden');
+            const activeBtn = document.getElementById(`tab-${tabId}`);
+            activeBtn.classList.add('border-brand-600', 'text-brand-600', 'font-semibold');
+            activeBtn.classList.remove('border-transparent', 'text-slate-500');
+        }
+
+        // GEMINI AI INTEGRATION FOR PARENTS
+        async function handleAISubmit(e) {
+            e.preventDefault();
+            const inputEl = document.getElementById('aiInput');
+            const userMsg = inputEl.value.trim();
+            if(!userMsg) return;
+
+            appendUserMessage(userMsg);
+            inputEl.value = '';
+
+            const loadingId = appendLoadingIndicator();
+
+            const currentStudentId = parseInt(document.getElementById('studentSelector').value || 0);
+            const student = allStudentsData.find(s => s.id === currentStudentId) || allStudentsData[0];
+
+            const systemPrompt = `Anda adalah Asisten Pakar Konsultasi Pendidikan & Presensi Sekolah Cerdas.
+            Anda berbicara dengan Orang Tua / Wali Murid dari siswa bernama: ${student.name} (${student.class}).
+            Data Presensi Siswa:
+            - Kehadiran Bulan Ini: ${student.attendance.percent} (${student.attendance.present} Hari Hadir)
+            - Jumlah Sakit: ${student.attendance.sakit || 0}, Izin: ${student.attendance.izin || 0}, Alpa: ${student.attendance.alpa || 0}
+
+            Berikan saran yang ramah, santun, komunikatif, dan praktis dalam Bahasa Indonesia.`;
+
+            try {
+                const apiKey = ""; 
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+
+                const payload = {
+                    contents: [{ parts: [{ text: userMsg }] }],
+                    systemInstruction: { parts: [{ text: systemPrompt }] }
+                };
+
+                const res = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await res.json();
+                removeLoadingIndicator(loadingId);
+
+                const aiReply = data.candidates?.[0]?.content?.parts?.[0]?.text || "Maaf, tidak dapat memproses tanggapan saat ini.";
+                appendAIMessage(aiReply);
+
+            } catch(err) {
+                console.error(err);
+                removeLoadingIndicator(loadingId);
+                appendAIMessage("Maaf, koneksi AI terganggu. Silakan coba lagi.");
+            }
+        }
+
+        function quickAsk(text) {
+            document.getElementById('aiInput').value = text;
+            handleAISubmit(new Event('submit'));
+        }
+
+        function appendUserMessage(text) {
+            const chatBox = document.getElementById('aiChatBox');
+            const div = document.createElement('div');
+            div.className = "flex items-start justify-end space-x-3";
+            div.innerHTML = `
+                <div class="bg-indigo-600 text-white p-3.5 rounded-2xl rounded-tr-none text-xs sm:text-sm max-w-[80%] shadow-sm leading-relaxed">
+                    ${escapeHtml(text)}
+                </div>
+                <div class="w-8 h-8 rounded-full bg-slate-300 text-slate-700 flex items-center justify-center text-xs shrink-0 font-bold">WM</div>
+            `;
+            chatBox.appendChild(div);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        function appendAIMessage(text) {
+            const chatBox = document.getElementById('aiChatBox');
+            const div = document.createElement('div');
+            div.className = "flex items-start space-x-3";
+            
+            const formattedText = text
+                .replace(/\*\*(.*?)\*\*/g, '<b>$1</b>')
+                .replace(/\n/g, '<br>');
+
+            div.innerHTML = `
+                <div class="w-8 h-8 rounded-full bg-indigo-600 text-white flex items-center justify-center text-xs shrink-0 font-bold">AI</div>
+                <div class="bg-white p-4 rounded-2xl rounded-tl-none border border-slate-200 text-xs sm:text-sm text-slate-700 max-w-[85%] shadow-sm leading-relaxed space-y-2">
+                    ${formattedText}
+                </div>
+            `;
+            chatBox.appendChild(div);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        function appendLoadingIndicator() {
+            const chatBox = document.getElementById('aiChatBox');
+            const id = 'loading-' + Date.now();
+            const div = document.createElement('div');
+            div.id = id;
+            div.className = "flex items-start space-x-3";
+            div.innerHTML = `
+                <div class="w-8 h-8 rounded-full bg-indigo-600 text-white flex items-center justify-center text-xs shrink-0 font-bold">AI</div>
+                <div class="bg-white p-4 rounded-2xl rounded-tl-none border border-slate-200 text-xs text-slate-500 max-w-[85%] shadow-sm flex items-center space-x-2">
+                    <i class="fa-solid fa-spinner fa-spin text-indigo-600"></i>
+                    <span>Sedang memproses presensi & menyusun jawaban...</span>
+                </div>
+            `;
+            chatBox.appendChild(div);
+            chatBox.scrollTop = chatBox.scrollHeight;
+            return id;
+        }
+
+        function removeLoadingIndicator(id) {
+            const el = document.getElementById(id);
+            if(el) el.remove();
+        }
+
+        function escapeHtml(text) {
+            return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+        }
+    </script>
+</body>
+</html>
