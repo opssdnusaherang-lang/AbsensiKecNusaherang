@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal Eksekutif Kepala Sekolah - Audit Kehadiran Kelas 1</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- SheetJS (xlsx) untuk Export Excel -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    
+    <!-- Script Proteksi Sesi Login & Logout -->
+    <script>
+      if (sessionStorage.getItem('isLoggedIn') !== 'true') {
+        alert('Akses ditolak! Silakan login terlebih dahulu.');
+        window.location.replace('../../index.html');
+      }
+
+      history.pushState(null, null, location.href);
+      window.onpopstate = function () {
+        history.go(1);
+      };
+
+      function logoutSekolah() {
+        window.location.replace('../menuDasboard.html');
+      }
+    </script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    animation: {
+                        'slide-up': 'slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                        'float': 'float 3s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        slideUp: { '0%': { transform: 'translateY(20px)', opacity: '0' }, '100%': { transform: 'translateY(0)', opacity: '1' } },
+                        float: { '0%, 100%': { transform: 'translateY(0px)' }, '50%': { transform: 'translateY(-5px)' } }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .glass-card { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(12px); }
+        .custom-scrollbar::-webkit-scrollbar { width: 5px; height: 5px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+    </style>
+</head>
+<body class="bg-slate-100 min-h-screen font-sans text-slate-800 antialiased flex flex-col justify-between selection:bg-indigo-500 selection:text-white">
+
+    <!-- Header Portal Eksekutif Kepala Sekolah (Sticky Top untuk Desktop & Mobile) -->
+    <header class="sticky top-0 z-50 bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white shadow-xl overflow-hidden">
+        <div class="absolute -top-10 -left-10 w-48 h-48 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute -bottom-10 right-10 w-64 h-64 bg-emerald-500/15 rounded-full blur-3xl pointer-events-none"></div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 sm:py-4 relative z-10">
+            <div class="flex flex-wrap items-center justify-between pb-2.5 mb-2.5 border-b border-white/10 gap-2">
+                <div class="flex items-center gap-2">
+                    <button onclick="logoutSekolah()" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-rose-500/80 hover:bg-rose-600 text-white text-xs font-semibold transition-all backdrop-blur-md border border-white/15 shadow-sm">
+                        <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
+                        <span>Kembali ke Menu Utama</span>
+                    </button>
+                    <span class="px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 border border-amber-400/30 text-xs font-bold flex items-center gap-1.5">
+                        <i data-lucide="award" class="w-3.5 h-3.5 text-amber-400"></i>
+                        Akses Khusus Kepala Sekolah
+                    </span>
+                </div>
+
+                <div class="flex items-center gap-2">
+                    <button onclick="fetchAllData()" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-white/10 hover:bg-white/20 text-white border border-white/15 transition-all shadow-sm">
+                        <i data-lucide="refresh-cw" class="w-3.5 h-3.5" id="refreshIcon"></i>
+                        <span>Sinkronisasi Data</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-3">
+                <div class="flex items-center space-x-3 text-center sm:text-left">
+                    <div class="p-2.5 bg-indigo-600/30 rounded-2xl backdrop-blur-md border border-indigo-400/30 shadow-inner animate-float hidden sm:block">
+                        <i data-lucide="building-2" class="w-7 h-7 text-indigo-200"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-xl sm:text-2xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white via-indigo-100 to-slate-200">
+                            Laporan Kehadiran Siswa - Kelas 1
+                        </h1>
+                        <p class="text-[11px] sm:text-xs text-slate-300 font-medium">Dashboard Monitoring Eksekutif & Penilaian Kedisiplinan Siswa</p>
+                    </div>
+                </div>
+
+                <!-- Kontrol Mode Rekapitulasi -->
+                <div class="bg-white/10 backdrop-blur-md p-1 rounded-2xl border border-white/15 flex items-center gap-1 text-xs font-semibold">
+                    <button id="btnHarian" onclick="switchMode('harian')" class="px-3 py-1.5 rounded-xl bg-indigo-600 text-white shadow">Audit Harian</button>
+                    <button id="btnBulanan" onclick="switchMode('bulan')" class="px-3 py-1.5 rounded-xl text-slate-300 hover:text-white">Rekap Bulanan</button>
+                    <button id="btnTahunan" onclick="switchMode('tahunan')" class="px-3 py-1.5 rounded-xl text-slate-300 hover:text-white">Tahun Ajaran</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 py-6 w-full flex-grow space-y-6">
+
+        <!-- Kartu KPI Ringkasan Eksekutif Kehadiran Kelas 1 -->
+        <div class="grid grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4">
+            <div class="glass-card p-4 rounded-3xl border border-white shadow-sm flex flex-col justify-between">
+                <div class="flex items-center justify-between text-slate-500 mb-2">
+                    <span class="text-[11px] font-bold uppercase tracking-wider">Persentase Kehadiran</span>
+                    <i data-lucide="trending-up" class="w-4 h-4 text-emerald-500"></i>
+                </div>
+                <div>
+                    <p class="text-2xl sm:text-3xl font-extrabold text-slate-800" id="kpiRate">0%</p>
+                    <p class="text-[11px] text-emerald-600 font-bold mt-1" id="kpiRateStatus">Tingkat Keaktifan</p>
+                </div>
+            </div>
+
+            <div class="glass-card p-4 rounded-3xl border border-white shadow-sm flex flex-col justify-between">
+                <div class="flex items-center justify-between text-slate-500 mb-2">
+                    <span class="text-[11px] font-bold uppercase tracking-wider">Total Siswa Hadir</span>
+                    <i data-lucide="user-check" class="w-4 h-4 text-emerald-600"></i>
+                </div>
+                <div>
+                    <p class="text-2xl sm:text-3xl font-extrabold text-emerald-700" id="kpiHadir">0</p>
+                    <p class="text-[11px] text-slate-500 mt-1">Siswa mengikuti KBM</p>
+                </div>
+            </div>
+
+            <div class="glass-card p-4 rounded-3xl border border-white shadow-sm flex flex-col justify-between">
+                <div class="flex items-center justify-between text-slate-500 mb-2">
+                    <span class="text-[11px] font-bold uppercase tracking-wider">Izin & Sakit</span>
+                    <i data-lucide="file-text" class="w-4 h-4 text-amber-500"></i>
+                </div>
+                <div>
+                    <p class="text-2xl sm:text-3xl font-extrabold text-amber-700" id="kpiIzinSakit">0</p>
+                    <p class="text-[11px] text-slate-500 mt-1"><span id="kpiIzin">0</span> Izin, <span id="kpiSakit">0</span> Sakit</p>
+                </div>
+            </div>
+
+            <div class="glass-card p-4 rounded-3xl border border-white shadow-sm flex flex-col justify-between">
+                <div class="flex items-center justify-between text-slate-500 mb-2">
+                    <span class="text-[11px] font-bold uppercase tracking-wider">Tanpa Keterangan (Alpa)</span>
+                    <i data-lucide="alert-triangle" class="w-4 h-4 text-rose-500"></i>
+                </div>
+                <div>
+                    <p class="text-2xl sm:text-3xl font-extrabold text-rose-700" id="kpiAlpa">0</p>
+                    <p class="text-[11px] text-rose-600 font-bold mt-1">Perlu Pembinaan Wali Kelas</p>
+                </div>
+            </div>
+
+            <div class="glass-card p-4 rounded-3xl border border-white shadow-sm col-span-2 lg:col-span-1 flex flex-col justify-between bg-gradient-to-br from-indigo-50/60 to-purple-50/60">
+                <div class="flex items-center justify-between text-indigo-700 mb-2">
+                    <span class="text-[11px] font-bold uppercase tracking-wider">Total Siswa Terdaftar</span>
+                    <i data-lucide="users" class="w-4 h-4 text-indigo-600"></i>
+                </div>
+                <div>
+                    <p class="text-2xl sm:text-3xl font-extrabold text-indigo-900" id="kpiTotalSiswa">0</p>
+                    <p class="text-[11px] text-indigo-600 font-medium mt-1">Siswa Kelas 1</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filter Periode Audit Kepala Sekolah -->
+        <div class="glass-card p-4 rounded-3xl border border-white shadow-sm flex flex-wrap items-center justify-between gap-3">
+            <div id="harianDateWrapper" class="flex items-center gap-3 w-full sm:w-auto">
+                <label class="text-xs font-bold text-slate-700 whitespace-nowrap flex items-center gap-1.5">
+                    <i data-lucide="calendar" class="w-4 h-4 text-indigo-600"></i>
+                    <span>Pilih Tanggal Audit:</span>
+                </label>
+                <input type="date" id="inputFilterDate" onchange="fetchAllData()" class="px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full sm:w-auto">
+            </div>
+
+            <div id="bulanSelectWrapper" class="hidden items-center gap-3 w-full sm:w-auto">
+                <label class="text-xs font-bold text-slate-700 whitespace-nowrap flex items-center gap-1.5">
+                    <i data-lucide="calendar-range" class="w-4 h-4 text-indigo-600"></i>
+                    <span>Pilih Bulan Ajaran:</span>
+                </label>
+                <select id="selectBulanOtomatis" onchange="fetchAllData()" class="px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full sm:w-auto">
+                    <option value="2026-07">Juli 2026</option>
+                    <option value="2026-08">Agustus 2026</option>
+                    <option value="2026-09">September 2026</option>
+                    <option value="2026-10" selected>Oktober 2026</option>
+                    <option value="2026-11">November 2026</option>
+                    <option value="2026-12">Desember 2026</option>
+                    <option value="2027-01">Januari 2027</option>
+                    <option value="2027-02">Februari 2027</option>
+                    <option value="2027-03">Maret 2027</option>
+                    <option value="2027-04">April 2027</option>
+                    <option value="2027-05">Mei 2027</option>
+                    <option value="2027-06">Juni 2027</option>
+                </select>
+            </div>
+
+            <!-- Catatan Evaluasi Kepala Sekolah -->
+            <div class="w-full bg-slate-50 p-3 rounded-2xl border border-slate-200/80 text-xs">
+                <p class="font-bold text-slate-800 mb-1 flex items-center gap-1.5">
+                    <i data-lucide="clipboard-check" class="w-4 h-4 text-indigo-600"></i>
+                    Catatan Evaluasi Kepala Sekolah:
+                </p>
+                <p id="ksEvaluationText" class="text-slate-600">Sedang menyusun analisis data kehadiran Kelas 1...</p>
+            </div>
+        </div>
+
+        <!-- Visualisasi Grafik Laporan -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+            <!-- Pie Chart Diagram Proporsi Kehadiran -->
+            <div class="lg:col-span-4 glass-card p-5 rounded-3xl border border-white shadow-sm flex flex-col items-center justify-between">
+                <div class="w-full flex items-center justify-between mb-2">
+                    <h3 class="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
+                        <i data-lucide="pie-chart" class="w-4 h-4 text-indigo-600"></i>
+                        Proporsi Kehadiran Kelas 1
+                    </h3>
+                </div>
+                <div class="w-full max-w-[190px] h-[190px] relative flex items-center justify-center my-2">
+                    <canvas id="doughnutChart"></canvas>
+                </div>
+                <div class="grid grid-cols-2 gap-2 w-full text-[11px] font-semibold mt-2">
+                    <div class="flex items-center justify-between p-2 rounded-xl bg-emerald-50 text-emerald-800">
+                        <span>Hadir</span> <span id="lblHadir">0</span>
+                    </div>
+                    <div class="flex items-center justify-between p-2 rounded-xl bg-amber-50 text-amber-800">
+                        <span>Izin</span> <span id="lblIzin">0</span>
+                    </div>
+                    <div class="flex items-center justify-between p-2 rounded-xl bg-blue-50 text-blue-800">
+                        <span>Sakit</span> <span id="lblSakit">0</span>
+                    </div>
+                    <div class="flex items-center justify-between p-2 rounded-xl bg-rose-50 text-rose-800">
+                        <span>Alpa</span> <span id="lblAlpa">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bar Chart Diagram Grafik Kehadiran -->
+            <div class="lg:col-span-8 glass-card p-5 rounded-3xl border border-white shadow-sm flex flex-col justify-between">
+                <div class="w-full flex items-center justify-between mb-2">
+                    <h3 class="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-1.5" id="barChartTitle">
+                        <i data-lucide="bar-chart-3" class="w-4 h-4 text-indigo-600"></i>
+                        Grafik Perbandingan Status Kehadiran
+                    </h3>
+                    <span class="text-[11px] text-slate-500 font-medium">Monitoring Real-Time Google Sheets</span>
+                </div>
+                <div class="w-full h-[230px] sm:h-[260px]">
+                    <canvas id="barChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabel Detail Audit Kehadiran Siswa Kelas 1 -->
+        <div class="glass-card p-5 rounded-3xl border border-white shadow-sm space-y-4">
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-3">
+                <div>
+                    <h3 class="text-sm font-bold text-slate-800 flex items-center gap-2">
+                        <span class="p-1.5 bg-indigo-50 text-indigo-600 rounded-xl">
+                            <i data-lucide="file-spreadsheet" class="w-4 h-4"></i>
+                        </span>
+                        Daftar Detail Audit Kehadiran Siswa Kelas 1
+                    </h3>
+                    <p class="text-[11px] text-slate-500">Data bersumber langsung dari catatan presensi harian</p>
+                </div>
+
+                <div class="w-full sm:w-72 relative">
+                    <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-2.5"></i>
+                    <input type="text" id="searchTableInput" oninput="filterTable()" placeholder="Cari nama atau NISN siswa..." class="w-full pl-10 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-2xl text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+            </div>
+
+            <div class="border border-slate-200/80 rounded-2xl overflow-hidden overflow-x-auto shadow-sm">
+                <table class="w-full text-left text-xs sm:text-sm whitespace-nowrap">
+                    <thead class="bg-slate-100 text-slate-700 font-bold border-b border-slate-200" id="tableHeaderRow">
+                        <tr>
+                            <th class="p-3 text-center w-12">No</th>
+                            <th class="p-3">Nama Siswa</th>
+                            <th class="p-3">NISN</th>
+                            <th class="p-3 text-center">Status Kehadiran</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ksTableBody" class="divide-y divide-slate-100 bg-white">
+                        <tr>
+                            <td colspan="4" class="text-center py-10 text-slate-400">
+                                <i data-lucide="loader-2" class="w-7 h-7 animate-spin mx-auto text-indigo-600 mb-2"></i>
+                                <p class="text-xs font-semibold">Memuat data audit presensi Kelas 1...</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer Laporan Kepala Sekolah -->
+    <footer class="bg-white/80 backdrop-blur-md border-t border-slate-200 py-4 text-center text-xs text-slate-500">
+        <p>© 2026/2027 Portal Eksekutif Kepala Sekolah - Sistem Audit Kehadiran Kelas 1</p>
+    </footer>
+
+    <!-- Script Utama Portal Kepala Sekolah -->
+    <script>
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzZIQBcgj-ZUvFjdL6qIPJgVzvL8bmHBhLSU4Af0NhY4LRiiOY_7AKgYOgfg0QsAkGo/exec";
+
+        let currentMode = 'harian';
+        let rawStudentData = [];
+        let yearSummaryData = null;
+
+        let doughnutChartInstance = null;
+        let barChartInstance = null;
+
+        lucide.createIcons();
+
+        // Set Default Date Today
+        document.getElementById('inputFilterDate').value = new Date().toISOString().split('T')[0];
+
+        function switchMode(mode) {
+            currentMode = mode;
+            document.getElementById('btnHarian').className = mode === 'harian' ? 'px-3 py-1.5 rounded-xl bg-indigo-600 text-white shadow' : 'px-3 py-1.5 rounded-xl text-slate-300 hover:text-white';
+            document.getElementById('btnBulanan').className = mode === 'bulan' ? 'px-3 py-1.5 rounded-xl bg-indigo-600 text-white shadow' : 'px-3 py-1.5 rounded-xl text-slate-300 hover:text-white';
+            document.getElementById('btnTahunan').className = mode === 'tahunan' ? 'px-3 py-1.5 rounded-xl bg-indigo-600 text-white shadow' : 'px-3 py-1.5 rounded-xl text-slate-300 hover:text-white';
+
+            const harianWrapper = document.getElementById('harianDateWrapper');
+            const bulanWrapper = document.getElementById('bulanSelectWrapper');
+
+            if (mode === 'harian') {
+                harianWrapper.classList.remove('hidden');
+                harianWrapper.classList.add('flex');
+                bulanWrapper.classList.add('hidden');
+            } else if (mode === 'bulan') {
+                harianWrapper.classList.add('hidden');
+                bulanWrapper.classList.remove('hidden');
+                bulanWrapper.classList.add('flex');
+            } else {
+                harianWrapper.classList.add('hidden');
+                bulanWrapper.classList.add('hidden');
+            }
+
+            fetchAllData();
+        }
+
+        function fetchAllData() {
+            const refreshIcon = document.getElementById('refreshIcon');
+            if(refreshIcon) refreshIcon.classList.add('animate-spin');
+
+            let url = '';
+            if (currentMode === 'harian') {
+                const dateVal = document.getElementById('inputFilterDate').value;
+                url = `${SCRIPT_URL}?action=getStudents&date=${dateVal}&mode=harian&kelas=Kelas1`;
+            } else if (currentMode === 'bulan') {
+                const monthVal = document.getElementById('selectBulanOtomatis').value;
+                url = `${SCRIPT_URL}?action=getStudents&date=${monthVal}-01&mode=bulan&kelas=Kelas1`;
+            } else {
+                url = `${SCRIPT_URL}?action=getYearSummary&kelas=Kelas1`;
+            }
+
+            fetch(url)
+                .then(res => res.json())
+                .then(data => {
+                    if(refreshIcon) refreshIcon.classList.remove('animate-spin');
+                    if (currentMode === 'tahunan') {
+                        yearSummaryData = data;
+                        renderTahunanView(data);
+                    } else if (data && Array.isArray(data.students)) {
+                        rawStudentData = data.students;
+                        renderDataViews(rawStudentData);
+                    } else {
+                        renderEmptyState();
+                    }
+                })
+                .catch(err => {
+                    if(refreshIcon) refreshIcon.classList.remove('animate-spin');
+                    console.error("Gagal mengambil data:", err);
+                    renderEmptyState("Gagal terhubung ke server Google Sheets.");
+                });
+        }
+
+        function renderDataViews(students) {
+            let h = 0, i = 0, s = 0, a = 0;
+            const total = students.length;
+
+            if (currentMode === 'harian') {
+                students.forEach(st => {
+                    const status = (st.statusToday || '').toUpperCase();
+                    if (status === 'H' || status === 'HADIR') h++;
+                    else if (status === 'I' || status === 'IZIN') i++;
+                    else if (status === 'S' || status === 'SAKIT') s++;
+                    else if (status === 'A' || status === 'ALPA') a++;
+                });
+            } else if (currentMode === 'bulan') {
+                students.forEach(st => {
+                    h += st.hadir || 0;
+                    i += st.izin || 0;
+                    s += st.sakit || 0;
+                    a += st.alpa || 0;
+                });
+            }
+
+            const grandTotal = currentMode === 'harian' ? total : (h + i + s + a);
+            const rate = grandTotal > 0 ? Math.round((h / grandTotal) * 100) : 0;
+
+            document.getElementById('kpiRate').innerText = `${rate}%`;
+            document.getElementById('kpiHadir').innerText = h;
+            document.getElementById('kpiIzinSakit').innerText = i + s;
+            document.getElementById('kpiIzin').innerText = i;
+            document.getElementById('kpiSakit').innerText = s;
+            document.getElementById('kpiAlpa').innerText = a;
+            document.getElementById('kpiTotalSiswa').innerText = total;
+
+            document.getElementById('lblHadir').innerText = h;
+            document.getElementById('lblIzin').innerText = i;
+            document.getElementById('lblSakit').innerText = s;
+            document.getElementById('lblAlpa').innerText = a;
+
+            // Evaluasi Kepala Sekolah
+            let evalNote = `Tingkat kedisiplinan kehadiran siswa Kelas 1 mencapai <b>${rate}%</b>. `;
+            if (a > 0) {
+                evalNote += `<span class="text-rose-600 font-bold">Terdeteksi ${a} ketidakhadiran tanpa keterangan (Alpa). Disarankan Kepala Sekolah menginstruksikan Wali Kelas 1 untuk melakukan tindak lanjut/pemanggilan orang tua.</span>`;
+            } else {
+                evalNote += `<span class="text-emerald-600 font-bold">Kondisi kehadiran sangat kondusif. Seluruh ketidakhadiran memiliki surat izin/keterangan medis resmi.</span>`;
+            }
+            document.getElementById('ksEvaluationText').innerHTML = evalNote;
+
+            renderTable(students);
+            renderCharts(h, i, s, a);
+        }
+
+        function renderTable(students) {
+            const tbody = document.getElementById('ksTableBody');
+            const headerRow = document.getElementById('tableHeaderRow');
+
+            if (currentMode === 'harian') {
+                headerRow.innerHTML = `
+                    <tr>
+                        <th class="p-3 text-center w-12">No</th>
+                        <th class="p-3">Nama Siswa</th>
+                        <th class="p-3">NISN</th>
+                        <th class="p-3 text-center">Status Kehadiran</th>
+                    </tr>
+                `;
+
+                if (students.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="4" class="text-center py-8 text-slate-400">Tidak ada data siswa Kelas 1.</td></tr>`;
+                    return;
+                }
+
+                let rows = '';
+                students.forEach((st, idx) => {
+                    const status = (st.statusToday || '').toUpperCase();
+                    let badge = '';
+
+                    if (status === 'H' || status === 'HADIR') badge = `<span class="px-2.5 py-1 text-[11px] font-bold rounded-full bg-emerald-100 text-emerald-800">✅ Hadir</span>`;
+                    else if (status === 'I' || status === 'IZIN') badge = `<span class="px-2.5 py-1 text-[11px] font-bold rounded-full bg-amber-100 text-amber-800">📄 Izin</span>`;
+                    else if (status === 'S' || status === 'SAKIT') badge = `<span class="px-2.5 py-1 text-[11px] font-bold rounded-full bg-blue-100 text-blue-800">🏥 Sakit</span>`;
+                    else if (status === 'A' || status === 'ALPA') badge = `<span class="px-2.5 py-1 text-[11px] font-bold rounded-full bg-rose-100 text-rose-800">❌ Alpa</span>`;
+                    else badge = `<span class="px-2.5 py-1 text-[11px] font-semibold rounded-full bg-slate-100 text-slate-500">Belum Absen</span>`;
+
+                    rows += `
+                        <tr class="hover:bg-slate-50/80 transition-all">
+                            <td class="p-3 text-center font-bold text-slate-500 text-xs">${idx + 1}</td>
+                            <td class="p-3 font-bold text-slate-800 text-xs sm:text-sm">${st.nama}</td>
+                            <td class="p-3 text-slate-500 font-mono text-xs">${st.nisn || '-'}</td>
+                            <td class="p-3 text-center">${badge}</td>
+                        </tr>
+                    `;
+                });
+                tbody.innerHTML = rows;
+
+            } else if (currentMode === 'bulan') {
+                headerRow.innerHTML = `
+                    <tr>
+                        <th class="p-3 text-center w-12">No</th>
+                        <th class="p-3">Nama Siswa</th>
+                        <th class="p-3 text-center text-emerald-700 font-bold">Hadir (H)</th>
+                        <th class="p-3 text-center text-amber-700 font-bold">Izin (I)</th>
+                        <th class="p-3 text-center text-blue-700 font-bold">Sakit (S)</th>
+                        <th class="p-3 text-center text-rose-700 font-bold">Alpa (A)</th>
+                    </tr>
+                `;
+
+                if (students.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="6" class="text-center py-8 text-slate-400">Tidak ada data presensi bulanan Kelas 1.</td></tr>`;
+                    return;
+                }
+
+                let rows = '';
+                students.forEach((st, idx) => {
+                    rows += `
+                        <tr class="hover:bg-slate-50/80 transition-all">
+                            <td class="p-3 text-center font-bold text-slate-500 text-xs">${idx + 1}</td>
+                            <td class="p-3 font-bold text-slate-800 text-xs sm:text-sm">${st.nama}</td>
+                            <td class="p-3 text-center font-bold text-emerald-700 bg-emerald-50/50 text-xs">${st.hadir || 0}</td>
+                            <td class="p-3 text-center font-bold text-amber-700 bg-amber-50/50 text-xs">${st.izin || 0}</td>
+                            <td class="p-3 text-center font-bold text-blue-700 bg-blue-50/50 text-xs">${st.sakit || 0}</td>
+                            <td class="p-3 text-center font-bold text-rose-700 bg-rose-50/50 text-xs">${st.alpa || 0}</td>
+                        </tr>
+                    `;
+                });
+                tbody.innerHTML = rows;
+            }
+            lucide.createIcons();
+        }
+
+        function renderTahunanView(data) {
+            const totals = data.totals || { hadir: 0, izin: 0, sakit: 0, alpa: 0 };
+            const h = totals.hadir, i = totals.izin, s = totals.sakit, a = totals.alpa;
+            const grandTotal = h + i + s + a;
+            const rate = grandTotal > 0 ? Math.round((h / grandTotal) * 100) : 0;
+
+            document.getElementById('kpiRate').innerText = `${rate}%`;
+            document.getElementById('kpiHadir').innerText = h;
+            document.getElementById('kpiIzinSakit').innerText = i + s;
+            document.getElementById('kpiIzin').innerText = i;
+            document.getElementById('kpiSakit').innerText = s;
+            document.getElementById('kpiAlpa').innerText = a;
+
+            document.getElementById('lblHadir').innerText = h;
+            document.getElementById('lblIzin').innerText = i;
+            document.getElementById('lblSakit').innerText = s;
+            document.getElementById('lblAlpa').innerText = a;
+
+            document.getElementById('ksEvaluationText').innerHTML = `Akumulasi tahun ajaran berjalan: <b>${rate}%</b> kehadiran (${h} total sesi hadir dari ${grandTotal} presensi).`;
+
+            // Tabel Tahunan
+            const tbody = document.getElementById('ksTableBody');
+            const headerRow = document.getElementById('tableHeaderRow');
+
+            headerRow.innerHTML = `
+                <tr>
+                    <th class="p-3 text-center w-12">No</th>
+                    <th class="p-3">Bulan Ajaran</th>
+                    <th class="p-3 text-center text-emerald-700 font-bold">Hadir</th>
+                    <th class="p-3 text-center text-amber-700 font-bold">Izin</th>
+                    <th class="p-3 text-center text-blue-700 font-bold">Sakit</th>
+                    <th class="p-3 text-center text-rose-700 font-bold">Alpa</th>
+                </tr>
+            `;
+
+            if (data.summary && Array.isArray(data.summary)) {
+                let rows = '';
+                data.summary.forEach((item, idx) => {
+                    rows += `
+                        <tr class="hover:bg-slate-50/80 transition-all">
+                            <td class="p-3 text-center font-bold text-slate-500 text-xs">${idx + 1}</td>
+                            <td class="p-3 font-bold text-slate-800 text-xs sm:text-sm">${item.bulan}</td>
+                            <td class="p-3 text-center font-bold text-emerald-700 bg-emerald-50/50 text-xs">${item.hadir}</td>
+                            <td class="p-3 text-center font-bold text-amber-700 bg-amber-50/50 text-xs">${item.izin}</td>
+                            <td class="p-3 text-center font-bold text-blue-700 bg-blue-50/50 text-xs">${item.sakit}</td>
+                            <td class="p-3 text-center font-bold text-rose-700 bg-rose-50/50 text-xs">${item.alpa}</td>
+                        </tr>
+                    `;
+                });
+                tbody.innerHTML = rows;
+            }
+
+            renderCharts(h, i, s, a);
+            lucide.createIcons();
+        }
+
+        function renderCharts(h, i, s, a) {
+            // Doughnut Chart
+            const ctxDoughnut = document.getElementById('doughnutChart').getContext('2d');
+            if (doughnutChartInstance) doughnutChartInstance.destroy();
+            doughnutChartInstance = new Chart(ctxDoughnut, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Hadir', 'Izin', 'Sakit', 'Alpa'],
+                    datasets: [{
+                        data: [h, i, s, a],
+                        backgroundColor: ['#10b981', '#f59e0b', '#3b82f6', '#ef4444'],
+                        borderWidth: 2,
+                        borderColor: '#ffffff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } }
+                }
+            });
+
+            // Bar Chart
+            const ctxBar = document.getElementById('barChart').getContext('2d');
+            if (barChartInstance) barChartInstance.destroy();
+            barChartInstance = new Chart(ctxBar, {
+                type: 'bar',
+                data: {
+                    labels: ['Hadir', 'Izin', 'Sakit', 'Alpa'],
+                    datasets: [{
+                        label: 'Total Siswa Kelas 1',
+                        data: [h, i, s, a],
+                        backgroundColor: ['#10b981', '#f59e0b', '#3b82f6', '#ef4444'],
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+                }
+            });
+        }
+
+        function filterTable() {
+            const query = document.getElementById('searchTableInput').value.toLowerCase().trim();
+            if(!query) { renderTable(rawStudentData); return; }
+            const res = rawStudentData.filter(s => String(s.nama).toLowerCase().includes(query) || String(s.nisn).toLowerCase().includes(query));
+            renderTable(res);
+        }
+
+        function renderEmptyState(msg = "Tidak ada data presensi") {
+            document.getElementById('ksTableBody').innerHTML = `<tr><td colspan="4" class="text-center py-8 text-rose-500 font-medium">${msg}</td></tr>`;
+        }
+
+        window.onload = function() {
+            fetchAllData();
+        };
+    </script>
+</body>
+</html>
